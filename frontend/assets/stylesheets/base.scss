@@ -3,6 +3,9 @@
 
 // Color palette
 $snow: #e6ecf0;
+$light-gray: #a9b9cc;
+$gray: #8898aa;
+$dark-gray: #5f6e7f;
 
 // General app styling
 .app-wrapper {
@@ -27,4 +30,34 @@ $snow: #e6ecf0;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   box-shadow: 0rem 0.1rem 0.2rem rgba(0, 0, 0, 0.1);
   margin-bottom: 1rem;
+
+  .navbar-brand {
+    font-weight: bold;
+  }
+}
+
+.btn {
+  font-weight: bold;
+}
+
+.line-form {
+  label {
+    margin-bottom: 0;
+    font-weight: bold;
+    color: $gray;
+  }
+
+  .form-control {
+    padding-top: 0.2rem;
+    padding-bottom: 0.4rem;
+    border-radius: 0px;
+    border: 0px solid transparent;
+    border-bottom: 2px solid $light-gray;
+
+    &:hover,
+    &:focus,
+    &:active {
+      border-bottom: 2px solid $dark-gray;
+    }
+  }
 }

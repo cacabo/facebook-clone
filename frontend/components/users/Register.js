@@ -6,8 +6,10 @@ const Regsiter = () => {
   return (
     <Thin>
       <div className="card">
-        <h2>New user</h2>
-        <form>
+        <h3 className="marg-bot-1 bold">
+          Regsiter
+        </h3>
+        <form className="line-form">
           <label>
             Email
           </label>
@@ -38,10 +40,10 @@ const Regsiter = () => {
           </label>
           <input type="password" name="confirmPassword" className="form-control marg-bot-1" />
 
-          <input type="submit" className="btn btn-primary full-width cursor" value="Register" />
+          <input type="submit" className="btn btn-primary full-width cursor" value="Create account" />
         </form>
         <p className="marg-top-1 marg-bot-0">
-          Already have an account? <Link to="/login" className="inline">login.</Link>
+          Already have an account? <Link to="/login" className="inline">login here.</Link>
         </p>
       </div>
     </Thin>

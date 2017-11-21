@@ -15,17 +15,19 @@ import Nav from '../components/shared/Nav';
 // Render the app
 const AppContainer = () => (
   <div className="app-wrapper">
-    <Nav />
     <Router>
-      <Switch>
-        <Route exact path='/' component={Home} />
-        <Route path='/users/:id' component={Profile} />
-        <Route path='/register' component={Register} />
-        <Route path='/login' component={Login} />
-        <Route path='/chats' component={Chats} />
-        <Route path='/chats/:id' component={Chat} />
-        <Route path='*' component={NotFound} />
-      </Switch>
+      <div>
+        <Nav />
+        <Switch>
+          <Route exact path='/' component={Home} />
+          <Route path='/users/:id' component={Profile} />
+          <Route path='/register' component={Register} />
+          <Route path='/login' component={Login} />
+          <Route path='/chats' component={Chats} />
+          <Route path='/chats/:id' component={Chat} />
+          <Route path='*' component={NotFound} />
+        </Switch>
+      </div>
     </Router>
   </div>
 );
