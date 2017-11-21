@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 
 // Import components to render
-import Home from '../components/Home';
+import Home from '../components/newsfeed/Home';
 import Profile from '../components/users/Profile';
 import Login from '../components/users/Login';
 import Register from '../components/users/Register';

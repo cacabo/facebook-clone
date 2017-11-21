@@ -1,0 +1,33 @@
+.line-form {
+  label {
+    margin-bottom: 0;
+    font-weight: bold;
+    color: $gray;
+  }
+
+  .form-control {
+    padding-top: 0.2rem;
+    padding-bottom: 0.4rem;
+    border-radius: 0px;
+    border: 0px solid transparent;
+    border-bottom: 2px solid $light-gray;
+
+    &:hover,
+    &:focus,
+    &:active {
+      border-bottom: 2px solid $dark-gray;
+    }
+  }
+}
+
+.status-form {
+  .form-control {
+    border: 1px solid transparent;
+    transition: all 0.2s ease;
+    height: 4rem;
+
+    &:focus {
+      height: 8rem;
+    }
+  }
+}
