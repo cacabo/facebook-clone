@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const Home = () => {
   return (
@@ -13,7 +14,8 @@ const Home = () => {
           ></textarea>
         </div>
         <div className="buttons right">
-          <input type="submit" value="Post" className="btn btn-primary card-shade cursor right" />
+          <Link to="/users/TODO" className="btn btn-info btn-sm card-shade">Profile</Link>
+          <input type="submit" value="Post" className="btn btn-primary btn-sm card-shade cursor" />
         </div>
       </form>
     </div>
