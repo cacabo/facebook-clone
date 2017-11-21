@@ -2,12 +2,12 @@ import React from 'react';
 import Thin from '../shared/Thin';
 import { Link } from 'react-router-dom';
 
-const Regsiter = () => {
+const Register = () => {
   return (
     <Thin>
       <div className="card">
         <h3 className="marg-bot-1 bold">
-          Regsiter
+          Register
         </h3>
         <form className="line-form">
           <label>
@@ -50,4 +50,4 @@ const Regsiter = () => {
   );
 };
 
-export default Regsiter;
+export default Register;
