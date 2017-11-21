@@ -61,3 +61,15 @@ $dark-gray: #5f6e7f;
     }
   }
 }
+
+// Remve underlines
+a {
+  text-decoration: none !important;
+
+  &:focus,
+  &:visited,
+  &:active,
+  &:hover {
+    text-decoration: none !important;
+  }
+}
