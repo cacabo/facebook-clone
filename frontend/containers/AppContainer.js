@@ -7,6 +7,7 @@ import Home from '../components/newsfeed/Home';
 import Profile from '../components/users/Profile';
 import Login from '../components/users/Login';
 import Register from '../components/users/Register';
+import EditProfile from '../components/users/EditProfile';
 import Chats from '../components/chats/Chats';
 import Chat from '../components/chats/Chat';
 import NotFound from '../components/NotFound';
@@ -20,6 +21,7 @@ const AppContainer = () => (
         <Nav />
         <Switch>
           <Route exact path='/' component={Home} />
+          <Route path='/users/:id/edit' component={EditProfile} />
           <Route path='/users/:id' component={Profile} />
           <Route path='/register' component={Register} />
           <Route path='/login' component={Login} />

@@ -13,7 +13,7 @@ const Register = () => {
           <label>
             Email
           </label>
-          <input type="email" name="email" className="form-control marg-bot-1" />
+          <input type="email" name="email" className="form-control marg-bot-1" autoFocus="true" />
 
           <div className="row">
             <div className="col-6">

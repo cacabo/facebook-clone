@@ -3,6 +3,13 @@ import Medium from '../shared/Medium';
 import StatusForm from '../newsfeed/StatusForm';
 import Status from '../newsfeed/Status';
 
+/**
+ * Render's a user's profile
+ *
+ * Cover photo and profile picture at the top
+ * Information about the user (bio, interests, friend count, etc.) to left
+ * List of posts and ability to write on their wall to the right / middle
+ */
 const Profile = () => {
   return (
     <div className="profile">

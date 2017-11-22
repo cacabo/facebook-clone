@@ -2,7 +2,13 @@ import React from 'react';
 import StatusForm from './StatusForm';
 import { Link } from 'react-router-dom';
 
-const Home = ({ name, status, userImg, id, image }) => {
+/**
+ * Renders a status posted by a user
+ *
+ * This can show up either on the newsfeed or on a user's profile page
+ * Fills the size of the component it is rendered within
+ */
+const Status = ({ name, status, userImg, id, image }) => {
   return (
     <div className="card status">
       <div className="user">
@@ -31,4 +37,4 @@ const Home = ({ name, status, userImg, id, image }) => {
   );
 };
 
-export default Home;
+export default Status;

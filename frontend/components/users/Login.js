@@ -13,7 +13,7 @@ const Login = () => {
           <label>
             Email
           </label>
-          <input type="email" name="email" className="form-control marg-bot-1" />
+          <input type="email" name="email" className="form-control marg-bot-1" autoFocus="true" />
 
           <label>
             Password
