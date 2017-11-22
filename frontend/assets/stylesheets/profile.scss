@@ -28,12 +28,37 @@
     height: 16rem;
     top: -15rem;
   }
+
+  .about {
+    padding-top: 2.5rem;
+
+    .tags {
+      list-style: none;
+      margin: 0rem 0rem 1rem 0rem;
+      padding: 0.5rem 0rem 0rem 0rem;
+
+      li {
+        padding: 0.2rem 0.4rem;
+        margin-right: 0.4rem;
+        margin-bottom: 0.4rem;
+        border-radius: 0.4rem;
+        background: $light-gray;
+        display: inline-block;
+      }
+    }
+  }
 }
 
 @media screen and (max-width: 992px) {
   .profile {
     .menu {
       padding-left: 18rem;
+    }
+
+    .profile-picture {
+      top: -13rem;
+      width: 14rem;
+      height: 14rem;
     }
   }
 }
