@@ -27,6 +27,7 @@ const AppContainer = () => (
           <Route path='/chats/:id' component={Chat} />
           <Route path='*' component={NotFound} />
         </Switch>
+        <div className="space-4"></div>
       </div>
     </Router>
   </div>

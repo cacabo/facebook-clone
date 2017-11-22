@@ -17,6 +17,16 @@ const Home = ({ name, status, userImg, id, image }) => {
         { status }
       </p>
       { image ? <img src={image} className="img-fluid image" /> : "" }
+      <div className="interact">
+        <div className="like">
+          <i className="fa fa-heart-o"></i>
+          12 likes
+        </div>
+        <div className="comment">
+          <i className="fa fa-comment-o"></i>
+          4 comments
+        </div>
+      </div>
     </div>
   );
 };

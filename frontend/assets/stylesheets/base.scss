@@ -116,6 +116,27 @@ a {
     display: block;
     margin-top: 0.5rem;
   }
+
+  .interact {
+    color: $gray;
+    padding-top: 1rem;
+
+    .like,
+    .comment {
+      display: inline-block;
+      margin-right: 1rem;
+
+      .fa {
+        margin-right: 0.5rem;
+        cursor: hand;
+        cursor: pointer;
+
+        &:hover {
+          color: $dark-gray;
+        }
+      }
+    }
+  }
 }
 
 .profile {
