@@ -1,5 +1,8 @@
 import React from 'react';
 
+/**
+ * Component to render all of a user's groupchats
+ */
 const Chats = () => {
     return (
         <div>

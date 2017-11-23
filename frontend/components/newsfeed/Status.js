@@ -3,12 +3,14 @@ import StatusForm from './StatusForm';
 import { Link } from 'react-router-dom';
 
 /**
- * Renders a status posted by a user
+ * Renders a status posted by a user. This can show up either on the newsfeed
+ * or on a user's profile page.
  *
- * This can show up either on the newsfeed or on a user's profile page
- * Fills the size of the component it is rendered within
+ * State handles whether comments show up or not. By default, they are hidden.
+ * Toggle the comments box by clicking on the comments icon or text.
  */
 class Status extends React.Component {
+  // Constructor method
   constructor(props) {
     super(props);
     this.state = {
@@ -23,6 +25,7 @@ class Status extends React.Component {
     });
   }
 
+  // Render method
   render() {
     return(
       <div className="card status">

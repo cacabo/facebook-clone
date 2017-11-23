@@ -1,5 +1,9 @@
 import React from 'react';
 
+/**
+ * Wrapper component of thin width which renders whatever component you put
+ * within it. This is used, for example, on login and registration forms.
+ */
 const Thin = ({ children }) => {
   return (
     <div className="container marg-top-1">

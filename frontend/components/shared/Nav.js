@@ -1,6 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
+/**
+ * Renders the navbar at the top of the screen on all pages.
+ *
+ * TODO make this stateful depending on if the user is logged in or not.
+ * Currently, it assumes that the user is not logged in.
+ */
 const Nav = () => {
   return (
     <nav className="navbar navbar-toggleable-md navbar-light">

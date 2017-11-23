@@ -2,6 +2,9 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import Thin from './shared/Thin';
 
+/**
+ * Component rendered when the URL entered by a user is not found
+ */
 const NotFound = () => (
   <Thin>
     <div className="card">

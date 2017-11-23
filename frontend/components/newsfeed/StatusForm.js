@@ -1,6 +1,13 @@
 import React from 'react';
 
+/**
+ * Render the status form to appear at the top of the newsfeed and at the top
+ * of a user's profile page.
+ *
+ * Post button only shows after the user clicks on the form.
+ */
 class StatusForm extends React.Component {
+  // Constructor method
   constructor(props) {
     super(props);
     this.state = {
@@ -9,12 +16,14 @@ class StatusForm extends React.Component {
     this.onClick = this.onClick.bind(this);
   }
 
+  // Click handler
   onClick() {
     this.setState({
       active: true,
     });
   }
 
+  // Render method
   render() {
     return (
       <div className="status-form marg-bot-1">

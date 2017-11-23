@@ -2,6 +2,9 @@ import React from 'react';
 import Thin from '../shared/Thin';
 import { Link } from 'react-router-dom';
 
+/**
+ * Component to render a user's login form
+ */
 const Login = () => {
   return (
     <Thin>

@@ -4,6 +4,13 @@ import Status from './Status';
 import FriendRecommendations from './FriendRecommendations';
 import OnlineNow from './OnlineNow';
 
+/**
+ * Component to render a user's newsfeed.
+ *
+ * On smaller screens, exclusively the newsfeed shows up. On larger screens,
+ * however, a user sees 1. recommended friends (to the left), 2. their newsfeed,
+ * 3. a list of friends currently online.
+ */
 const Home = () => {
   return (
     <div className="container-fluid marg-top-1">

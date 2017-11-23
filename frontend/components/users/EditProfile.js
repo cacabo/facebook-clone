@@ -2,7 +2,10 @@ import React from 'react';
 import Thin from '../shared/Thin';
 import { Link } from 'react-router-dom';
 
-class Register extends React.Component {
+/**
+ * Component to render a form to edit a user's profile
+ */
+class EditProfile extends React.Component {
   render() {
     return(
       <Thin>
@@ -47,4 +50,4 @@ class Register extends React.Component {
   }
 };
 
-export default Register;
+export default EditProfile;

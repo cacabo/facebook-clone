@@ -1,5 +1,9 @@
 import React from 'react';
 
+/**
+ * Wrapper component of medium width which renders whatever component you put
+ * within it.
+ */
 const Medium = ({ children }) => {
   return (
     <div className="container">

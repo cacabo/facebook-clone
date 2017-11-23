@@ -2,6 +2,9 @@ import React from 'react';
 import Thin from '../shared/Thin';
 import { Link } from 'react-router-dom';
 
+/**
+ * Component to render a form to register a user
+ */
 const Register = () => {
   return (
     <Thin>
