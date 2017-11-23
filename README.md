@@ -1,3 +1,15 @@
+# NETS 212 Final Project
+
+Facebook-clone for NETS 212. View the Dropbox paper [here.](https://paper.dropbox.com/doc/NETS-212-Final-Project-ez4p6TwrYmhhTXeR6T8qu)
+
+### Todo
+
+__Frontend__
+- [ ] Timestamp on statuses
+
+__Backend__
+- [ ] A lot of stuff
+
 # React + Node Starter
 _for [Heroku](https://www.heroku.com/) deployment_
 

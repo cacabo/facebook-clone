@@ -131,6 +131,18 @@ a {
     margin-top: 0.75rem;
     font-weight: bold;
     color: $dark-gray;
+    margin-bottom: 0rem;
+  }
+
+  &.user-sm {
+    .userImg {
+      width: 2rem;
+      height: 2rem;
+    }
+
+    p {
+      margin-top: 0.25rem;
+    }
   }
 }
 
