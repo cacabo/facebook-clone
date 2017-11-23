@@ -1,12 +1,17 @@
 import React from 'react';
 import StatusForm from './StatusForm';
 import Status from './Status';
+import FriendRecommendations from './FriendRecommendations';
+import OnlineNow from './OnlineNow';
 
 const Home = () => {
   return (
     <div className="container-fluid marg-top-1">
       <div className="row">
-        <div className="col-12 col-md-8 offset-md-2 col-lg-6 offset-lg-3 col-xl-5 offset-xl-3">
+        <div className="col-lg-3 hidden-md-down">
+          <FriendRecommendations />
+        </div>
+        <div className="col-12 col-md-8 offset-md-2 col-lg-6 offset-lg-0 col-xl-5">
           <StatusForm placeholder="What's on your mind?" />
 
           <Status
@@ -23,6 +28,9 @@ const Home = () => {
             id="1"
             image="http://www.insidedogsworld.com/wp-content/uploads/2016/03/Dog-Pictures.jpg"
           />
+        </div>
+        <div className="col-lg-3 col-xl-4 hidden-lg-down">
+          <OnlineNow />
         </div>
       </div>
     </div>

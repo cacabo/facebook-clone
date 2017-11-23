@@ -1,31 +1,5 @@
 // Styling for statuses
 .status {
-  .user {
-    display: flex;
-
-    .userImg {
-      width: 3rem;
-      height: 3rem;
-      background: $light-gray;
-      border-radius: 50%;
-      display: inline-block;
-      margin-right: 0.5rem;
-      -webkit-background-size: cover;
-      -moz-background-size: cover;
-      -o-background-size: cover;
-      background-size: cover;
-      background-repeat: no-repeat;
-      background-position: center;
-    }
-
-    p {
-      flex: 1;
-      margin-top: 0.75rem;
-      font-weight: bold;
-      color: $dark-gray;
-    }
-  }
-
   .image {
     width: 100%;
     height: auto;
@@ -51,6 +25,23 @@
           color: $dark-gray;
         }
       }
+    }
+  }
+
+  .comments {
+    padding-top: 0.5rem;
+
+    .comments-form {
+      display: flex;
+      padding-bottom: 1rem;
+
+      .form-control {
+        flex: 1;
+      }
+    }
+
+    &.hidden {
+      display: none;
     }
   }
 }
