@@ -49,31 +49,15 @@
 
       .form-control {
         flex: 1;
-        border-radius: 1rem;
+        border-radius: 1.2rem;
         border-color: $lighter-gray;
         padding: 0.5rem 1rem;
+        resize: none;
 
         &:focus,
         &:active {
           border-color: $light-gray;
           height: 5rem;
-        }
-      }
-
-      .btn {
-        color: white;
-        background: $light-gray;
-        border-radius: 1rem;
-        border: 1px solid $light-gray;
-        margin-left: 0.5rem;
-
-        &:hover,
-        &:active,
-        &:focus {
-          background: $gray;
-          border: 1px solid $light-gray;
-          cursor: hand;
-          cursor: pointer;
         }
       }
     }

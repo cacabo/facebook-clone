@@ -61,6 +61,28 @@
   font-weight: bold;
 }
 
+.btn-gray {
+  color: white;
+  background: $light-gray;
+  border-radius: 1.2rem;
+  border: 1px solid $light-gray;
+  margin-left: 0.5rem;
+
+  &:hover,
+  &:active,
+  &:focus {
+    background: $gray;
+    border: 1px solid $light-gray;
+    cursor: hand;
+    cursor: pointer;
+  }
+
+  &.btn-sm {
+    border-radius: 1rem;
+    padding: 0.25rem 0.75rem;
+  }
+}
+
 .buttons {
   width: 100%;
 

@@ -51,7 +51,7 @@ class Status extends React.Component {
         <div className={ this.state.toggledComments ? "comments" : "comments hidden" }>
           <form className="comments-form">
             <textarea className="form-control" placeholder="Leave a comment..." name="comment" type="text" rows="1"></textarea>
-            <input className="btn" type="submit" name="submit" value="Reply" />
+            <input className="btn btn-gray" type="submit" name="submit" value="Reply" />
           </form>
           <p>
             These are the comments

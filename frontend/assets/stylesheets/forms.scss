@@ -25,9 +25,21 @@
     border: 1px solid transparent;
     transition: all 0.2s ease;
     height: 4rem;
+    resize: none;
 
     &:focus {
       height: 8rem;
+    }
+  }
+
+  .buttons {
+    background: $light-snow;
+    padding: 0.5rem 1rem;
+    border-top: 1px solid $lighter-gray;
+    border-radius: 0rem 0rem 0.4rem 0.4rem;
+
+    &.hidden {
+      display: none;
     }
   }
 }
