@@ -1,5 +1,7 @@
 // Styling for statuses
-.status {
+.card.status {
+  padding: 0rem !important;
+
   .image {
     width: 100%;
     height: auto;
@@ -7,9 +9,17 @@
     margin-top: 0.5rem;
   }
 
+  .user {
+    padding: 1rem 1rem 0.5rem 1rem;
+  }
+
+  .text {
+    padding: 0rem 1rem;
+  }
+
   .interact {
     color: $gray;
-    padding-top: 1rem;
+    padding: 1rem;
 
     .like,
     .comment {
@@ -29,14 +39,42 @@
   }
 
   .comments {
-    padding-top: 0.5rem;
-
     .comments-form {
+      background: $light-snow;
       display: flex;
-      padding-bottom: 1rem;
+      padding: 0.5rem 1rem;
+      border-top: 1px solid $lighter-gray;
+      border-bottom: 1px solid $lighter-gray;
+      align-items: flex-start;
 
       .form-control {
         flex: 1;
+        border-radius: 1rem;
+        border-color: $lighter-gray;
+        padding: 0.5rem 1rem;
+
+        &:focus,
+        &:active {
+          border-color: $light-gray;
+          height: 5rem;
+        }
+      }
+
+      .btn {
+        color: white;
+        background: $light-gray;
+        border-radius: 1rem;
+        border: 1px solid $light-gray;
+        margin-left: 0.5rem;
+
+        &:hover,
+        &:active,
+        &:focus {
+          background: $gray;
+          border: 1px solid $light-gray;
+          cursor: hand;
+          cursor: pointer;
+        }
       }
     }
 

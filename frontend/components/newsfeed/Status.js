@@ -34,7 +34,7 @@ class Status extends React.Component {
             </Link>
           </p>
         </div>
-        <p className="marg-bot-0">
+        <p className="marg-bot-0 text">
           { this.props.status }
         </p>
         { this.props.image ? <img src={ this.props.image } className="img-fluid image" /> : "" }
@@ -50,8 +50,8 @@ class Status extends React.Component {
         </div>
         <div className={ this.state.toggledComments ? "comments" : "comments hidden" }>
           <form className="comments-form">
-            <input className="form-control" placeholder="Leave a comment..." name="comment" type="text" />
-            <input className="btn btn-secondary" type="submit" name="submit" value="Reply" />
+            <textarea className="form-control" placeholder="Leave a comment..." name="comment" type="text" rows="1"></textarea>
+            <input className="btn" type="submit" name="submit" value="Reply" />
           </form>
           <p>
             These are the comments
