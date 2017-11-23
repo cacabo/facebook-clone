@@ -2,6 +2,14 @@
 
 Facebook-clone for NETS 212. View the Dropbox paper [here.](https://paper.dropbox.com/doc/NETS-212-Final-Project-ez4p6TwrYmhhTXeR6T8qu)
 
+### Setup
+
+There's information about the boilerplate below, but for our general workflow:
+* Always run `git pull` before starting or committing anything.
+* Always work in a separate branch and create a pull request for everyone else to approve before merging into master.
+  * This will become increasingly important as the project gets more complex.
+* Update the todo list below and document everything your write with comments.
+
 ### Todo
 
 __Frontend__
