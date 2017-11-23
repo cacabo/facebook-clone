@@ -1,6 +1,7 @@
 import React from 'react';
 import StatusForm from './StatusForm';
 import { Link } from 'react-router-dom';
+import Comment from './Comment';
 
 /**
  * Renders a status posted by a user. This can show up either on the newsfeed
@@ -8,6 +9,8 @@ import { Link } from 'react-router-dom';
  *
  * State handles whether comments show up or not. By default, they are hidden.
  * Toggle the comments box by clicking on the comments icon or text.
+ *
+ * TODO stateful likes
  */
 class Status extends React.Component {
   // Constructor method
@@ -15,13 +18,21 @@ class Status extends React.Component {
     super(props);
     this.state = {
       toggledComments: false,
+      isLiked: false,
     };
-    this.onClick = this.onClick.bind(this);
+    this.commentOnClick = this.commentOnClick.bind(this);
+    this.likeOnClick = this.likeOnClick.bind(this);
   }
 
-  onClick() {
+  commentOnClick() {
     this.setState({
       toggledComments: !this.state.toggledComments,
+    });
+  }
+
+  likeOnClick() {
+    this.setState({
+      isLiked: !this.state.isLiked,
     });
   }
 
@@ -42,23 +53,21 @@ class Status extends React.Component {
         </p>
         { this.props.image ? <img src={ this.props.image } className="img-fluid image" /> : "" }
         <div className="interact">
-          <div className="like">
-            <i className="fa fa-heart-o"></i>
+          <div className="like" onClick={ this.likeOnClick }>
+            <i className={ this.state.isLiked ? "fa fa-heart" : "fa fa-heart-o" }></i>
             12 likes
           </div>
-          <div className="comment" onClick={ this.onClick }>
-            <i className="fa fa-comment-o"></i>
+          <div className="comment" onClick={ this.commentOnClick }>
+            <i className={ this.state.toggledComments ? "fa fa-comment" : "fa fa-comment-o" }></i>
             4 comments
           </div>
         </div>
         <div className={ this.state.toggledComments ? "comments" : "comments hidden" }>
           <form className="comments-form">
             <textarea className="form-control" placeholder="Leave a comment..." name="comment" type="text" rows="1"></textarea>
-            <input className="btn btn-gray" type="submit" name="submit" value="Reply" />
+            <input className="btn btn-gray btn-sm" type="submit" name="submit" value="Reply" />
           </form>
-          <p>
-            These are the comments
-          </p>
+          <Comment text="Really good stuff" />
         </div>
       </div>
     );

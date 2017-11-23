@@ -35,6 +35,14 @@
           color: $dark-gray;
         }
       }
+
+      .fa-heart {
+        color: $pink !important;
+
+        &:hover {
+          color: $dark-pink !important;
+        }
+      }
     }
   }
 
@@ -49,10 +57,11 @@
 
       .form-control {
         flex: 1;
-        border-radius: 1.2rem;
+        border-radius: 0.8rem;
         border-color: $lighter-gray;
-        padding: 0.5rem 1rem;
+        padding: 0.25rem 0.75rem;
         resize: none;
+        font-size: 0.9rem;
 
         &:focus,
         &:active {
@@ -60,6 +69,15 @@
           height: 5rem;
         }
       }
+
+      .btn {
+        font-size: 0.9rem !important;
+      }
+    }
+
+    .comment {
+      padding: 0.5rem 1rem;
+      font-size: 0.9rem;
     }
 
     &.hidden {
