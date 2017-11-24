@@ -24,11 +24,11 @@
   .form-control {
     border: 1px solid transparent;
     transition: all 0.2s ease;
-    height: 4rem;
+    min-height: 4rem;
     resize: none;
 
     &:focus {
-      height: 8rem;
+      min-height: 8rem;
     }
   }
 

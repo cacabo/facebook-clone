@@ -8,7 +8,7 @@ import autosize from 'autosize';
  */
 class EditProfile extends React.Component {
   componentDidMount() {
-    autosize(document.querySelector('textarea'));
+    autosize(document.querySelectorAll('textarea'));
   }
 
   render() {
@@ -41,12 +41,12 @@ class EditProfile extends React.Component {
             <label>
               Bio
             </label>
-            <textarea name="bio" className="form-control marg-bot-1" rows="1"></textarea>
+            <textarea type="text" name="bio" className="form-control marg-bot-1" rows="1"></textarea>
 
             <label>
               Interests
             </label>
-            <input type="text" name="interests" className="form-control marg-bot-1" />
+            <textarea type="text" name="interests" className="form-control marg-bot-1" rows="1"></textarea>
 
             <input type="submit" className="btn btn-primary full-width cursor" value="Update information" />
           </form>

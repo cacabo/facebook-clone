@@ -1,4 +1,5 @@
 import React from 'react';
+import autosize from 'autosize';
 
 /**
  * Render the status form to appear at the top of the newsfeed and at the top
@@ -14,6 +15,10 @@ class StatusForm extends React.Component {
       active: false,
     };
     this.onClick = this.onClick.bind(this);
+  }
+
+  componentDidMount() {
+    autosize(document.querySelectorAll('textarea'));
   }
 
   // Click handler
