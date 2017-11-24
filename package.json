@@ -14,6 +14,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "autosize": "^4.0.0",
     "aws-sdk": "^2.155.0",
     "babel-core": "^6.24.1",
     "babel-loader": "^6.4.1",

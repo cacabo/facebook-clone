@@ -1,11 +1,16 @@
 import React from 'react';
 import Thin from '../shared/Thin';
 import { Link } from 'react-router-dom';
+import autosize from 'autosize';
 
 /**
  * Component to render a form to edit a user's profile
  */
 class EditProfile extends React.Component {
+  componentDidMount() {
+    autosize(document.querySelector('textarea'));
+  }
+
   render() {
     return(
       <Thin>
