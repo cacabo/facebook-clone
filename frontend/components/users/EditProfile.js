@@ -48,6 +48,16 @@ class EditProfile extends React.Component {
             </label>
             <textarea type="text" name="interests" className="form-control marg-bot-1" rows="1"></textarea>
 
+            <label>
+              Profile picture
+            </label>
+            <input type="url" name="profilePicture" className="form-control marg-bot-1" />
+
+            <label>
+              Cover photo
+            </label>
+            <input type="url" name="coverPhoto" className="form-control marg-bot-1" />
+
             <input type="submit" className="btn btn-primary full-width cursor" value="Update information" />
           </form>
           <p className="marg-top-1 marg-bot-0">
