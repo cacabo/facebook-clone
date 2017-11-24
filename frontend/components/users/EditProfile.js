@@ -14,6 +14,10 @@ class EditProfile extends React.Component {
             Edit profile information
           </h3>
           <form className="line-form">
+            <label>
+              Email
+            </label>
+            <input type="email" name="email" className="form-control marg-bot-1" />
             <div className="row">
               <div className="col-6">
                 <label>
@@ -42,7 +46,7 @@ class EditProfile extends React.Component {
             <input type="submit" className="btn btn-primary full-width cursor" value="Update information" />
           </form>
           <p className="marg-top-1 marg-bot-0">
-            Nevermind? <Link to={ "/users/" + this.props.match.params.id } className="inline">back to profile.</Link>
+            Nevermind? <Link to={ "/users/" + this.props.match.params.id } className="inline">Back to your profile.</Link>
           </p>
         </div>
       </Thin>

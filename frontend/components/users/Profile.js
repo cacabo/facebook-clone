@@ -46,7 +46,7 @@ const Profile = () => {
                   <strong>Posts:</strong> 41
                 </p>
               </div>
-              <div className="col-12 col-md-8">
+              <div className="col-12 col-md-8 col-lg-7">
                 <StatusForm placeholder="Write on this user's wall" />
 
                 <Status
