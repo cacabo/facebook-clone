@@ -30,10 +30,10 @@
   &.pad-0 {
     padding: 0rem !important;
   }
+}
 
-  &.marg-bot-05 {
-    margin-bottom: 0.5rem;
-  }
+.marg-bot-05 {
+  margin-bottom: 0.5rem !important;
 }
 
 .navbar {
@@ -134,6 +134,17 @@ a {
     margin-bottom: 0rem;
   }
 
+  .is-online {
+    display: block;
+    position: absolute;
+    right: 1.25rem;
+    margin-top: 0.75rem;
+    background: rgb(66, 183, 42);
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+  }
+
   &.user-sm {
     .userImg {
       width: 2rem;
@@ -150,10 +161,10 @@ a {
   padding-bottom: 0.25rem !important;
 }
 
-.recommendation {
+.userPreview {
   padding: 0.75rem 0rem;
 }
 
-.recommendation + .recommendation {
+.userPreview {
   border-top: 1px solid rgba(0, 0, 0, 0.15);
 }

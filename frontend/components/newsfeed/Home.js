@@ -36,7 +36,7 @@ const Home = () => {
             image="http://www.insidedogsworld.com/wp-content/uploads/2016/03/Dog-Pictures.jpg"
           />
         </div>
-        <div className="col-lg-3 col-xl-4 hidden-lg-down">
+        <div className="col-md-3 col-xl-4 hidden-md-down">
           <OnlineNow />
         </div>
       </div>
