@@ -63,6 +63,10 @@ textarea {
 
 .btn {
   font-weight: bold;
+
+  &.disabled {
+    cursor: not-allowed !important;
+  }
 }
 
 .btn-gray {

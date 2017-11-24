@@ -1,4 +1,5 @@
 import React from 'react';
+import autosize from 'autosize';
 import StatusForm from './StatusForm';
 import { Link } from 'react-router-dom';
 import Comment from './Comment';
@@ -22,6 +23,10 @@ class Status extends React.Component {
     };
     this.commentOnClick = this.commentOnClick.bind(this);
     this.likeOnClick = this.likeOnClick.bind(this);
+  }
+
+  componentDidMount() {
+    autosize(document.querySelectorAll('textarea'));
   }
 
   commentOnClick() {
@@ -64,10 +69,10 @@ class Status extends React.Component {
         </div>
         <div className={ this.state.toggledComments ? "comments" : "comments hidden" }>
           <form className="comments-form">
-            <textarea className="form-control" placeholder="Leave a comment..." name="comment" type="text" rows="1"></textarea>
+            <textarea className="form-control animate" placeholder="Leave a comment..." name="comment" type="text" rows="1"></textarea>
             <input className="btn btn-gray btn-sm" type="submit" name="submit" value="Reply" />
           </form>
-          <Comment text="Really good stuff" />
+          <Comment text="Nice post" />
         </div>
       </div>
     );

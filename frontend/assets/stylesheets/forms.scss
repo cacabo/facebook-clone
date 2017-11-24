@@ -26,10 +26,6 @@
     transition: all 0.2s ease;
     min-height: 4rem;
     resize: none;
-
-    &:focus {
-      min-height: 8rem;
-    }
   }
 
   .buttons {

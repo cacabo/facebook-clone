@@ -13,35 +13,61 @@ class StatusForm extends React.Component {
     super(props);
     this.state = {
       active: false,
+      status: "",
     };
-    this.onClick = this.onClick.bind(this);
+    this.handleClick = this.handleClick.bind(this);
+    this.handleChange = this.handleChange.bind(this);
   }
 
+  // Autosize the text area to fit the text that's pasted into it
   componentDidMount() {
     autosize(document.querySelectorAll('textarea'));
   }
 
-  // Click handler
-  onClick() {
+  // Click handler to expand the form
+  handleClick() {
     this.setState({
       active: true,
     });
+  }
+
+  // Handle a change in the form state--that is, when a user types in the status
+  handleChange(event) {
+    // Update the state of the form
+    this.setState({
+      status: event.target.value,
+    });
+  }
+
+  // Handle when the status form is submitted
+  handleSubmit(event) {
+    /**
+     * TODO
+     */
+    event.preventDefault();
   }
 
   // Render method
   render() {
     return (
       <div className="status-form marg-bot-1">
-        <form onClick={ this.onClick }>
+        <form onClick={ this.handleClick } onSubmit={ this.handleSubmit }>
           <div className="card pad-0 marg-bot-05">
             <textarea
               type="text"
               name="status"
               className="form-control"
               placeholder={ this.props.placeholder }
+              value={ this.state.status }
+              onChange={ this.handleChange }
             ></textarea>
             <div className={ this.state.active ? "buttons right" : "buttons right hidden" }>
-              <input type="submit" value="Post" className="btn btn-gray btn-sm card-shade cursor" />
+              <input
+                type="submit"
+                value="Post"
+                className={
+                  (this.state.status && this.state.status.length > 0) ? "btn btn-gray btn-sm card-shade" : "btn btn-gray btn-sm card-shade disabled"
+                } />
             </div>
           </div>
         </form>
