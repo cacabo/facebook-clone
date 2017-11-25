@@ -18,7 +18,7 @@ class Home extends React.Component {
     super(props);
 
     /**
-     * TODO REPLACE THIS DUMMY DATA
+     * TODO REPLACE DUMMY DATA
      */
     this.state = {
       statuses: [
