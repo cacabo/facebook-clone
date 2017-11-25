@@ -4,6 +4,10 @@ Facebook-clone for NETS 212. View the Dropbox paper [here.](https://paper.dropbo
 
 ### Setup
 
+To start, `clone` the repository and then run `npm install`. Make sure that you have a `config.json` file created in the route directory just like in HW4 which contains your AWS public and secret keys and your region for AWS DynamoDB. Note that this is not included in the git repository because you should never publish your keys to GitHub, even in a private repository.
+
+There are a variety of scripts that you can run as detailed in the `package.json` file. When editing react components, for example, it makes sense to run `npm start` and `npm run frontend` in different terminal windows.
+
 There's information about the boilerplate below, but for our general workflow:
 * Always run `git pull` before starting or committing anything.
 * Always work in a separate branch and create a pull request for everyone else to approve before merging into master.

@@ -147,7 +147,7 @@ class Register extends React.Component {
             />
           </form>
           <p className="marg-top-1 marg-bot-0">
-            Already have an account? <Link to="/login" className="inline">login here.</Link>
+            Already have an account? <Link to="/login" className="inline">Login here.</Link>
           </p>
         </div>
       </Thin>
