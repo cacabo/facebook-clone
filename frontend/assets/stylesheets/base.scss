@@ -71,7 +71,7 @@ textarea {
 }
 
 .btn-gray {
-  color: white;
+  color: white !important;
   background: $light-gray;
   border-radius: 1.2rem;
   border: 1px solid $light-gray;
@@ -166,6 +166,10 @@ a {
   }
 }
 
+.marg-top-05 {
+  margin-top: 0.5rem !important;
+}
+
 .pad-bot-025 {
   padding-bottom: 0.25rem !important;
 }
@@ -179,18 +183,21 @@ a {
 }
 
 .chat-container {
-  display: flex;
   width: 100%;
+  display: flex;
+  height: calc(100vh - 56.27px);
+  overflow: hidden !important;
 
   .chats {
-    height: 100%;
-    position: fixed;
+    height: 100vh;
+    position: relative;
     top: 0;
     width: 20rem;
     background: white;
     border-right: 1px solid rgba(0, 0, 0, 0.15);
     box-shadow: 0rem 0.1rem 0.3rem rgba(0, 0, 0, 0.05);
-    padding-top: 56.27px;
+    overflow-y: scroll;
+    overflow-x: hidden;
 
     .chat-preview {
       width: 100%;
@@ -205,6 +212,43 @@ a {
       &:active {
         background: rgba(0, 0, 0, 0.05);
       }
+    }
+  }
+
+  .chat {
+    flex: 1;
+    padding: 1rem;
+  }
+}
+
+@media screen and (min-device-width: 928px) and (min-width: 928px) {
+  .chat-container {
+    .chat {
+      padding-right: 4rem;
+    }
+  }
+}
+
+@media screen and (min-device-width: 1024px) and (min-width: 1024px) {
+  .chat-container {
+    .chat {
+      padding-right: 10rem;
+    }
+  }
+}
+
+@media screen and (min-device-width: 1118px) and (min-width: 1118px) {
+  .chat-container {
+    .chat {
+      padding-right: 16rem;
+    }
+  }
+}
+
+@media screen and (min-device-width: 1248px) and (min-width: 1248px) {
+  .chat-container {
+    .chat {
+      padding-right: 24rem;
     }
   }
 }

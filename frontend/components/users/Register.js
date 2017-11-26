@@ -4,6 +4,8 @@ import { Link } from 'react-router-dom';
 
 /**
  * Component to render a form to register a user
+ *
+ * TODO check for valid email
  */
 class Register extends React.Component {
   // Constructor method

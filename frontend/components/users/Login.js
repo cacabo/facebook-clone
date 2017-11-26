@@ -4,33 +4,86 @@ import { Link } from 'react-router-dom';
 
 /**
  * Component to render a user's login form
+ *
+ * TODO check for valid email
  */
-const Login = () => {
-  return (
-    <Thin>
-      <div className="card">
-        <h3 className="bold marg-bot-1">
-          Login
-        </h3>
-        <form className="line-form">
-          <label>
-            Email
-          </label>
-          <input type="email" name="email" className="form-control marg-bot-1" autoFocus="true" />
+class Login extends React.Component {
+  // Constructor method
+  constructor(props) {
+    super(props);
+    this.state = {
+      email: "",
+      password: "",
+    }
 
-          <label>
-            Password
-          </label>
-          <input type="password" name="password" className="form-control marg-bot-1" />
+    // Bind this
+    this.handleChangeEmail = this.handleChangeEmail.bind(this);
+    this.handleChangePassword = this.handleChangePassword.bind(this);
+  }
 
-          <input type="submit" className="btn btn-primary full-width cursor" value="Create account" />
-        </form>
-        <p className="marg-top-1 marg-bot-0">
-          Don't have an account? <Link to="/register" className="inline">create one here.</Link>
-        </p>
-      </div>
-    </Thin>
-  );
+  // Helper method to handle email state change
+  handleChangeEmail(event) {
+    this.setState({
+      email: event.target.value,
+    });
+  }
+
+  // Helper method to handle password state change
+  handleChangePassword(event) {
+    this.setState({
+      password: event.target.value,
+    });
+  }
+
+  // Render the component
+  render() {
+    return (
+      <Thin>
+        <div className="card">
+          <h3 className="bold marg-bot-1">
+            Login
+          </h3>
+          <form className="line-form">
+            <label>
+              Email
+            </label>
+            <input
+              value={ this.state.email }
+              onChange={ this.handleChangeEmail }
+              type="email"
+              name="email"
+              className="form-control marg-bot-1"
+              autoFocus="true"
+            />
+
+            <label>
+              Password
+            </label>
+            <input
+              value={ this.state.password }
+              onChange={ this.handleChangePassword }
+              type="password"
+              name="password"
+              className="form-control marg-bot-1"
+            />
+
+            <input
+              type="submit"
+              className={
+                (this.state.email && this.state.password) ?
+                "btn btn-primary full-width cursor" :
+                "btn btn-primary full-width disabled"
+              }
+              value="Create account"
+            />
+          </form>
+          <p className="marg-top-1 marg-bot-0">
+            Don't have an account? <Link to="/register" className="inline">create one here.</Link>
+          </p>
+        </div>
+      </Thin>
+    );
+  }
 };
 
 export default Login;

@@ -23,6 +23,9 @@ const Nav = () => {
           <li className="nav-item">
             <Link to="/login" className="nav-link">Login</Link>
           </li>
+          <li className="nav-item">
+            <Link to="/chats" className="nav-link">Chats</Link>
+          </li>
         </ul>
       </div>
     </nav>

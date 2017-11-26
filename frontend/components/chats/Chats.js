@@ -1,6 +1,7 @@
 import React from 'react';
 import ChatPreview from './ChatPreview';
 import uuid from 'uuid-v4';
+import { Link } from 'react-router-dom';
 
 /**
  * Component to render all of a user's groupchats
@@ -36,6 +37,12 @@ class Chats extends React.Component {
       <div className="chat-container">
         <div className="chats">
           { this.renderChatPreviews() }
+          <Link to="/chats/new" className="btn btn-gray marg-top-05">
+            New chat &nbsp; <i className="fa fa-plus"></i>
+          </Link>
+        </div>
+        <div className="chat">
+         { this.props.children }
         </div>
       </div>
     );
