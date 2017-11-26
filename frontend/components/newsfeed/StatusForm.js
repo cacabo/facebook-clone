@@ -15,6 +15,8 @@ class StatusForm extends React.Component {
       active: false,
       status: "",
     };
+
+    // Bind this to helper methods
     this.handleClick = this.handleClick.bind(this);
     this.handleChange = this.handleChange.bind(this);
   }

@@ -37,9 +37,11 @@ class Chats extends React.Component {
       <div className="chat-container">
         <div className="chats">
           { this.renderChatPreviews() }
-          <Link to="/chats/new" className="btn btn-gray marg-top-05">
-            New chat &nbsp; <i className="fa fa-plus"></i>
-          </Link>
+          <div className="pad-1 pad-top-0">
+            <Link to="/chats/new" className="btn btn-gray marg-top-05">
+              New chat &nbsp; <i className="fa fa-plus"></i>
+            </Link>
+          </div>
         </div>
         <div className="chat">
          { this.props.children }

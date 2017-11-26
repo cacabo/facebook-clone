@@ -40,6 +40,10 @@ textarea {
   margin-bottom: 0.5rem !important;
 }
 
+.pad-top-0 {
+  padding-top: 0 !important;
+}
+
 .navbar {
   background: white;
   border-bottom: 1px solid rgba(0, 0, 0, 0.15);
@@ -75,7 +79,6 @@ textarea {
   background: $light-gray;
   border-radius: 1.2rem;
   border: 1px solid $light-gray;
-  margin-left: 0.5rem;
 
   &:hover,
   &:active,
@@ -203,6 +206,8 @@ a {
       width: 100%;
       border-bottom: 1px solid rgba(0, 0, 0, 0.15);
       padding: 0.75rem 1rem;
+      cursor: hand;
+      cursor: pointer;
 
       &:hover {
         background: rgba(0, 0, 0, 0.025);

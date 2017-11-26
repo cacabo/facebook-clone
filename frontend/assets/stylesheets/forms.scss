@@ -39,3 +39,25 @@
     }
   }
 }
+
+.chat {
+  display: flex;
+  flex-direction: column;
+
+  .messages{
+    flex: 1;
+    overflow-x: hidden;
+    overflow-y: scroll;
+  }
+
+  .message-form {
+    text-align: right;
+
+    .form-control {
+      margin-bottom: 0.5rem;
+      resize: none;
+      min-height: 1.2rem;
+      border: 1px solid rgba(0, 0, 0, 0.15);
+    }
+  }
+}

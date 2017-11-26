@@ -25,16 +25,19 @@ class Status extends React.Component {
     this.likeOnClick = this.likeOnClick.bind(this);
   }
 
+  // Autosize textarea when user types
   componentDidMount() {
     autosize(document.querySelectorAll('textarea'));
   }
 
+  // Handle a click on the comments icon
   commentOnClick() {
     this.setState({
       toggledComments: !this.state.toggledComments,
     });
   }
 
+  // Handle a click on the likes icon
   likeOnClick() {
     this.setState({
       isLiked: !this.state.isLiked,
