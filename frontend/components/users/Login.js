@@ -14,11 +14,13 @@ class Login extends React.Component {
     this.state = {
       username: "",
       password: "",
+      error: "",
     }
 
     // Bind this
     this.handleChangeUsername = this.handleChangeUsername.bind(this);
     this.handleChangePassword = this.handleChangePassword.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   // Helper method to handle email state change
@@ -37,10 +39,39 @@ class Login extends React.Component {
 
   // Handle when the login form is submitted
   handleSubmit(event) {
-    /**
-     * TODO
-     */
+    // Prevent the default request
     event.preventDefault();
+
+    // Keep track of if the inputs to the form are valid
+    let isValid = true;
+
+    // Ensure inputs are not empty
+    if (!this.state.username || !this.state.password) {
+      this.setState({
+        error: "Username and password must be populated."
+      });
+      isValid = false;
+    } else {
+      // Ensure the username is properly formatted: no whitespace and only
+      // letters, numbers, periods, or underscores
+      const usernameRegex = /^[a-zA-Z0-9.\-_]+$/;
+      const validUsername = usernameRegex.test(this.state.username);
+
+      // Throw an error if the username is invalid
+      if (!validUsername) {
+        this.setState({
+          error: "Username can only contain letters, numbers, periods, hyphens, and underscores."
+        });
+        isValid = false;
+      }
+    }
+
+    // If no error was found with the inputs
+    if (isValid) {
+      /**
+       * TODO make the request
+       */
+    }
   }
 
   // Render the component
@@ -51,6 +82,18 @@ class Login extends React.Component {
           <h3 className="bold marg-bot-1">
             Login
           </h3>
+          {
+            this.state.error ?
+            <div className="alert alert-danger error">
+              <p className="bold marg-bot-025">
+                There was an error:
+              </p>
+              <p className="marg-bot-0">
+                { this.state.error }
+              </p>
+            </div>
+            : ""
+          }
           <form className="line-form" onSubmit={ this.handleSubmit }>
             <label>
               Username
