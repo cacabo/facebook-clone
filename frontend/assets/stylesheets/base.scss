@@ -223,6 +223,31 @@ a {
   .chat {
     flex: 1;
     padding: 1rem;
+
+    .message-wrapper {
+      width: 100%;
+      display: block;
+
+      .message {
+        background: white;
+        padding: 0.25rem 0.75rem;
+        display: inline-block;
+        border-radius: 0.6rem;
+        margin-bottom: 0.4rem;
+        max-width: 80%;
+        border: 1px solid rgba(0, 0, 0, 0.15);
+        box-shadow: 0rem 0.1rem 0.2rem rgba(0, 0, 0, 0.05);
+      }
+
+      &.current-user {
+        text-align: right;
+
+        .message {
+          background: $light-snow;
+          text-align: left !important;
+        }
+      }
+    }
   }
 }
 

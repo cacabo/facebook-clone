@@ -4,6 +4,9 @@ import Chats from './Chats';
 
 /**
  * Component to render one of a user's group chats.
+ *
+ * TODO replace dummy data
+ * TODO pass down ID of the current user
  */
 class Chat extends React.Component {
   // Constructor method
@@ -11,6 +14,27 @@ class Chat extends React.Component {
     super(props);
     this.state = {
       message: "",
+      currentUser: "12",
+      messages: [
+        {
+          inx: "0",
+          user: "12",
+          body: "This is the first message",
+          createdAt: 1511894393650,
+        },
+        {
+          inx: "1",
+          user: "13",
+          body: "This is the second message",
+          createdAt: 1511894551346,
+        },
+        {
+          inx: "1",
+          user: "12",
+          body: "This is a longer message than the other messages and should take up more space",
+          createdAt: 1511894607965,
+        },
+      ],
     }
     this.handleChangeMessage = this.handleChangeMessage.bind(this);
   }
@@ -27,12 +51,32 @@ class Chat extends React.Component {
     });
   }
 
-  // Helper function to render messags
+  /**
+   * Helper function to render messages
+   *
+   * TODO find user profile picture and render that next to the message
+   */
   renderMessages() {
-    /**
-     * TODO
-     */
-    return "";
+    return this.state.messages.map(m => {
+      // If the message belongs to the logged in user
+      if (this.state.currentUser === m.user) {
+        return (
+          <div className="message-wrapper current-user">
+            <div className="message">
+              { m.body }
+            </div>
+          </div>
+        );
+      } else {
+        return (
+          <div className="message-wrapper">
+            <div className="message">
+              { m.body }
+            </div>
+          </div>
+        );
+      }
+    });
   }
 
   // Render the chat component
@@ -40,11 +84,7 @@ class Chat extends React.Component {
     return (
       <Chats>
         <div className="messages">
-          <h1>This is a single chat</h1>
           { this.renderMessages() }
-          <p>
-            This is a chat
-          </p>
         </div>
         <form className="message-form">
           <textarea
