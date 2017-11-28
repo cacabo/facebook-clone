@@ -147,6 +147,11 @@ class Register extends React.Component {
 
     // If no error has been found to this point
     if (isValid) {
+      // Remove any existing error
+      this.setState({
+        error: "",
+      });
+      
       /**
        * TODO make the request
        */

@@ -14,11 +14,13 @@ class StatusForm extends React.Component {
     this.state = {
       active: false,
       status: "",
+      error: "",
     };
 
     // Bind this to helper methods
     this.handleClick = this.handleClick.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   // Autosize the text area to fit the text that's pasted into it
@@ -43,36 +45,67 @@ class StatusForm extends React.Component {
 
   // Handle when the status form is submitted
   handleSubmit(event) {
+    // Prevent the default submit action
+    event.preventDefault();
+
+    // Keep track of if an error has occured or not
+    let isValid = true;
+
+    // Ensure that the status is valid
+    if (!this.state.status || this.state.status.length < 2) {
+      this.setState({
+        error: "Status must be at least 2 characters long."
+      });
+      isValid = false;
+    } else {
+      this.setState({
+        error: "",
+      });
+    }
     /**
      * TODO
      */
-    event.preventDefault();
+
   }
 
   // Render method
   render() {
     return (
-      <div className="status-form marg-bot-1">
-        <form onClick={ this.handleClick } onSubmit={ this.handleSubmit }>
-          <div className="card pad-0 marg-bot-05">
-            <textarea
-              type="text"
-              name="status"
-              className="form-control"
-              placeholder={ this.props.placeholder }
-              value={ this.state.status }
-              onChange={ this.handleChange }
-            ></textarea>
-            <div className={ this.state.active ? "buttons right" : "buttons right hidden" }>
-              <input
-                type="submit"
-                value="Post"
-                className={
-                  (this.state.status && this.state.status.length > 0) ? "btn btn-gray btn-sm card-shade" : "btn btn-gray btn-sm card-shade disabled"
-                } />
-            </div>
+      <div>
+        {
+          this.state.error ?
+          <div className="alert alert-danger error card-shade marg-bot-1">
+            <p className="bold marg-bot-025">
+              There was an error:
+            </p>
+            <p className="marg-bot-0">
+              { this.state.error }
+            </p>
           </div>
-        </form>
+          : ""
+        }
+        <div className="status-form marg-bot-1">
+          <form onClick={ this.handleClick } onSubmit={ this.handleSubmit }>
+            <div className="card pad-0 marg-bot-05">
+              <textarea
+                type="text"
+                name="status"
+                className="form-control"
+                placeholder={ this.props.placeholder }
+                value={ this.state.status }
+                onChange={ this.handleChange }
+              ></textarea>
+              <div className={ this.state.active ? "buttons right" : "buttons right hidden" }>
+                <input
+                  type="submit"
+                  value="Post"
+                  className={
+                    (this.state.status && this.state.status.length > 0) ? "btn btn-gray btn-sm card-shade" : "btn btn-gray btn-sm card-shade disabled"
+                  } />
+              </div>
+            </div>
+          </form>
+        </div>
       </div>
     );
   }

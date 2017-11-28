@@ -68,6 +68,11 @@ class Login extends React.Component {
 
     // If no error was found with the inputs
     if (isValid) {
+      // Remove any existing error
+      this.setState({
+        error: "",
+      });
+      
       /**
        * TODO make the request
        */
