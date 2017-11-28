@@ -27,12 +27,21 @@ class Chat extends React.Component {
     });
   }
 
+  // Helper function to render messags
+  renderMessages() {
+    /**
+     * TODO
+     */
+    return "";
+  }
+
   // Render the chat component
   render() {
     return (
       <Chats>
         <div className="messages">
           <h1>This is a single chat</h1>
+          { this.renderMessages() }
           <p>
             This is a chat
           </p>

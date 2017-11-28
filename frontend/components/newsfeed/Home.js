@@ -39,8 +39,11 @@ class Home extends React.Component {
     }
   }
 
-  // Helper function to render statuses on the homepage
-  // This renders the statuses contained in the state of the component
+  /**
+   * Helper function to render statuses on the homepage
+   * This renders the statuses contained in the state of the component
+   * NOTE map is a funcitonal iterator method
+   */
   renderStatuses() {
     return this.state.statuses.map((status) => {
       return (
