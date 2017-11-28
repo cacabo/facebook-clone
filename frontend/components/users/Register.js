@@ -5,32 +5,34 @@ import { Link } from 'react-router-dom';
 /**
  * Component to render a form to register a user
  *
- * TODO check for valid email
+ * TODO check for valid username
  */
 class Register extends React.Component {
   // Constructor method
   constructor(props) {
     super(props);
     this.state = {
-      email: "",
+      username: "",
       firstName: "",
       lastName: "",
       password: "",
       confirmPassword: "",
+      error: "",
     };
 
     // Binding "this" to each state helper method
-    this.handleChangeEmail = this.handleChangeEmail.bind(this);
+    this.handleChangeUsername = this.handleChangeUsername.bind(this);
     this.handleChangeFirstName = this.handleChangeFirstName.bind(this);
     this.handleChangeLastName = this.handleChangeLastName.bind(this);
     this.handleChangePassword = this.handleChangePassword.bind(this);
     this.handleChangeConfirmPassword = this.handleChangeConfirmPassword.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  // Handle a change to the email state
-  handleChangeEmail(event) {
+  // Handle a change to the username state
+  handleChangeUsername(event) {
     this.setState({
-      email: event.target.value,
+      username: event.target.value,
     });
   }
 
@@ -64,10 +66,87 @@ class Register extends React.Component {
 
   // Handle when the status form is submitted
   handleSubmit(event) {
-    /**
-     * TODO
-     */
+    // Prevent the default submit action
     event.preventDefault();
+
+    // Keep track of if the registration is valid or not
+    let isValid = true;
+
+    // Ensure all fields are not empty
+    if (!this.state.username ||
+        !this.state.firstName ||
+        !this.state.lastName ||
+        !this.state.password ||
+        !this.state.confirmPassword) {
+      this.setState({
+        error: "All fields must be populated."
+      });
+      isValid = false;
+    }
+
+    // Ensure the password match
+    if (this.state.password !== this.state.confirmPassword) {
+      this.setState({
+        error: "Password and confirmation must match."
+      });
+      isValid = false;
+    }
+
+    // Ensure none of the parameters are too long or too short
+    if (isValid) {
+      if (this.state.username.length < 2) {
+        this.setState({
+          error: "Username must be at least two characters long."
+        });
+        isValid = false;
+      } else if (this.state.username.length > 30) {
+        this.setState({
+          error: "Username must be less than or equal to 30 characters long."
+        });
+        isValid = false;
+      } else if (this.state.firstName.length > 40) {
+        this.setState({
+          error: "First name must be less than or equal to 40 characters long."
+        });
+        isValid = false;
+      } else if (this.state.lastName.length > 40) {
+        this.setState({
+          error: "Last name must be less than or equal to 40 characters long."
+        });
+        isValid = false;
+      } else if (this.state.password.length < 6) {
+        this.setState({
+          error: "Password must be at least 6 characters long."
+        });
+        isValid = false;
+      }
+    }
+
+    // If no error has been found to this point
+    if (isValid) {
+      // Ensure the username is properly formatted: no whitespace and only
+      // letters, numbers, periods, or underscores
+      const usernameRegex = /^[a-zA-Z0-9.\-_]+$/;
+      const validUsername = usernameRegex.test(this.state.username);
+
+      // Throw an error if the username is invalid
+      if (!validUsername) {
+        this.setState({
+          error: "Username can only contain letters, numbers, periods, hyphens, and underscores."
+        });
+        isValid = false;
+      }
+    }
+
+    /**
+     * TODO ensure the username is unique
+     * TODO handle the submit
+     */
+    if (isValid) {
+      /**
+       * TODO make the request
+       */
+    }
   }
 
   // Render the component
@@ -78,16 +157,28 @@ class Register extends React.Component {
           <h3 className="marg-bot-1 bold">
             Register
           </h3>
+          {
+            this.state.error ?
+            <div className="alert alert-danger error">
+              <p className="bold marg-bot-025">
+                There was an error:
+              </p>
+              <p className="marg-bot-0">
+                { this.state.error }
+              </p>
+            </div>
+            : ""
+          }
           <form className="line-form" onSubmit={ this.handleSubmit }>
             <label>
-              Email
+              Username
             </label>
             <input
-              type="email"
-              name="email"
+              type="text"
+              name="username"
               className="form-control marg-bot-1"
-              value={ this.state.email }
-              onChange={ this.handleChangeEmail }
+              value={ this.state.username }
+              onChange={ this.handleChangeUsername }
               autoFocus="true"
             />
 
@@ -144,7 +235,7 @@ class Register extends React.Component {
               type="submit"
               className={
                 (
-                  this.state.email &&
+                  this.state.username &&
                   this.state.firstName &&
                   this.state.lastName &&
                   this.state.password &&

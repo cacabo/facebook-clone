@@ -12,19 +12,19 @@ class Login extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      email: "",
+      username: "",
       password: "",
     }
 
     // Bind this
-    this.handleChangeEmail = this.handleChangeEmail.bind(this);
+    this.handleChangeUsername = this.handleChangeUsername.bind(this);
     this.handleChangePassword = this.handleChangePassword.bind(this);
   }
 
   // Helper method to handle email state change
-  handleChangeEmail(event) {
+  handleChangeUsername(event) {
     this.setState({
-      email: event.target.value,
+      username: event.target.value,
     });
   }
 
@@ -53,13 +53,13 @@ class Login extends React.Component {
           </h3>
           <form className="line-form" onSubmit={ this.handleSubmit }>
             <label>
-              Email
+              Username
             </label>
             <input
-              value={ this.state.email }
-              onChange={ this.handleChangeEmail }
-              type="email"
-              name="email"
+              value={ this.state.username }
+              onChange={ this.handleChangeUsername }
+              type="text"
+              name="username"
               className="form-control marg-bot-1"
               autoFocus="true"
             />
@@ -78,7 +78,7 @@ class Login extends React.Component {
             <input
               type="submit"
               className={
-                (this.state.email && this.state.password) ?
+                (this.state.username && this.state.password) ?
                 "btn btn-primary full-width cursor" :
                 "btn btn-primary full-width disabled"
               }
