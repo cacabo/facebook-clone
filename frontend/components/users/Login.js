@@ -35,6 +35,14 @@ class Login extends React.Component {
     });
   }
 
+  // Handle when the login form is submitted
+  handleSubmit(event) {
+    /**
+     * TODO
+     */
+    event.preventDefault();
+  }
+
   // Render the component
   render() {
     return (
@@ -43,7 +51,7 @@ class Login extends React.Component {
           <h3 className="bold marg-bot-1">
             Login
           </h3>
-          <form className="line-form">
+          <form className="line-form" onSubmit={ this.handleSubmit }>
             <label>
               Email
             </label>

@@ -52,6 +52,14 @@ class Chat extends React.Component {
     });
   }
 
+  // Handle when the status form is submitted
+  handleSubmit(event) {
+    /**
+     * TODO
+     */
+    event.preventDefault();
+  }
+
   /**
    * Helper function to render messages
    *
@@ -87,7 +95,7 @@ class Chat extends React.Component {
         <div className="messages">
           { this.renderMessages() }
         </div>
-        <form className="message-form">
+        <form className="message-form" onSubmit={ this.handleSubmit }>
           <textarea
             name="message"
             value={ this.state.message }

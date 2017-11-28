@@ -62,6 +62,14 @@ class Register extends React.Component {
     });
   }
 
+  // Handle when the status form is submitted
+  handleSubmit(event) {
+    /**
+     * TODO
+     */
+    event.preventDefault();
+  }
+
   // Render the component
   render() {
     return (
@@ -70,7 +78,7 @@ class Register extends React.Component {
           <h3 className="marg-bot-1 bold">
             Register
           </h3>
-          <form className="line-form">
+          <form className="line-form" onSubmit={ this.handleSubmit }>
             <label>
               Email
             </label>
