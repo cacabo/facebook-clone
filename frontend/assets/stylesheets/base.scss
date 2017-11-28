@@ -204,6 +204,8 @@ a {
 
     .chat-preview {
       width: 100%;
+      display: block;
+      color: black !important;
       border-bottom: 1px solid rgba(0, 0, 0, 0.15);
       padding: 0.75rem 1rem;
       cursor: hand;

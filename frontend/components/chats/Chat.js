@@ -1,6 +1,7 @@
 import React from 'react';
 import autosize from 'autosize';
 import Chats from './Chats';
+import uuid from 'uuid-v4';
 
 /**
  * Component to render one of a user's group chats.
@@ -61,7 +62,7 @@ class Chat extends React.Component {
       // If the message belongs to the logged in user
       if (this.state.currentUser === m.user) {
         return (
-          <div className="message-wrapper current-user">
+          <div className="message-wrapper current-user" key={ uuid() }>
             <div className="message">
               { m.body }
             </div>
@@ -69,7 +70,7 @@ class Chat extends React.Component {
         );
       } else {
         return (
-          <div className="message-wrapper">
+          <div className="message-wrapper" key={ uuid() }>
             <div className="message">
               { m.body }
             </div>

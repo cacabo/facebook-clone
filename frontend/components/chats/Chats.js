@@ -15,9 +15,18 @@ class Chats extends React.Component {
     super(props);
     this.state = {
       chats: [
-        { name: "Dope group chat" },
-        { name: "Even better group chat" },
-        { name: "The best group chat" }
+        {
+          name: "Dope group chat",
+          id: "1",
+        },
+        {
+          name: "Even better group chat",
+          id: "12",
+        },
+        {
+          name: "The best group chat",
+          id: "4",
+        }
       ],
     }
   }
@@ -26,7 +35,11 @@ class Chats extends React.Component {
   renderChatPreviews() {
     return this.state.chats.map(chat => {
       return (
-        <ChatPreview name={ chat.name } key={ uuid() } />
+        <ChatPreview
+          name={ chat.name }
+          id={ chat.id }
+          key={ uuid() }
+        />
       );
     });
   }
