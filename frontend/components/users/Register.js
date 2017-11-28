@@ -5,7 +5,10 @@ import { Link } from 'react-router-dom';
 /**
  * Component to render a form to register a user
  *
- * TODO check for valid username
+ * Errors are rendered based on the state of the component below the title but
+ * above the registraiton form.
+ *
+ * Registration fields: username, firstName, lastName, password, confirmPassword
  */
 class Register extends React.Component {
   // Constructor method
@@ -122,7 +125,6 @@ class Register extends React.Component {
       }
     }
 
-    // If no error has been found to this point
     if (isValid) {
       // Ensure the username is properly formatted: no whitespace and only
       // letters, numbers, periods, or underscores
@@ -142,6 +144,8 @@ class Register extends React.Component {
      * TODO ensure the username is unique
      * TODO handle the submit
      */
+
+    // If no error has been found to this point
     if (isValid) {
       /**
        * TODO make the request
