@@ -65,6 +65,32 @@ const AppContainer = ({ isLoggedIn }) => {
     <Route exact path="/users/:username" component={Profile} />
   );
 
+  // Handle new chat route
+  const newChatRoute = (
+    <Route exact path="/chats/new" render={() => (
+      <LoggedInAuth toBeRendered={<NewChat />} />
+    )} />
+  );
+
+  // Handle chat show route
+  const chatRoute = (
+    <Route exact path="/chats/:id" render={() => (
+      <LoggedInAuth toBeRendered={<Chat />} />
+    )} />
+  );
+
+  // Handle chat index route
+  const chatsRoute = (
+    <Route exact path="/chats" render={() => (
+      <LoggedInAuth toBeRendered={<Chats />} />
+    )} />
+  );
+
+  // Handle not found router
+  const notFoundRoute = (
+    <Route path="*" component={NotFound} />
+  );
+
   // Actually render the component
   return(
     <div className="app-wrapper">
@@ -77,12 +103,10 @@ const AppContainer = ({ isLoggedIn }) => {
             { loginRoute }
             { editProfileRoute }
             { userProfileRoute }
-            <Route path="/chats/new" component={NewChat} />
-            <Route path="/chats/:id" component={Chat} />
-            <Route path="/chats" component={Chats} />
-
-            {/* Handle 404 error */}
-            <Route path="*" component={NotFound} />
+            { newChatRoute }
+            { chatRoute }
+            { chatsRoute }
+            { notFoundRoute }
           </Switch>
         </div>
       </Router>
