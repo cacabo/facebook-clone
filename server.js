@@ -3,7 +3,10 @@ const express = require('express');
 const app = express();
 const PORT = process.env.PORT || 3000;
 const api = require('./backend/routes');
+const bodyParser = require('body-parser');
 
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/api', api);

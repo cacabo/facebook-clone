@@ -164,16 +164,33 @@ class Register extends React.Component {
               error: "Username already taken."
             })
           } else {
+            const data = {
+              username: this.state.username,
+              firstName: this.state.firstName,
+              lastName: this.state.lastName,
+              password: this.state.password,
+              confirmPassword: this.state.confirmPassword,
+            };
+
+            console.log("DATA:");
+            console.log(data);
+
+            axios.post("/api/users/new", data)
+            .then((res) => {
+              console.log(res);
+            })
+            .catch((err) => {
+              console.log(err);
+            });
             /**
              * TODO
              */
           }
         })
         .catch((err) => {
-          /**
-           * TODO handle if there is an error
-           */
-          console.log(err);
+          this.setState({
+            error: "There was an error querrying the database."
+          });
         });
     }
   }

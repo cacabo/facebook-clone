@@ -31,4 +31,15 @@ router.get('/users/:username', (req, res) => {
   });
 });
 
+// Register a new user
+router.post('/users/new', (req, res) => {
+  db.createUser(req.body, (data, err) => {
+    console.log("ROUTE: ", data);
+    console.log("ROUTE ERR: ", err);
+    res.send({
+      "success": true,
+    });
+  });
+});
+
 module.exports = router;
