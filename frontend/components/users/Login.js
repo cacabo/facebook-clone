@@ -1,6 +1,7 @@
 import React from 'react';
 import Thin from '../shared/Thin';
 import { Link } from 'react-router-dom';
+import PropTypes from 'prop-types';
 
 /**
  * Component to render a user's login form
@@ -83,6 +84,13 @@ class Login extends React.Component {
   render() {
     return (
       <Thin>
+        {
+          this.props.notice && (
+            <div className="alert alert-warning alert-card card-shade">
+              { this.props.notice }
+            </div>
+          )
+        }
         <div className="card">
           <h3 className="bold marg-bot-1">
             Login
@@ -141,5 +149,9 @@ class Login extends React.Component {
     );
   }
 }
+
+Login.propTypes = {
+  notice: PropTypes.string,
+};
 
 export default Login;

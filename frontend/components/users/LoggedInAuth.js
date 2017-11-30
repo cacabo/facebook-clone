@@ -1,7 +1,7 @@
 import React from 'react';
-import { Redirect } from 'react-router';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import Login from './Login';
 
 /**
  * Component to redirect a user to log in if they are not already logged in
@@ -10,7 +10,7 @@ const LoggedInAuth = ({ isLoggedIn, toBeRendered }) => (
   isLoggedIn ? (
     toBeRendered
   ) : (
-    <Redirect to="/login" />
+    <Login notice="You must be logged in to view this page." />
   )
 );
 
