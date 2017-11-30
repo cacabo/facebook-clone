@@ -141,11 +141,6 @@ class Register extends React.Component {
       }
     }
 
-    /**
-     * TODO ensure the username is unique
-     * TODO handle the submit
-     */
-
     // If no error has been found to this point
     if (isValid) {
       // Remove any existing error
@@ -176,14 +171,16 @@ class Register extends React.Component {
             // Send a post request to create the user
             axios.post("/api/users/new", data)
             .then((postRes) => {
+              /**
+               * TODO UPDATE APPLICATION STATE, REDIRECT TO HOME
+               */
               console.log(postRes);
             })
             .catch((err) => {
-              console.log(err);
+              this.setState({
+                error: "There was an issue creating your account: " + err,
+              });
             });
-            /**
-             * TODO
-             */
           }
         })
         .catch((err) => {
