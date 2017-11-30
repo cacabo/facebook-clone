@@ -7,7 +7,7 @@ const api = require('./backend/routes');
 const bodyParser = require('body-parser');
 
 // Express sessions configuration
-app.set('trust proxy', 1)
+app.set('trust proxy', 1);
 app.use(session({
   secret: 'perky puppy',
   resave: false,
@@ -22,11 +22,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/api', api);
 
 app.get('*', (request, response) => {
-    response.sendFile(__dirname + '/public/index.html'); // For React/Redux
+  response.sendFile(__dirname + '/public/index.html'); // For React/Redux
 });
 
 app.listen(PORT, error => {
-    error
-    ? console.error(error)
-    : console.info(`==> 🌎 Listening on port ${PORT}. Visit http://localhost:${PORT}/ in your browser.`);
+  error
+  ? console.error(error)
+  : console.info(`==> 🌎 Listening on port ${PORT}. Visit http://localhost:${PORT}/ in your browser.`);
 });

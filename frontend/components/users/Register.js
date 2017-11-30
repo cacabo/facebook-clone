@@ -175,8 +175,8 @@ class Register extends React.Component {
 
             // Send a post request to create the user
             axios.post("/api/users/new", data)
-            .then((res) => {
-              console.log(res);
+            .then((postRes) => {
+              console.log(postRes);
             })
             .catch((err) => {
               console.log(err);
@@ -188,7 +188,7 @@ class Register extends React.Component {
         })
         .catch((err) => {
           this.setState({
-            error: "There was an error querrying the database."
+            error: "There was an error querrying the database: " + err,
           });
         });
     }
@@ -299,6 +299,6 @@ class Register extends React.Component {
       </Thin>
     );
   }
-};
+}
 
 export default Register;

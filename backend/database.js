@@ -3,10 +3,10 @@ var keyvaluestore = require('./keyvaluestore.js');
 
 // Create the usersTable
 var users = new keyvaluestore('usersTable');
-users.init(function(err, data){});
+users.init(() => {});
 
 // Get a user with the specified username
-var get_user = function(username, callback) {
+function getUser(username, callback) {
   users.get(username, (err, data) => {
     if (err || !data) {
       // If there was an issue getting the data
@@ -22,32 +22,32 @@ var get_user = function(username, callback) {
 }
 
 // Create a new user
-var create_user = function(user, callback) {
+function createUser(user, callback) {
   /**
    * TODO more error checking
    */
-   if (user.password !== user.confirmPassword) {
-     callback(null, "Passwords must match");
-   } else {
-     // Remove the confirm password
-     delete user.confirmPassword;
+  if (user.password !== user.confirmPassword) {
+    callback(null, "Passwords must match");
+  } else {
+    // Remove the confirm password
+    delete user.confirmPassword;
 
-     // Put the user into the table
-     const username = user.username;
-     users.put(username, JSON.stringify(user), (err, data) => {
-       if (err || !data) {
-         callback(null, "Failed to create user: " + err);
-       } else {
-         callback(data, null);
-       }
-     });
-   }
+    // Put the user into the table
+    const username = user.username;
+    users.put(username, JSON.stringify(user), (err, data) => {
+      if (err || !data) {
+        callback(null, "Failed to create user: " + err);
+      } else {
+        callback(data, null);
+      }
+    });
+  }
 }
 
 // Create the database object to export
 const database = {
-  createUser: create_user,
-  getUser: get_user,
+  createUser: createUser,
+  getUser: getUser,
 };
 
 module.exports = database;
