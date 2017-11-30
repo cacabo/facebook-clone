@@ -5,7 +5,7 @@ var keyvaluestore = require('./keyvaluestore.js');
 var users = new keyvaluestore('usersTable');
 users.init(function(err, data){});
 
-// Get a user with the specified ID
+// Get a user with the specified username
 var get_user = function(username, callback) {
   users.get(username, function(err, data) {
     if (err || !data) {

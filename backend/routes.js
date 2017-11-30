@@ -10,8 +10,10 @@ router.get('/', (req, res) => {
   });
 });
 
-router.get('/users', (req, res) => {
-  db.getUser("cameroncabo@gmail.com", (data, err) => {
+// Find a user with the specified username
+router.get('/user', (req, res) => {
+  console.log(req.body);
+  db.getUser(req.body.username, (data, err) => {
     if (err || !data) {
       res.send({
         success: false,

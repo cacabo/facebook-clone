@@ -151,10 +151,11 @@ class Register extends React.Component {
       this.setState({
         error: "",
       });
-      
+
       /**
        * TODO make the request
        */
+       
     }
   }
 
