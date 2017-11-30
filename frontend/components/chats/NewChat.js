@@ -11,7 +11,7 @@ class NewChat extends React.Component {
     super(props);
     this.state = {
       members: "",
-    }
+    };
     this.handleChangeMembers = this.handleChangeMembers.bind(this);
   }
 
@@ -47,8 +47,7 @@ class NewChat extends React.Component {
             onChange={ this.handleChangeMembers }
             rows="1"
             className="form-control"
-          >
-          </textarea>
+          />
           <input
             type="submit"
             className={
@@ -62,6 +61,6 @@ class NewChat extends React.Component {
       </Chats>
     );
   }
-};
+}
 
 export default NewChat;

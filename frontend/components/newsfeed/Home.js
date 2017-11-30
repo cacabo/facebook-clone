@@ -36,7 +36,7 @@ class Home extends React.Component {
           image: "https://static.boredpanda.com/blog/wp-content/uploads/2016/01/bear-dogs-310__605.jpg",
         },
       ],
-    }
+    };
   }
 
   /**
@@ -55,7 +55,7 @@ class Home extends React.Component {
           id={ status.id }
           key={ uuid() }
         />
-      )
+      );
     });
   }
 
@@ -70,7 +70,7 @@ class Home extends React.Component {
           <div className="col-12 col-md-8 offset-md-2 col-lg-6 offset-lg-0 col-xl-5">
             <StatusForm placeholder="What's on your mind?" />
             { this.renderStatuses() }
-            <div className="space-4"></div>
+            <div className="space-4" />
           </div>
           <div className="col-md-3 col-xl-4 hidden-md-down">
             <OnlineNow />
@@ -79,6 +79,6 @@ class Home extends React.Component {
       </div>
     );
   }
-};
+}
 
 export default Home;

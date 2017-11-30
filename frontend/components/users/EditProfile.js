@@ -2,6 +2,7 @@ import React from 'react';
 import Thin from '../shared/Thin';
 import { Link } from 'react-router-dom';
 import autosize from 'autosize';
+import PropTypes from 'prop-types';
 
 /**
  * Component to render a form to edit a user's profile
@@ -41,12 +42,12 @@ class EditProfile extends React.Component {
             <label>
               Bio
             </label>
-            <textarea type="text" name="bio" className="form-control marg-bot-1" rows="1"></textarea>
+            <textarea type="text" name="bio" className="form-control marg-bot-1" rows="1" />
 
             <label>
               Interests
             </label>
-            <textarea type="text" name="interests" className="form-control marg-bot-1" rows="1"></textarea>
+            <textarea type="text" name="interests" className="form-control marg-bot-1" rows="1" />
 
             <label>
               Profile picture
@@ -67,6 +68,10 @@ class EditProfile extends React.Component {
       </Thin>
     );
   }
+}
+
+EditProfile.propTypes = {
+  match: PropTypes.object,
 };
 
 export default EditProfile;

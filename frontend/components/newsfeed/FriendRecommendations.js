@@ -46,7 +46,7 @@ class FriendRecommendations extends React.Component {
   }
 
   // Render the component
-  render () {
+  render() {
     return (
       <div className="card pad-bot-025">
         <strong className="marg-bot-05">

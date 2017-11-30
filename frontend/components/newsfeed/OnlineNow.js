@@ -39,7 +39,7 @@ class OnlineNow extends React.Component {
           name={ rec.name }
           id={ rec.id }
           img={ rec.img }
-          isOnline={ true }
+          isOnline
           key={ uuid() }
         />
       );

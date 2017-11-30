@@ -267,37 +267,39 @@
           db.putItem(params, callback);
         })
 
-        inxList.push(self.inx)
+        inxList.push(self.inx);
         self.inx++;
       }
-      async.parallel(tasks, function(err, data){
-        if (err)
-          callback(err)
-        else
-          callback(null, inxList)
+      async.parallel(tasks, function(err, data) {
+        if (err) {
+          callback(err);
+        } else {
+          callback(null, inxList);
+        }
       })
     } else {
       var params = {
-          Item: {
-            "keyword": {
-              S: keyword
-            },
-            "inx": {
-              N: self.inx.toString()
-            },
-            value: {
-              S: value
-            }
+        Item: {
+          "keyword": {
+            S: keyword
           },
-          TableName: self.tableName,
-          ReturnValues: 'NONE'
+          "inx": {
+            N: self.inx.toString()
+          },
+          value: {
+            S: value
+          }
+        },
+        TableName: self.tableName,
+        ReturnValues: 'NONE'
       };
 
-      db.putItem(params, function(err, data){
-        if (err)
-          callback(err)
-        else
-          callback(null, self.inx)
+      db.putItem(params, (err, data) => {
+        if (err) {
+          callback(err);
+        } else {
+          callback(null, self.inx);
+        }
       });
       self.inx++;
     }
@@ -312,32 +314,32 @@
    */
   keyvaluestore.prototype.remove = function(keyword, inx, callback) {
     var self = this;
-    if (self.inx === -1){
-      callback("Error using table - call init first!", null)
-      return
+    if (self.inx === -1) {
+      callback("Error using table - call init first!", null);
+      return;
     }
 
     self.cache.del(keyword);
     var params = {
-        "Key": {
-          "keyword": {
-            S: keyword
-          },
-          "inx": {
-            N: inx
-          }
+      "Key": {
+        "keyword": {
+          S: keyword
         },
-        TableName: self.tableName,
-        ReturnValues: 'ALL_OLD'
+        "inx": {
+          N: inx
+        }
+      },
+      TableName: self.tableName,
+      ReturnValues: 'ALL_OLD'
     };
 
-    db.deleteItem(params, function(err, data){
-      if (err || !data.Attributes){
-        if (!err)
-          err = "No such item " + keyword + " " + inx
+    db.deleteItem(params, function(err, data) {
+      if (err || !data.Attributes) {
+        if (!err) {
+          err = "No such item " + keyword + " " + inx;
+        }
         callback(err, null);
-      }
-      else{
+      } else {
         callback(null, data.Attributes.value.S);
       }
     });
@@ -353,11 +355,11 @@
     var self = this;
 
     var params = {
-        TableName: self.tableName,
-        AttributesToGet: ['keyword', 'inx']
+      TableName: self.tableName,
+      AttributesToGet: ['keyword', 'inx']
     };
 
-    db.scan(params, function(err, data) {
+    db.scan(params, (err, data) => {
       var values = [];
 
       if (!err) {
@@ -384,37 +386,37 @@
    */
   keyvaluestore.prototype.update = function(keyword, inx, attributes, callback) {
     var self = this;
-    if (self.inx === -1){
-      callback("Error using table - call init first!", null)
-      return
+    if (self.inx === -1) {
+      callback("Error using table - call init first!", null);
+      return;
     }
-    self.remove(keyword, inx, function(err, data){
-      if (err)
+    self.remove(keyword, inx, (err, data) => {
+      if (err) {
         callback(err, null);
-      else {
-        data = JSON.parse(data)
+      } else {
+        data = JSON.parse(data);
         for (var attr in attributes) {
           data[attr] = attributes[attr];
         }
         var params = {
-            Item: {
-              "keyword": {
-                S: keyword
-              },
-              "inx": {
-                N: inx.toString()
-              },
-              value: {
-                S: JSON.stringify(data)
-              }
+          Item: {
+            "keyword": {
+              S: keyword
             },
-            TableName: self.tableName,
-            ReturnValues: 'NONE'
+            "inx": {
+              N: inx.toString()
+            },
+            value: {
+              S: JSON.stringify(data)
+            }
+          },
+          TableName: self.tableName,
+          ReturnValues: 'NONE'
         };
 
         db.putItem(params, callback);
       }
-    })
+    });
   };
 
   module.exports = keyvaluestore;

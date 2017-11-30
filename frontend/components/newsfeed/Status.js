@@ -1,8 +1,8 @@
 import React from 'react';
 import autosize from 'autosize';
-import StatusForm from './StatusForm';
 import { Link } from 'react-router-dom';
 import Comment from './Comment';
+import PropTypes from 'prop-types';
 
 /**
  * Renders a status posted by a user. This can show up either on the newsfeed
@@ -49,7 +49,7 @@ class Status extends React.Component {
     return(
       <div className="card status">
         <div className="user">
-          <div className="userImg" style={{backgroundImage: "url(" + this.props.userImg + ")"}}></div>
+          <div className="userImg" style={{backgroundImage: "url(" + this.props.userImg + ")"}} />
           <p>
             <Link to={ "/users/" + this.props.id } >
               { this.props.name }
@@ -59,20 +59,20 @@ class Status extends React.Component {
         <p className="marg-bot-0 text">
           { this.props.status }
         </p>
-        { this.props.image ? <img src={ this.props.image } className="img-fluid image" /> : "" }
+        { this.props.image ? <img alt={ this.props.status } src={ this.props.image } className="img-fluid image" /> : "" }
         <div className="interact">
           <div className="like" onClick={ this.likeOnClick }>
-            <i className={ this.state.isLiked ? "fa fa-heart" : "fa fa-heart-o" }></i>
+            <i className={ this.state.isLiked ? "fa fa-heart" : "fa fa-heart-o" } />
             12 likes
           </div>
           <div className="comment" onClick={ this.commentOnClick }>
-            <i className={ this.state.toggledComments ? "fa fa-comment" : "fa fa-comment-o" }></i>
+            <i className={ this.state.toggledComments ? "fa fa-comment" : "fa fa-comment-o" } />
             4 comments
           </div>
         </div>
         <div className={ this.state.toggledComments ? "comments" : "comments hidden" }>
           <form className="comments-form">
-            <textarea className="form-control animate" placeholder="Leave a comment..." name="comment" type="text" rows="1"></textarea>
+            <textarea className="form-control animate" placeholder="Leave a comment..." name="comment" type="text" rows="1" />
             <input className="btn btn-gray btn-sm" type="submit" name="submit" value="Reply" />
           </form>
           <Comment text="Nice post" />
@@ -81,5 +81,13 @@ class Status extends React.Component {
     );
   }
 }
+
+Status.propTypes = {
+  userImg: PropTypes.string,
+  name: PropTypes.string,
+  image: PropTypes.string,
+  status: PropTypes.string,
+  id: PropTypes.number,
+};
 
 export default Status;
