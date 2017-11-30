@@ -1,6 +1,8 @@
+// Import modules and frameworks
 import React from 'react';
 import { connect } from 'react-redux';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import PropTypes from 'prop-types';
 
 // Import components to render
 import Home from '../components/newsfeed/Home';
@@ -15,11 +17,14 @@ import NotFound from '../components/NotFound';
 import Nav from '../components/shared/Nav';
 
 // Render the app
-const AppContainer = () => (
+const AppContainer = ({ username }) => (
   <div className="app-wrapper">
     <Router>
       <div>
         <Nav />
+        <h1>
+          {"USERNAME: " + username}
+        </h1>
         <Switch>
           <Route exact path="/" component={Home} />
           <Route path="/users/:id/edit" component={EditProfile} />
@@ -36,9 +41,13 @@ const AppContainer = () => (
   </div>
 );
 
+AppContainer.propTypes = {
+  username: PropTypes.string,
+};
+
 const mapStateToProps = (state) => {
   return {
-    username: state.username
+    username: state.username,
   };
 };
 

@@ -40,7 +40,7 @@ router.post('/users/new', (req, res) => {
         error: err,
       });
     } else {
-      // Set teh session username
+      // Set the session username
       req.session.username = req.body.username;
 
       // Propogate the success to the component

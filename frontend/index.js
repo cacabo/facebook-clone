@@ -17,7 +17,7 @@ console.log("Store configured");
 
 // Dispatch example events
 store.dispatch({ type: "LOGIN", username: "cameron" });
-store.dispatch({ type: "LOGOUT" });
+// store.dispatch({ type: "LOGOUT" });
 
 render(
   <Root store={store} />,

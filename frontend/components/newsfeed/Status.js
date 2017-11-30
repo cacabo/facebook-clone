@@ -84,10 +84,10 @@ class Status extends React.Component {
 
 Status.propTypes = {
   userImg: PropTypes.string,
-  name: PropTypes.string.isRequired,
+  name: PropTypes.string,
   image: PropTypes.string,
-  status: PropTypes.string.isRequired,
-  username: PropTypes.string.isRequired,
+  status: PropTypes.string,
+  username: PropTypes.string,
 };
 
 export default Status;
