@@ -2,6 +2,9 @@ import React from 'react';
 import autosize from 'autosize';
 import Chats from './Chats';
 import uuid from 'uuid-v4';
+import SocketIOClient from 'socket.io-client';
+import { subscribeToMessages } from './socketrouter';
+import { sendMessage } from './socketrouter';
 
 /**
  * Component to render one of a user's group chats.
@@ -13,31 +16,22 @@ class Chat extends React.Component {
   // Constructor method
   constructor(props) {
     super(props);
+
+    subscribeToMessages((message) => this.setState((prevState, props) => {
+        console.log("received message: " + message)
+        var oldMessage = this.state.messages;
+        oldMessage.push(JSON.parse(message));
+        return {messages: oldMessage}
+    }));
+     
     this.state = {
       message: "",
       currentUser: "12",
-      messages: [
-        {
-          inx: "0",
-          user: "12",
-          body: "This is the first message",
-          createdAt: 1511894393650,
-        },
-        {
-          inx: "1",
-          user: "13",
-          body: "This is the second message",
-          createdAt: 1511894551346,
-        },
-        {
-          inx: "1",
-          user: "12",
-          body: "This is a longer message than the other messages and should take up more space",
-          createdAt: 1511894607965,
-        },
-      ],
+      messages: [],
     }
+
     this.handleChangeMessage = this.handleChangeMessage.bind(this);
+    this.submit = this.handleSubmit.bind(this);
   }
 
   // Autosize the text area to fit the text that's pasted into it
@@ -52,11 +46,30 @@ class Chat extends React.Component {
     });
   }
 
-  // Handle when the status form is submitted
+  //do socket sending here. Append this to own message list. 
   handleSubmit(event) {
-    /**
-     * TODO
-     */
+    var messageToSend = this.state.message; //have to do this.state not this alone
+
+    var messageParams = {
+      user: this.state.user,
+      body: messageToSend,
+      createdAt: Date.now
+    };
+
+    sendMessage(JSON.stringify(messageParams), (success) => { 
+      if (success) {
+        this.setState((prevState, props) => {
+          var oldMessage = this.state.messages;
+          oldMessage.push(messageParams);
+          return {
+            messages: oldMessage,
+            message: ""
+          }
+        });
+      } else {
+        //message unsent
+      }
+    });
     event.preventDefault();
   }
 
@@ -95,11 +108,11 @@ class Chat extends React.Component {
         <div className="messages">
           { this.renderMessages() }
         </div>
-        <form className="message-form" onSubmit={ this.handleSubmit }>
+        <form className="message-form" onSubmit={ this.handleSubmit.bind(this) }>
           <textarea
             name="message"
             value={ this.state.message }
-            onChange={ this.handleChangeMessage }
+            onChange={ this.handleChangeMessage.bind(this) }
             className="form-control card-shade"
             type="text"
           >
