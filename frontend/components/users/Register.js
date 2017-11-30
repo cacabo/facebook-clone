@@ -1,6 +1,7 @@
 import React from 'react';
 import Thin from '../shared/Thin';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 
 /**
  * Component to render a form to register a user
@@ -155,7 +156,25 @@ class Register extends React.Component {
       /**
        * TODO make the request
        */
-       
+      axios.get("/api/users/" + this.state.username)
+        .then((res) => {
+          // If a user was found
+          if (res.data.success) {
+            this.setState({
+              error: "Username already taken."
+            })
+          } else {
+            /**
+             * TODO
+             */
+          }
+        })
+        .catch((err) => {
+          /**
+           * TODO handle if there is an error
+           */
+          console.log(err);
+        });
     }
   }
 

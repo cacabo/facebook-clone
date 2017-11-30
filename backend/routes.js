@@ -11,9 +11,12 @@ router.get('/', (req, res) => {
 });
 
 // Find a user with the specified username
-router.get('/user', (req, res) => {
-  console.log(req.body);
-  db.getUser(req.body.username, (data, err) => {
+router.get('/users/:username', (req, res) => {
+  // Find the username in the URL
+  const username = req.params.username;
+
+  // Find the user in the database
+  db.getUser(username, (data, err) => {
     if (err || !data) {
       res.send({
         success: false,
