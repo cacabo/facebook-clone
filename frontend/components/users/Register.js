@@ -175,13 +175,15 @@ class Register extends React.Component {
             // Send a post request to create the user
             axios.post("/api/users/new", data)
             .then((postRes) => {
-              /**
-               * TODO UPDATE APPLICATION STATE, REDIRECT TO HOME
-               */
+              // Find the username in the response
               const username = postRes.data.username;
 
-              console.log(username);
+              // Dispatch the login event to Redux
               this.props.onRegister(username);
+
+              /**
+               * TODO Redirect to home
+               */
             })
             .catch((err) => {
               this.setState({

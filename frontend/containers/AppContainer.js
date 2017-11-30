@@ -2,7 +2,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
-import PropTypes from 'prop-types';
 
 // Import components to render
 import Home from '../components/newsfeed/Home';
@@ -17,17 +16,14 @@ import NotFound from '../components/NotFound';
 import Nav from '../components/shared/Nav';
 
 // Render the app
-const AppContainer = ({ username }) => (
+const AppContainer = () => (
   <div className="app-wrapper">
     <Router>
       <div>
         <Nav />
-        <h1>
-          {"USERNAME: " + username}
-        </h1>
         <Switch>
           <Route exact path="/" component={Home} />
-          <Route path="/users/:id/edit" component={EditProfile} />
+          <Route path="/users/:username/edit" component={EditProfile} />
           <Route path="/users/:username" component={Profile} />
           <Route path="/register" component={Register} />
           <Route path="/login" component={Login} />
@@ -41,14 +37,8 @@ const AppContainer = ({ username }) => (
   </div>
 );
 
-AppContainer.propTypes = {
-  username: PropTypes.string,
-};
-
-const mapStateToProps = (state) => {
-  return {
-    username: state.username,
-  };
+const mapStateToProps = (/* state */) => {
+  return {};
 };
 
 const mapDispatchToProps = (/* dispatch */) => {
