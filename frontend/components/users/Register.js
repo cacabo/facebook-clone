@@ -173,7 +173,7 @@ class Register extends React.Component {
                * TODO UPDATE APPLICATION STATE, REDIRECT TO HOME
                */
               const username = postRes.data.username;
-              console.log(postRes);
+              console.log(username);
             })
             .catch((err) => {
               this.setState({

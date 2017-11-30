@@ -51,7 +51,7 @@ class Status extends React.Component {
         <div className="user">
           <div className="userImg" style={{backgroundImage: "url(" + this.props.userImg + ")"}} />
           <p>
-            <Link to={ "/users/" + this.props.id } >
+            <Link to={ "/users/" + this.props.username } >
               { this.props.name }
             </Link>
           </p>
@@ -87,7 +87,7 @@ Status.propTypes = {
   name: PropTypes.string,
   image: PropTypes.string,
   status: PropTypes.string,
-  id: PropTypes.number,
+  username: PropTypes.string,
 };
 
 export default Status;

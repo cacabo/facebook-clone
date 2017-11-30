@@ -1,8 +1,8 @@
-function rootReducer(state = {name: 'Facebook'}, action) {
-    switch (action.type) {
-        default:
-            return state;
-    }
+function rootReducer(state = {username: ""}, action) {
+  switch (action.type) {
+    default:
+      return state;
+  }
 }
 
 export default rootReducer;

@@ -23,7 +23,7 @@ const AppContainer = () => (
         <Switch>
           <Route exact path="/" component={Home} />
           <Route path="/users/:id/edit" component={EditProfile} />
-          <Route path="/users/:id" component={Profile} />
+          <Route path="/users/:username" component={Profile} />
           <Route path="/register" component={Register} />
           <Route path="/login" component={Login} />
           <Route path="/chats/new" component={NewChat} />
