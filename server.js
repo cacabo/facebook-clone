@@ -1,9 +1,19 @@
 const path = require('path');
 const express = require('express');
+const session = require('express-session');
 const app = express();
 const PORT = process.env.PORT || 3000;
 const api = require('./backend/routes');
 const bodyParser = require('body-parser');
+
+// Express sessions configuration
+app.set('trust proxy', 1)
+app.use(session({
+  secret: 'perky puppy',
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: false }
+}));
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));

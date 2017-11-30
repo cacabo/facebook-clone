@@ -38,8 +38,7 @@ var create_user = function(user, callback) {
        if (err || !data) {
          callback(null, "Failed to create user: " + err);
        } else {
-         console.log(data);
-         callback({success: true}, null);
+         callback(data, null);
        }
      });
    }

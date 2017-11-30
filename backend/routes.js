@@ -34,11 +34,22 @@ router.get('/users/:username', (req, res) => {
 // Register a new user
 router.post('/users/new', (req, res) => {
   db.createUser(req.body, (data, err) => {
-    console.log("ROUTE: ", data);
-    console.log("ROUTE ERR: ", err);
-    res.send({
-      "success": true,
-    });
+    if (err) {
+      res.send({
+        success: false,
+        error: err,
+      });
+    } else {
+      // Set teh session username
+      req.session.username = req.body.username;
+
+      // Propogate the success to the component
+      res.send({
+        success: true,
+        data: data,
+        username: req.session.username,
+      });
+    }
   });
 });
 

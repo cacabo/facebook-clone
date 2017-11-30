@@ -162,8 +162,9 @@ class Register extends React.Component {
           if (res.data.success) {
             this.setState({
               error: "Username already taken."
-            })
+            });
           } else {
+            // Store the data from the form
             const data = {
               username: this.state.username,
               firstName: this.state.firstName,
@@ -172,9 +173,7 @@ class Register extends React.Component {
               confirmPassword: this.state.confirmPassword,
             };
 
-            console.log("DATA:");
-            console.log(data);
-
+            // Send a post request to create the user
             axios.post("/api/users/new", data)
             .then((res) => {
               console.log(res);
