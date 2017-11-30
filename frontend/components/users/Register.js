@@ -148,9 +148,7 @@ class Register extends React.Component {
         error: "",
       });
 
-      /**
-       * TODO make the request
-       */
+      // Check if the username is already taken
       axios.get("/api/users/" + this.state.username)
         .then((res) => {
           // If a user was found
@@ -174,6 +172,7 @@ class Register extends React.Component {
               /**
                * TODO UPDATE APPLICATION STATE, REDIRECT TO HOME
                */
+              const username = postRes.data.username;
               console.log(postRes);
             })
             .catch((err) => {

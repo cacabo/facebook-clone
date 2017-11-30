@@ -18,15 +18,15 @@ class Chats extends React.Component {
       chats: [
         {
           name: "Dope group chat",
-          id: "1",
+          id: 1,
         },
         {
           name: "Even better group chat",
-          id: "12",
+          id: 12,
         },
         {
           name: "The best group chat",
-          id: "4",
+          id: 4,
         }
       ],
     };

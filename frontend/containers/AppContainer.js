@@ -21,19 +21,32 @@ const AppContainer = () => (
       <div>
         <Nav />
         <Switch>
-          <Route exact path='/' component={Home} />
-          <Route path='/users/:id/edit' component={EditProfile} />
-          <Route path='/users/:id' component={Profile} />
-          <Route path='/register' component={Register} />
-          <Route path='/login' component={Login} />
-          <Route path='/chats/new' component={NewChat} />
-          <Route path='/chats/:id' component={Chat} />
-          <Route path='/chats' component={Chats} />
-          <Route path='*' component={NotFound} />
+          <Route exact path="/" component={Home} />
+          <Route path="/users/:id/edit" component={EditProfile} />
+          <Route path="/users/:id" component={Profile} />
+          <Route path="/register" component={Register} />
+          <Route path="/login" component={Login} />
+          <Route path="/chats/new" component={NewChat} />
+          <Route path="/chats/:id" component={Chat} />
+          <Route path="/chats" component={Chats} />
+          <Route path="*" component={NotFound} />
         </Switch>
       </div>
     </Router>
   </div>
 );
 
-export default AppContainer;
+const mapStateToProps = (state) => {
+  return {
+    username: state.username
+  };
+};
+
+const mapDispatchToProps = (/* dispatch */) => {
+  return {};
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(AppContainer);
