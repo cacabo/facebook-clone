@@ -1,5 +1,6 @@
 import React from 'react';
 import autosize from 'autosize';
+import PropTypes from 'prop-types';
 
 /**
  * Render the status form to appear at the top of the newsfeed and at the top
@@ -65,7 +66,11 @@ class StatusForm extends React.Component {
     /**
      * TODO
      */
-
+    if (isValid) {
+      /**
+       * Make the request
+       */
+    }
   }
 
   // Render method
@@ -94,7 +99,7 @@ class StatusForm extends React.Component {
                 placeholder={ this.props.placeholder }
                 value={ this.state.status }
                 onChange={ this.handleChange }
-              ></textarea>
+              />
               <div className={ this.state.active ? "buttons right" : "buttons right hidden" }>
                 <input
                   type="submit"
@@ -109,6 +114,10 @@ class StatusForm extends React.Component {
       </div>
     );
   }
+}
+
+StatusForm.propTypes = {
+  placeholder: PropTypes.string,
 };
 
 export default StatusForm;

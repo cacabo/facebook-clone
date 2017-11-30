@@ -2,6 +2,7 @@ import React from 'react';
 import ChatPreview from './ChatPreview';
 import uuid from 'uuid-v4';
 import { Link } from 'react-router-dom';
+import PropTypes from 'prop-types';
 
 /**
  * Component to render all of a user's groupchats
@@ -17,18 +18,18 @@ class Chats extends React.Component {
       chats: [
         {
           name: "Dope group chat",
-          id: "1",
+          id: 1,
         },
         {
           name: "Even better group chat",
-          id: "12",
+          id: 12,
         },
         {
           name: "The best group chat",
-          id: "4",
+          id: 4,
         }
       ],
-    }
+    };
   }
 
   // Helper method to render chats based on state
@@ -52,7 +53,7 @@ class Chats extends React.Component {
           { this.renderChatPreviews() }
           <div className="pad-1 pad-top-0">
             <Link to="/chats/new" className="btn btn-gray marg-top-05">
-              New chat &nbsp; <i className="fa fa-plus"></i>
+              New chat &nbsp; <i className="fa fa-plus" />
             </Link>
           </div>
         </div>
@@ -62,6 +63,10 @@ class Chats extends React.Component {
       </div>
     );
   }
+}
+
+Chats.propTypes = {
+  children: PropTypes.object,
 };
 
 export default Chats;

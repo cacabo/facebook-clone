@@ -1,6 +1,7 @@
 import React from 'react';
 import Thin from '../shared/Thin';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 
 /**
  * Component to render a form to register a user
@@ -140,21 +141,52 @@ class Register extends React.Component {
       }
     }
 
-    /**
-     * TODO ensure the username is unique
-     * TODO handle the submit
-     */
-
     // If no error has been found to this point
     if (isValid) {
       // Remove any existing error
       this.setState({
         error: "",
       });
-      
-      /**
-       * TODO make the request
-       */
+
+      // Check if the username is already taken
+      axios.get("/api/users/" + this.state.username)
+        .then((res) => {
+          // If a user was found
+          if (res.data.success) {
+            this.setState({
+              error: "Username already taken."
+            });
+          } else {
+            // Store the data from the form
+            const data = {
+              username: this.state.username,
+              firstName: this.state.firstName,
+              lastName: this.state.lastName,
+              password: this.state.password,
+              confirmPassword: this.state.confirmPassword,
+            };
+
+            // Send a post request to create the user
+            axios.post("/api/users/new", data)
+            .then((postRes) => {
+              /**
+               * TODO UPDATE APPLICATION STATE, REDIRECT TO HOME
+               */
+              const username = postRes.data.username;
+              console.log(username);
+            })
+            .catch((err) => {
+              this.setState({
+                error: "There was an issue creating your account: " + err,
+              });
+            });
+          }
+        })
+        .catch((err) => {
+          this.setState({
+            error: "There was an error querrying the database: " + err,
+          });
+        });
     }
   }
 
@@ -263,6 +295,6 @@ class Register extends React.Component {
       </Thin>
     );
   }
-};
+}
 
 export default Register;

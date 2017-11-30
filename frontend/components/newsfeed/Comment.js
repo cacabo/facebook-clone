@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 /**
  * Component to render an individual comment.
@@ -10,5 +11,9 @@ const Comment = ({ text }) => (
     { text }
   </div>
 );
+
+Comment.propTypes = {
+  text: PropTypes.string,
+};
 
 export default Comment;

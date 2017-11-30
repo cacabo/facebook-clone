@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 /**
  * Wrapper component of medium width which renders whatever component you put
@@ -14,6 +15,10 @@ const Medium = ({ children }) => {
       </div>
     </div>
   );
+};
+
+Medium.propTypes = {
+  children: PropTypes.object,
 };
 
 export default Medium;

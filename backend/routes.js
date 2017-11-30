@@ -10,8 +10,13 @@ router.get('/', (req, res) => {
   });
 });
 
-router.get('/users', (req, res) => {
-  db.getUser("cameroncabo@gmail.com", (data, err) => {
+// Find a user with the specified username
+router.get('/users/:username', (req, res) => {
+  // Find the username in the URL
+  const username = req.params.username;
+
+  // Find the user in the database
+  db.getUser(username, (data, err) => {
     if (err || !data) {
       res.send({
         success: false,
@@ -21,6 +26,28 @@ router.get('/users', (req, res) => {
       res.send({
         success: true,
         data: data,
+      });
+    }
+  });
+});
+
+// Register a new user
+router.post('/users/new', (req, res) => {
+  db.createUser(req.body, (data, err) => {
+    if (err) {
+      res.send({
+        success: false,
+        error: err,
+      });
+    } else {
+      // Set teh session username
+      req.session.username = req.body.username;
+
+      // Propogate the success to the component
+      res.send({
+        success: true,
+        data: data,
+        username: req.session.username,
       });
     }
   });

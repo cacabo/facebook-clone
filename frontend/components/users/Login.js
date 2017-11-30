@@ -15,7 +15,7 @@ class Login extends React.Component {
       username: "",
       password: "",
       error: "",
-    }
+    };
 
     // Bind this
     this.handleChangeUsername = this.handleChangeUsername.bind(this);
@@ -72,7 +72,7 @@ class Login extends React.Component {
       this.setState({
         error: "",
       });
-      
+
       /**
        * TODO make the request
        */
@@ -140,6 +140,6 @@ class Login extends React.Component {
       </Thin>
     );
   }
-};
+}
 
 export default Login;

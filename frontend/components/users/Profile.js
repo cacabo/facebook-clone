@@ -1,5 +1,4 @@
 import React from 'react';
-import Medium from '../shared/Medium';
 import StatusForm from '../newsfeed/StatusForm';
 import Status from '../newsfeed/Status';
 
@@ -13,7 +12,7 @@ import Status from '../newsfeed/Status';
 const Profile = () => {
   return (
     <div className="profile">
-      <div className="cover-photo"></div>
+      <div className="cover-photo" />
       <div className="menu">
         <h3>Cameron Cabo</h3>
       </div>
@@ -21,7 +20,7 @@ const Profile = () => {
       <div className="container-fluid">
         <div className="row">
           <div className="col-12 col-lg-10 offset-lg-1">
-            <div className="profile-picture"></div>
+            <div className="profile-picture" />
 
             <div className="row">
               <div className="col-12 col-md-4 about">
