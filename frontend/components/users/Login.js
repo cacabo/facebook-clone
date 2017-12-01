@@ -84,66 +84,68 @@ class Login extends React.Component {
   render() {
     return (
       <Thin>
-        {
-          this.props.notice && (
-            <div className="alert alert-warning alert-card card-shade">
-              { this.props.notice }
-            </div>
-          )
-        }
-        <div className="card">
-          <h3 className="bold marg-bot-1">
-            Login
-          </h3>
+        <div>
           {
-            this.state.error ?
-            <div className="alert alert-danger error">
-              <p className="bold marg-bot-025">
-                There was an error:
-              </p>
-              <p className="marg-bot-0">
-                { this.state.error }
-              </p>
-            </div>
-            : ""
+            this.props.notice && (
+              <div className="alert alert-warning alert-card card-shade">
+                { this.props.notice }
+              </div>
+            )
           }
-          <form className="line-form" onSubmit={ this.handleSubmit }>
-            <label>
-              Username
-            </label>
-            <input
-              value={ this.state.username }
-              onChange={ this.handleChangeUsername }
-              type="text"
-              name="username"
-              className="form-control marg-bot-1"
-              autoFocus="true"
-            />
+          <div className="card">
+            <h3 className="bold marg-bot-1">
+              Login
+            </h3>
+            {
+              this.state.error ?
+              <div className="alert alert-danger error">
+                <p className="bold marg-bot-025">
+                  There was an error:
+                </p>
+                <p className="marg-bot-0">
+                  { this.state.error }
+                </p>
+              </div>
+              : ""
+            }
+            <form className="line-form" onSubmit={ this.handleSubmit }>
+              <label>
+                Username
+              </label>
+              <input
+                value={ this.state.username }
+                onChange={ this.handleChangeUsername }
+                type="text"
+                name="username"
+                className="form-control marg-bot-1"
+                autoFocus="true"
+              />
 
-            <label>
-              Password
-            </label>
-            <input
-              value={ this.state.password }
-              onChange={ this.handleChangePassword }
-              type="password"
-              name="password"
-              className="form-control marg-bot-1"
-            />
+              <label>
+                Password
+              </label>
+              <input
+                value={ this.state.password }
+                onChange={ this.handleChangePassword }
+                type="password"
+                name="password"
+                className="form-control marg-bot-1"
+              />
 
-            <input
-              type="submit"
-              className={
-                (this.state.username && this.state.password) ?
-                "btn btn-primary full-width cursor" :
-                "btn btn-primary full-width disabled"
-              }
-              value="Create account"
-            />
-          </form>
-          <p className="marg-top-1 marg-bot-0">
-            Don't have an account? <Link to="/register" className="inline">create one here.</Link>
-          </p>
+              <input
+                type="submit"
+                className={
+                  (this.state.username && this.state.password) ?
+                  "btn btn-primary full-width cursor" :
+                  "btn btn-primary full-width disabled"
+                }
+                value="Create account"
+              />
+            </form>
+            <p className="marg-top-1 marg-bot-0">
+              Don't have an account? <Link to="/register" className="inline">create one here.</Link>
+            </p>
+          </div>
         </div>
       </Thin>
     );
