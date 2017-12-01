@@ -1,6 +1,7 @@
 import React from 'react';
 import Thin from '../shared/Thin';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 
 /**
  * Component to render a user's login form
@@ -73,9 +74,25 @@ class Login extends React.Component {
         error: "",
       });
 
-      /**
-       * TODO make the request
-       */
+      // Check if the user exists/password is right
+      axios.post("/api/users/sessions/new", {
+        username: this.state.username,
+        password: this.state.password,
+      })
+        .then((res) => {
+          // If there is an error
+          if (res.data.err) {
+            console.log(res.data.err);
+            this.setState({
+              error: res.data.err,
+            });
+          } else {
+            // Redirect
+            this.setState({
+              error: "Log In Here",
+            });
+          }
+        });
     }
   }
 
