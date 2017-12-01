@@ -17,7 +17,7 @@ router.post('/users/sessions/new', (req, res) => {
     if(err) {
       res.send({
         success: false,
-        err: "Username Doesn't Exist. Consider signing up",
+        err: "User not found, consider signing up.",
       });
     // user exists
     } else if (data) {
@@ -25,7 +25,7 @@ router.post('/users/sessions/new', (req, res) => {
       if(req.body.password !== data.password) {
         res.send({
           success: false,
-          err: "Wrong Password"
+          err: "Username and password do not match."
         });
       } else{
         res.send({
