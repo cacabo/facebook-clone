@@ -88,9 +88,7 @@ class Login extends React.Component {
             });
           } else {
             // Redirect
-            this.setState({
-              error: "Log In Here",
-            });
+            console.log(res.data.data.username);
           }
         });
     }
@@ -147,7 +145,7 @@ class Login extends React.Component {
                 "btn btn-primary full-width cursor" :
                 "btn btn-primary full-width disabled"
               }
-              value="Create account"
+              value="Login"
             />
           </form>
           <p className="marg-top-1 marg-bot-0">
