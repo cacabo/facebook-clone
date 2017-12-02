@@ -66,7 +66,7 @@ class Chats extends React.Component {
 }
 
 Chats.propTypes = {
-  children: PropTypes.object,
+  children: PropTypes.array,
 };
 
 export default Chats;

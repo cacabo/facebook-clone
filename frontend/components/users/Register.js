@@ -2,6 +2,9 @@ import React from 'react';
 import Thin from '../shared/Thin';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import { login } from '../../actions/index';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 
 /**
  * Component to render a form to register a user
@@ -148,6 +151,9 @@ class Register extends React.Component {
         error: "",
       });
 
+      /**
+       * TODO make this the same method as create
+       */
       // Check if the username is already taken
       axios.get("/api/users/" + this.state.username)
         .then((res) => {
@@ -169,11 +175,15 @@ class Register extends React.Component {
             // Send a post request to create the user
             axios.post("/api/users/new", data)
             .then((postRes) => {
-              /**
-               * TODO UPDATE APPLICATION STATE, REDIRECT TO HOME
-               */
+              // Find the username in the response
               const username = postRes.data.username;
-              console.log(username);
+
+              // Dispatch the login event to Redux
+              this.props.onRegister(username);
+
+              /**
+               * TODO Redirect to home
+               */
             })
             .catch((err) => {
               this.setState({
@@ -297,4 +307,21 @@ class Register extends React.Component {
   }
 }
 
-export default Register;
+Register.propTypes = {
+  onRegister: PropTypes.func,
+};
+
+const mapStateToProps = (/* state */) => {
+  return {};
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    onRegister: (username) => dispatch(login(username)),
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Register);
