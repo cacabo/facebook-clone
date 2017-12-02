@@ -75,10 +75,14 @@ router.get('/users/:username', (req, res) => {
 
 // Register a new user
 router.post('/users/new', (req, res) => {
-  // Hash the password
+  // Hash the password and confirm password
   const obj = req.body;
-  const hash = SHA3(req.body.password).toString();
-  obj.password = hash;
+  const hashPassword = SHA3(req.body.password).toString();
+  const hashConfirmPassword = SHA3(req.body.confirmPassword).toString();
+
+  // Update the object containing the form data
+  obj.password = hashPassword;
+  obj.confirmPassword = hashConfirmPassword;
 
   // Create the user in the database
   db.createUser(obj, (data, err) => {
