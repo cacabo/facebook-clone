@@ -119,8 +119,9 @@ AppContainer.propTypes = {
 };
 
 const mapStateToProps = (state) => {
+  console.log("STATE", state);
   return {
-    isLoggedIn: state.isLoggedIn,
+    isLoggedIn: state.userState.isLoggedIn,
   };
 };
 

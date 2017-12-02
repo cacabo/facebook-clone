@@ -21,7 +21,7 @@ LoggedInAuth.propTypes = {
 
 const mapStateToProps = (state) => {
   return {
-    isLoggedIn: state.isLoggedIn,
+    isLoggedIn: state.userState.isLoggedIn,
   };
 };
 

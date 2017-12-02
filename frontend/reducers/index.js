@@ -1,25 +1,19 @@
-// Default values for the program state
-const defaults = {
-  username: "",
-  isLoggedIn: false,
+// Frameworks necessary for state persistance
+import { persistCombineReducers } from 'redux-persist';
+import storage from 'redux-persist/es/storage';
+
+// Import reducers from other files
+import userReducer from './userReducer';
+
+// Configuration necessary for state persistance
+const config = {
+  key: 'primary',
+  storage
 };
 
-// Construct the root reducer function
-function rootReducer(prevState = defaults, action) {
-  // Switch statement on the type of actions
-  switch (action.type) {
-    case "LOGIN":
-      const loginState = {
-        ...prevState,
-        username: action.username,
-        isLoggedIn: true,
-      };
-      return loginState;
-    case "LOGOUT":
-      return defaults;
-    default:
-      return prevState;
-  }
-}
+// Root reducer combines all separate reducers and calls the appropriate one
+const rootReducer = persistCombineReducers(config, {
+  userState: userReducer,
+});
 
 export default rootReducer;
