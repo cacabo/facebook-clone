@@ -2,6 +2,8 @@ import React from 'react';
 import Thin from '../shared/Thin';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import { login } from '../../actions/index';
+import { connect } from 'react-redux';
 import axios from 'axios';
 
 /**
@@ -73,25 +75,29 @@ class Login extends React.Component {
         error: "",
       });
 
-      /**
-       * TODO CATCH THE ERROR
-       */
       // Check if the user exists/password is right
       axios.post("/api/users/sessions/new", {
         username: this.state.username,
         password: this.state.password,
       })
-        .then((res) => {
-          // If there is an error
+        .then(res => {
+          // If there is an error in the response
           if (res.data.err) {
-            console.log(res.data.err);
             this.setState({
               error: res.data.err,
             });
           } else {
-            // Redirect
-            console.log(res.data.data.username);
+            // Find the username from the response
+            const username = res.data.data.username;
+
+            // Dispatch the login event to Redux
+            this.props.onLogin(username);
           }
+        })
+        .catch(err => {
+          this.setState({
+            error: err
+          });
         });
     }
   }
@@ -169,6 +175,20 @@ class Login extends React.Component {
 
 Login.propTypes = {
   notice: PropTypes.string,
+  onLogin: PropTypes.func,
 };
 
-export default Login;
+const mapStateToProps = (/* state */) => {
+  return {};
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    onLogin: (username) => dispatch(login(username)),
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Login);

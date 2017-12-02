@@ -180,10 +180,6 @@ class Register extends React.Component {
 
               // Dispatch the login event to Redux
               this.props.onRegister(username);
-
-              /**
-               * TODO Redirect to home
-               */
             })
             .catch((err) => {
               this.setState({

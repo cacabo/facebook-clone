@@ -10,11 +10,13 @@ export default function configureStore() {
     applyMiddleware(logger),
   );
 
+  // Create a persistor for persistent state
   const persistor = persistStore(
     store,
     null,
     () => store.getState()
   );
 
+  // Return the persistor and store
   return { persistor, store };
 }

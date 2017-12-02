@@ -4,6 +4,7 @@ import Status from './Status';
 import FriendRecommendations from './FriendRecommendations';
 import OnlineNow from './OnlineNow';
 import uuid from 'uuid-v4';
+import PropTypes from 'prop-types';
 
 /**
  * Component to render a user's newsfeed.
@@ -68,6 +69,15 @@ class Home extends React.Component {
             <FriendRecommendations />
           </div>
           <div className="col-12 col-md-8 offset-md-2 col-lg-6 offset-lg-0 col-xl-5">
+            {
+              this.props.success ? (
+                <div className="alert alert-success">
+                  { this.props.success }
+                </div>
+              ) : (
+                ""
+              )
+            }
             <StatusForm placeholder="What's on your mind?" />
             { this.renderStatuses() }
             <div className="space-4" />
@@ -80,5 +90,9 @@ class Home extends React.Component {
     );
   }
 }
+
+Home.propTypes = {
+  success: PropTypes.string,
+};
 
 export default Home;
