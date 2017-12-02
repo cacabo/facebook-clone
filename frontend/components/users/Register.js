@@ -151,56 +151,38 @@ class Register extends React.Component {
         error: "",
       });
 
-      /**
-       * TODO make this the same method as create
-       */
       // Check if the username is already taken
-      axios.get("/api/users/" + this.state.username)
-        .then((res) => {
-          // If a user was found
-          if (res.data.success) {
-            this.setState({
-              error: "Username already taken."
-            });
-          } else {
-            // Store the data from the form
-            const data = {
-              username: this.state.username,
-              firstName: this.state.firstName,
-              lastName: this.state.lastName,
-              password: this.state.password,
-              confirmPassword: this.state.confirmPassword,
-            };
+      // Store the data from the form
+      const data = {
+        username: this.state.username,
+        firstName: this.state.firstName,
+        lastName: this.state.lastName,
+        password: this.state.password,
+        confirmPassword: this.state.confirmPassword,
+      };
 
-            // Send a post request to create the user
-            axios.post("/api/users/new", data)
-            .then((postRes) => {
-              console.log("Porstres", postRes);
+      // Send a post request to create the user
+      axios.post("/api/users/new", data)
+      .then((postRes) => {
+        console.log("Porstres", postRes);
 
-              if (postRes.data.success) {
-                // Find the username in the response
-                const username = postRes.data.username;
+        if (postRes.data.success) {
+          // Find the username in the response
+          const username = postRes.data.username;
 
-                // Dispatch the login event to Redux
-                this.props.onRegister(username);
-              } else {
-                this.setState({
-                  error: postRes.data.error,
-                });
-              }
-            })
-            .catch((err) => {
-              this.setState({
-                error: "There was an issue creating your account: " + err,
-              });
-            });
-          }
-        })
-        .catch((err) => {
+          // Dispatch the login event to Redux
+          this.props.onRegister(username);
+        } else {
           this.setState({
-            error: "There was an error querrying the database: " + err,
+            error: postRes.data.error,
           });
+        }
+      })
+      .catch((err) => {
+        this.setState({
+          error: "There was an issue creating your account: " + err,
         });
+      });
     }
   }
 

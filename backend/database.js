@@ -52,16 +52,24 @@ function createUser(user, callback) {
     } else if (user.password.length < 6) {
       callback(null, "Password must be at least 6 characters long.");
     } else {
-      // Remove the confirm password
-      delete user.confirmPassword;
+      // Fields are properly formatted
+      // Check if the user already exists
+      users.get(user.username, (userNotFound, userData) => {
+        if (userNotFound || !userData) {
+          // Remove the confirm password
+          delete user.confirmPassword;
 
-      // Put the user into the table
-      const username = user.username;
-      users.put(username, JSON.stringify(user), (err, data) => {
-        if (err || !data) {
-          callback(null, "Failed to create user: " + err);
+          // Put the user into the table
+          const username = user.username;
+          users.put(username, JSON.stringify(user), (err, data) => {
+            if (err || !data) {
+              callback(null, "Failed to create user: " + err);
+            } else {
+              callback(data, null);
+            }
+          });
         } else {
-          callback(data, null);
+          callback(null, "Username already taken.");
         }
       });
     }
