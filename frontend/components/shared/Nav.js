@@ -72,8 +72,8 @@ Nav.propTypes = {
 
 const mapStateToProps = (state) => {
   return {
-    username: state.username,
-    isLoggedIn: state.isLoggedIn,
+    username: state.userState.username,
+    isLoggedIn: state.userState.isLoggedIn,
   };
 };
 
