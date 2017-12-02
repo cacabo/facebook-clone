@@ -10,6 +10,17 @@ router.get('/', (req, res) => {
   });
 });
 
+// Sign the user out
+router.get('/logout', (req, res) => {
+  // Delete the current session
+  req.session.destroy();
+
+  // Send the success
+  res.send({
+    success: true,
+  });
+});
+
 // Login the user
 router.post('/users/sessions/new', (req, res) => {
   db.getUser(req.body.username, (data, err) => {
