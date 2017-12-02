@@ -2,6 +2,7 @@ import React from 'react';
 import Thin from '../shared/Thin';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import axios from 'axios';
 
 /**
  * Component to render a user's login form
@@ -74,9 +75,23 @@ class Login extends React.Component {
         error: "",
       });
 
-      /**
-       * TODO make the request
-       */
+      // Check if the user exists/password is right
+      axios.post("/api/users/sessions/new", {
+        username: this.state.username,
+        password: this.state.password,
+      })
+        .then((res) => {
+          // If there is an error
+          if (res.data.err) {
+            console.log(res.data.err);
+            this.setState({
+              error: res.data.err,
+            });
+          } else {
+            // Redirect
+            console.log(res.data.data.username);
+          }
+        });
     }
   }
 
@@ -131,21 +146,20 @@ class Login extends React.Component {
                 name="password"
                 className="form-control marg-bot-1"
               />
-
-              <input
-                type="submit"
-                className={
-                  (this.state.username && this.state.password) ?
-                  "btn btn-primary full-width cursor" :
-                  "btn btn-primary full-width disabled"
-                }
-                value="Create account"
-              />
-            </form>
-            <p className="marg-top-1 marg-bot-0">
-              Don't have an account? <Link to="/register" className="inline">create one here.</Link>
-            </p>
-          </div>
+                  
+            <input
+              type="submit"
+              className={
+                (this.state.username && this.state.password) ?
+                "btn btn-primary full-width cursor" :
+                "btn btn-primary full-width disabled"
+              }
+              value="Login"
+            />
+          </form>
+          <p className="marg-top-1 marg-bot-0">
+            Don't have an account? <Link to="/register" className="inline">create one here.</Link>
+          </p>
         </div>
       </Thin>
     );

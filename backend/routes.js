@@ -10,6 +10,33 @@ router.get('/', (req, res) => {
   });
 });
 
+// Login the user
+router.post('/users/sessions/new', (req, res) => {
+  db.getUser(req.body.username, (data, err) => {
+    //  there was an error looking up user
+    if(err) {
+      res.send({
+        success: false,
+        err: "User not found, consider signing up.",
+      });
+    // user exists
+    } else if (data) {
+      // check password
+      if(req.body.password !== data.password) {
+        res.send({
+          success: false,
+          err: "Username and password do not match."
+        });
+      } else{
+        res.send({
+          success: true,
+          data: data,
+        });
+      }
+    }
+  });
+});
+
 // Find a user with the specified username
 router.get('/users/:username', (req, res) => {
   // Find the username in the URL
