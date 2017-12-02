@@ -21,13 +21,22 @@ app.listen(PORT, error => {
     : console.info(`==> 🌎 Listening on port ${PORT}. Visit http://localhost:${PORT}/ in your browser.`);
 });
 
-// The event will be called when a client is connected.
+// The event will be called when a client is connected. Right when the app opens
 socket.on('connection', (socket) => {
 	console.log('A client just joined on', socket.id);
 
-	socket.on('chat', (message) => {
-		console.log("Broadcast reached");
-	  	// The `broadcast` allows us to send to all users but the sender.
-	  	socket.broadcast.emit('chat', message);
+	//pull from database all chats pertaining to user and connect to them
+    socket.join('1');
+    socket.join('12');
+    socket.join('4');
+
+    //maybe have info of which room message came from in message json
+    //emit only to that room once query room out of JSON object
+	socket.on('message', (message) => {
+		var messageData = JSON.parse(message);
+		var room = messageData.room;
+
+		console.log("Broadcast reached " + message.body + " " + room);
+		socket.broadcast.to(room).emit('message', message);
 	});
 });

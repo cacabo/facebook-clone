@@ -16,13 +16,6 @@ class Chat extends React.Component {
   // Constructor method
   constructor(props) {
     super(props);
-
-    subscribeToMessages((message) => this.setState((prevState, props) => {
-        console.log("received message: " + message)
-        var oldMessage = this.state.messages;
-        oldMessage.push(JSON.parse(message));
-        return {messages: oldMessage}
-    }));
      
     this.state = {
       message: "",
@@ -37,6 +30,18 @@ class Chat extends React.Component {
   // Autosize the text area to fit the text that's pasted into it
   componentDidMount() {
     autosize(document.querySelectorAll('textarea'));
+
+    //listens for new messages received
+    subscribeToMessages((message) => this.setState((prevState, props) => {
+        console.log("received message: " + message)
+        var messageInfo = JSON.parse(message);
+
+        if (messageInfo.room == this.props.match.params.id) {
+          var oldMessage = this.state.messages;
+          oldMessage.push(messageInfo);
+          return {messages: oldMessage}
+        }
+    }));
   }
 
   // Helper method to handle a change to state
@@ -50,13 +55,17 @@ class Chat extends React.Component {
   handleSubmit(event) {
     var messageToSend = this.state.message; //have to do this.state not this alone
 
+    console.log("Current Room from send: " + this.props.match.params.id);
+    console.log("Chat ID: " + this.props.match.params.id);
+
     var messageParams = {
       user: this.state.user,
       body: messageToSend,
-      createdAt: Date.now
+      createdAt: Date.now,
+      room: this.props.match.params.id
     };
 
-    sendMessage(JSON.stringify(messageParams), (success) => { 
+    sendMessage(this.props.match.params.id, JSON.stringify(messageParams), (success) => { 
       if (success) {
         this.setState((prevState, props) => {
           var oldMessage = this.state.messages;

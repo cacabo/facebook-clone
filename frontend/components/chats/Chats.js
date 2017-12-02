@@ -13,7 +13,9 @@ class Chats extends React.Component {
   // Constructor method
   constructor(props) {
     super(props);
+
     this.state = {
+      //store room names here after making a query to the database
       chats: [
         {
           name: "Dope group chat",
