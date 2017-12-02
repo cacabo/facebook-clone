@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const SHA3 = require('crypto-js/sha3');
 const db = require('./database.js');
 
 // API routes
@@ -23,17 +24,20 @@ router.get('/logout', (req, res) => {
 
 // Login the user
 router.post('/users/sessions/new', (req, res) => {
+  // Hash the password
+  const hash = SHA3(req.body.password).toString();
+
+  // Query for the specified user
   db.getUser(req.body.username, (data, err) => {
     //  there was an error looking up user
-    if(err) {
+    if (err) {
       res.send({
         success: false,
         err: "User not found, consider signing up.",
       });
-    // user exists
     } else if (data) {
-      // check password
-      if(req.body.password !== data.password) {
+      // Else the user exists: check the password
+      if(hash !== data.password) {
         res.send({
           success: false,
           err: "Username and password do not match."
@@ -71,7 +75,17 @@ router.get('/users/:username', (req, res) => {
 
 // Register a new user
 router.post('/users/new', (req, res) => {
-  db.createUser(req.body, (data, err) => {
+  // Hash the password and confirm password
+  const obj = req.body;
+  const hashPassword = SHA3(req.body.password).toString();
+  const hashConfirmPassword = SHA3(req.body.confirmPassword).toString();
+
+  // Update the object containing the form data
+  obj.password = hashPassword;
+  obj.confirmPassword = hashConfirmPassword;
+
+  // Create the user in the database
+  db.createUser(obj, (data, err) => {
     if (err) {
       res.send({
         success: false,
