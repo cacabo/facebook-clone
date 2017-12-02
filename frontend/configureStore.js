@@ -18,23 +18,3 @@ export default function configureStore() {
 
   return { persistor, store };
 }
-
-// return new Promise((resolve, reject) => {
-//   try {
-//     const store = createStore(
-//       rootReducer,
-//       undefined,
-//       compose(
-//         applyMiddleware(...middlewares),
-//       ),
-//     );
-//
-//     persistStore(
-//       store,
-//       null,
-//       () => store.getState()
-//     );
-//   } catch (e) {
-//     reject(e);
-//   }
-// });

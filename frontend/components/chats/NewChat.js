@@ -58,6 +58,7 @@ class NewChat extends React.Component {
             value="Create chat"
           />
         </form>
+        <div className="space-1"/>
       </Chats>
     );
   }
