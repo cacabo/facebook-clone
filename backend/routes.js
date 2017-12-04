@@ -3,7 +3,9 @@ const router = express.Router();
 const SHA3 = require('crypto-js/sha3');
 const db = require('./database.js');
 
-// API routes
+/**
+ * Denote that the API is up and running
+ */
 router.get('/', (req, res) => {
   res.send({
     success: true,
@@ -11,7 +13,9 @@ router.get('/', (req, res) => {
   });
 });
 
-// Sign the user out
+/**
+ * Sign the user out
+ */
 router.get('/logout', (req, res) => {
   // Delete the current session
   req.session.destroy();
@@ -22,7 +26,65 @@ router.get('/logout', (req, res) => {
   });
 });
 
-// Login the user
+/**
+ * Get all statuses
+ * NOTE this likely is not userful though can be used to start off before we
+ * have more targetted database methods
+ */
+router.get('/statuses', (req, res) => {
+  // Find all statuses in the database
+  db.getStatuses((data, err) => {
+    if (err || !data) {
+      res.send({
+        success: false,
+        error: err,
+      });
+    } else {
+      res.send({
+        success: true,
+        data: data,
+      });
+    }
+  });
+});
+
+/**
+ * Get a single status
+ * TODO
+ */
+router.get('/statuses/id', (req, res) => {
+  res.send({
+    success: false,
+    error: "Unimplemented",
+  });
+});
+
+/**
+ * Find a user with the specified username
+ */
+router.get('/users/:username', (req, res) => {
+  // Find the username in the URL
+  const username = req.params.username;
+
+  // Find the user in the database
+  db.getUser(username, (data, err) => {
+    if (err || !data) {
+      res.send({
+        success: false,
+        error: err,
+      });
+    } else {
+      res.send({
+        success: true,
+        data: data,
+      });
+    }
+  });
+});
+
+/**
+ * Login the user (start a new express session)
+ */
 router.post('/users/sessions/new', (req, res) => {
   // Hash the password
   const hash = SHA3(req.body.password).toString();
@@ -52,28 +114,9 @@ router.post('/users/sessions/new', (req, res) => {
   });
 });
 
-// Find a user with the specified username
-router.get('/users/:username', (req, res) => {
-  // Find the username in the URL
-  const username = req.params.username;
-
-  // Find the user in the database
-  db.getUser(username, (data, err) => {
-    if (err || !data) {
-      res.send({
-        success: false,
-        err: err,
-      });
-    } else {
-      res.send({
-        success: true,
-        data: data,
-      });
-    }
-  });
-});
-
-// Register a new user
+/**
+ * Register a new user
+ */
 router.post('/users/new', (req, res) => {
   // Hash the password and confirm password
   const obj = req.body;

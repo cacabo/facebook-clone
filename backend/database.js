@@ -1,11 +1,33 @@
 // Import the keyvaluestore
-var keyvaluestore = require('./keyvaluestore.js');
+const keyvaluestore = require('./keyvaluestore.js');
 
-// Create the usersTable
-var users = new keyvaluestore('usersTable');
+// Create user table
+const users = new keyvaluestore('users');
 users.init(() => {});
 
-// Get a user with the specified username
+// Create statuses table
+const statuses = new keyvaluestore('statuses');
+statuses.init(() => {});
+
+/**
+ * Get all statuses
+ */
+function getStatuses(callback) {
+  // TODO
+  callback(null, "Not yet implemented");
+}
+
+/**
+ * Get a single status
+ */
+function getStatus(id, callback) {
+  // TODO
+  callback(null, "Not yet implemented");
+}
+
+/**
+ * Get a user with the specified username
+ */
 function getUser(username, callback) {
   users.get(username, (err, data) => {
     if (err || !data) {
@@ -21,7 +43,9 @@ function getUser(username, callback) {
   });
 }
 
-// Create a new user
+/**
+ * Create a new user
+ */
 function createUser(user, callback) {
   // Perform error checking
   if (!user.username ||
@@ -80,6 +104,8 @@ function createUser(user, callback) {
 const database = {
   createUser: createUser,
   getUser: getUser,
+  getStatuses: getStatuses,
+  getStatus: getStatus,
 };
 
 module.exports = database;
