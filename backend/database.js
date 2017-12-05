@@ -1,5 +1,6 @@
 // Import the keyvaluestore
 const keyvaluestore = require('./keyvaluestore.js');
+const async = require('async');
 
 // Create users table and initialize it
 const users = new keyvaluestore('users');
@@ -15,22 +16,69 @@ statuses.init(() => {});
 
 /**
  * Get all statuses in the table
- * TODO implement
  */
 function getStatuses(callback) {
-  callback(null, "Not yet implemented");
+  statuses.scanKeys((err, values) => {
+    console.log(values);
+    if (err || !values) {
+      callback(null, "Failed to retrieve keys.");
+    } else {
+      // Construct a status array
+      const statusArr = [];
+
+      // Iterate over the keys in the statuses array
+      async.each(values, (value, keysCallback) => {
+        // Find the username associated with the key
+        const keyword = value.key;
+
+        // Find the status with the given key
+        statuses.get(keyword, (statusErr, statusData) => {
+          if (statusErr || !statusData) {
+            // If we failed to retrieve data
+            callback(null, "An error occured: " + statusErr);
+          } else {
+            // Push the status onto the array
+            statusArr.push(statusData[0].value);
+
+            // Alert that the async call is done
+            keysCallback();
+          }
+        });
+      }, (asyncErr) => {
+        if (asyncErr) {
+          // If there is an error with the async operation
+          callback(null, asyncErr);
+        } else {
+          // Send the statuses to the user
+          callback({ statusArr }, null);
+        }
+      });
+    }
+  });
 }
 
 /**
- * Get a single status
- * TODO
+ * Get a single status based on the passed in ID
  */
 function getStatus(id, callback) {
   if (!id || id.length === 0) {
     callback(null, "Status ID must be well-defined");
+  } else {
+    statuses.get(id, (err, data) => {
+      if (err || !data) {
+        callback(null, "Status not found");
+      } else {
+        callback(data, null);
+      }
+    });
   }
+}
 
-  // TODO
+/**
+ * Create a status
+ * TODO
+ */
+function createStatus(key, data, callback) {
   callback(null, "Not yet implemented");
 }
 
@@ -58,7 +106,7 @@ function getUser(username, callback) {
   users.get(username, (err, data) => {
     if (err || !data) {
       // If there was an issue getting the data
-      callback(null, "User not found: " + err);
+      callback(null, "User not found");
     } else {
       // Find the value in the returned data
       var value = JSON.parse(data[0].value);
@@ -133,6 +181,7 @@ const database = {
   getStatuses: getStatuses,
   getStatus: getStatus,
   getUserStatuses: getUserStatuses,
+  createStatus: createStatus,
 };
 
 module.exports = database;

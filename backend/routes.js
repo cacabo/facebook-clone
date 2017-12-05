@@ -1,7 +1,13 @@
+// Import frameworks
 const express = require('express');
 const router = express.Router();
 const SHA3 = require('crypto-js/sha3');
 const db = require('./database.js');
+
+/**
+ * TODO handle 404 error
+ * TODO ensure that a user is logged in
+ */
 
 /**
  * Denote that the API is up and running
