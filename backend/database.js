@@ -5,6 +5,30 @@ var keyvaluestore = require('./keyvaluestore.js');
 var users = new keyvaluestore('usersTable');
 users.init(() => {});
 
+// Create the friendRelationshipTable
+var friendships = new keyvaluestore('friendshipsTable');
+friendships.init(() => {});
+
+// Create the status table
+var statuses = new keyvaluestore('statusTable');
+statuses.init(() => {});
+
+// Create comments table
+var comments = new keyvaluestore('commentsTable');
+comments.init(() => {});
+
+// Create chats table
+var chats = new keyvaluestore('chatsTable');
+chats.init(() => {});
+
+// Create userChatRelationship table
+var userChats = new keyvaluestore('userChatsTable');
+userChats.init(() => {});
+
+// Create messages table
+var messages = new keyvaluestore('messagesTable');
+messages.init(() => {});
+
 // Get a user with the specified username
 function getUser(username, callback) {
   users.get(username, (err, data) => {

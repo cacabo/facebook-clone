@@ -1,0 +1,18 @@
+"vchien" {
+  "inx": "3456789",
+  "username": "vchien",
+  "password": "ah22efhasdf",
+  "firstName": "Victor",
+  "lastName": "Chien",
+  "bio": "I love tech",
+  "affiliation": [
+    "penn",
+    "hack4impact"],
+  "interests": [
+    "computer science",
+    "coding",
+    "cs",
+  ],
+  "profilePicture": "https://scontent-lga3-1.xx.fbcdn.net/v/t1.0-9/23376439_1879135205465108_919241293664341856_n.jpg?oh=9cd27529b03a6f46f3d3e2cf72119600&amp;oe=5AC8A1D8",
+  "createdAt": "15113340133432",
+}
