@@ -1,6 +1,7 @@
-"comment2" {
-  "inx": "3456789123454",
+"vchien1" {
+  "inx": "1",
   "content": "How cool!",
-  "user": "3456789",
+  "user": "vchien",
+  "status": "1234",
   "createdAt": "1245431",
 }
