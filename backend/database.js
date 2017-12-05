@@ -1,27 +1,49 @@
 // Import the keyvaluestore
 const keyvaluestore = require('./keyvaluestore.js');
 
-// Create user table
+// Create users table and initialize it
 const users = new keyvaluestore('users');
 users.init(() => {});
 
-// Create statuses table
+// Create statuses table and initialize it
 const statuses = new keyvaluestore('statuses');
 statuses.init(() => {});
 
 /**
- * Get all statuses
+ * TODO create other tables as per the sample data
+ */
+
+/**
+ * Get all statuses in the table
+ * TODO implement
  */
 function getStatuses(callback) {
-  // TODO
   callback(null, "Not yet implemented");
 }
 
 /**
  * Get a single status
+ * TODO
  */
 function getStatus(id, callback) {
+  if (!id || id.length === 0) {
+    callback(null, "Status ID must be well-defined");
+  }
+
   // TODO
+  callback(null, "Not yet implemented");
+}
+
+/**
+ * Get all statuses by a user
+ * TODO perform a range query for the specific statuses we want
+ */
+function getUserStatuses(username, callback) {
+  if (!username || username.length === 0) {
+    callback(null, "Username must be well-defined");
+  }
+
+  console.log(username);
   callback(null, "Not yet implemented");
 }
 
@@ -29,6 +51,10 @@ function getStatus(id, callback) {
  * Get a user with the specified username
  */
 function getUser(username, callback) {
+  if (!username || username.length === 0) {
+    callback(null, "Username must be well-defined");
+  }
+
   users.get(username, (err, data) => {
     if (err || !data) {
       // If there was an issue getting the data
@@ -106,6 +132,7 @@ const database = {
   getUser: getUser,
   getStatuses: getStatuses,
   getStatus: getStatus,
+  getUserStatuses: getUserStatuses,
 };
 
 module.exports = database;

@@ -52,12 +52,42 @@ router.get('/statuses', (req, res) => {
 });
 
 /**
+ * Get all statuses by a particular user
+ * TODO test that this works / implement
+ */
+router.get('/users/:username/statuses/', (req, res) => {
+  // Find the username in the URL
+  const username = req.params.username;
+
+  // Get the statuses from the database
+  db.getUserStatuses(username, (data, err) => {
+    if (err || !data) {
+      // If there is an error or no data is sent
+      res.send({
+        success: false,
+        error: err,
+      });
+    } else {
+      // TO
+      res.send({
+        // If there is a success, relay the data to the user
+        success: true,
+        data: data,
+      });
+    }
+  });
+});
+
+/**
  * Get a single status
  * TODO
  */
-router.get('/statuses/id', (req, res) => {
+router.get('/statuses/:id', (req, res) => {
+  // Find the id in the URL
+  const id = req.params.id;
+
   // Get the status from the database
-  db.getStatus((data, err) => {
+  db.getStatus(id, (data, err) => {
     if (err || !data) {
       // If there is an error or no data is sent
       res.send({
