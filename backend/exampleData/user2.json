@@ -5,7 +5,7 @@
   "firstName": "Victor",
   "lastName": "Chien",
   "bio": "I love tech",
-  "affiliation": "@penn",
+  "affiliation": ["@penn"],
   "interests": [
     "computer science",
     "coding",
