@@ -5,7 +5,9 @@
   "firstName": "Cameron",
   "lastName": "Cabo",
   "bio": "Really cool guy",
-  "affiliation": ["@penn"],
+  "affiliation": [
+    "penn",
+    "PennLabs"],
   "interests": [
     "computer science",
     "design",

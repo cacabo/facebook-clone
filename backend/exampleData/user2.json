@@ -1,11 +1,13 @@
-"victorchien" {
+"vchien" {
   "inx": "3456789",
   "username": "vchien",
-  "password": "password (hashed)",
+  "password": "ah22efhasdf",
   "firstName": "Victor",
   "lastName": "Chien",
   "bio": "I love tech",
-  "affiliation": ["@penn"],
+  "affiliation": [
+    "penn",
+    "hack4impact"],
   "interests": [
     "computer science",
     "coding",
