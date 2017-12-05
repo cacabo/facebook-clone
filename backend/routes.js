@@ -30,17 +30,20 @@ router.get('/logout', (req, res) => {
  * Get all statuses
  * NOTE this likely is not userful though can be used to start off before we
  * have more targetted database methods
+ * TODO test that this works
  */
 router.get('/statuses', (req, res) => {
   // Find all statuses in the database
   db.getStatuses((data, err) => {
     if (err || !data) {
+      // If there is an error or no data is sent
       res.send({
         success: false,
         error: err,
       });
     } else {
       res.send({
+        // If there is a success, relay the data to the user
         success: true,
         data: data,
       });
@@ -53,9 +56,22 @@ router.get('/statuses', (req, res) => {
  * TODO
  */
 router.get('/statuses/id', (req, res) => {
-  res.send({
-    success: false,
-    error: "Unimplemented",
+  // Get the status from the database
+  db.getStatus((data, err) => {
+    if (err || !data) {
+      // If there is an error or no data is sent
+      res.send({
+        success: false,
+        error: err,
+      });
+    } else {
+      // TO
+      res.send({
+        // If there is a success, relay the data to the user
+        success: true,
+        data: data,
+      });
+    }
   });
 });
 
