@@ -13,6 +13,7 @@ import PropTypes from 'prop-types';
  *
  * TODO stateful likes
  * TODO pull user information from DB
+ * TODO actually render comments
  */
 class Status extends React.Component {
   // Constructor method
@@ -78,7 +79,7 @@ class Status extends React.Component {
         <div className={ this.state.toggledComments ? "comments" : "comments hidden" }>
           <form className="comments-form">
             <textarea className="form-control animate" placeholder="Leave a comment..." name="comment" type="text" rows="1" />
-            <input className="btn btn-gray btn-sm" type="submit" name="submit" value="Reply" />
+            <input className="btn btn-gray btn-sm marg-left-05" type="submit" name="submit" value="Reply" />
           </form>
           <Comment text="Nice post" />
         </div>

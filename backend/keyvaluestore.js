@@ -365,8 +365,8 @@
       if (!err) {
         for (var i = 0; i < data.Count; i++) {
           values.push({
-            "key": data.Items[i].keyword['S'],
-            "inx": data.Items[i].inx['N']
+            "key": data.Items[i].keyword["S"],
+            "inx": data.Items[i].inx["N"]
           });
         }
       }

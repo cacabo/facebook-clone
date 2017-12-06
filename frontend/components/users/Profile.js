@@ -5,6 +5,7 @@ import axios from 'axios';
 import PropTypes from 'prop-types';
 import Thin from '../shared/Thin';
 import { Link } from 'react-router';
+import NotFound from '../NotFound';
 
 /**
  * Render's a user's profile
@@ -12,6 +13,12 @@ import { Link } from 'react-router';
  * Cover photo and profile picture at the top
  * Information about the user (bio, interests, friend count, etc.) to left
  * List of posts and ability to write on their wall to the right / middle
+ *
+ * TODO handle errors
+ * TODO pull user information
+ * TODO render user statuses
+ * TODO handle posts on user's wall
+ * TODO have different errors (statuses, user not found, post error, etc)
  */
 class Profile extends React.Component {
   // Constructor method
@@ -25,20 +32,38 @@ class Profile extends React.Component {
       coverPhoto: "",
       bio: "",
       interests: "",
+      statuses: null,
+      profilePending: true,
+      statusesPending: true,
     };
   }
 
   // Set the state upon load
   componentDidMount() {
+    // Get the user information
     axios.get('/api/users/' + this.props.match.params.username)
       .then(data => {
         this.setState({
           ...data.data.data,
+          profilePending: false,
         });
       })
       .catch(() => {
         this.setState({
-          error: "User with the specified username not found"
+          error: "User with the specified username not found",
+          profilePending: false,
+        });
+      });
+
+    // Get the users statuses
+    axios.get('/api/users/' + this.props.match.params.username + '/statuses')
+      .then(data => {
+        console.log(data);
+        // TODO
+      })
+      .catch(err => {
+        this.setState({
+          error: err,
         });
       });
   }
@@ -46,26 +71,13 @@ class Profile extends React.Component {
   // Render the component
   render() {
     if (this.state.error) {
-      console.log("There is an error");
-      return (
-        <Thin>
-          <div className="card">
-            <h2>Content not found</h2>
-            <p>
-              { this.state.error }
-            </p>
-            <Link to="/" className="btn btn-primary">
-              Back to home
-            </Link>
-          </div>
-        </Thin>
-      );
+      console.log(this.state.error);
     }
     return (
       <div className="profile">
         <div className="cover-photo" />
         <div className="menu">
-          <h3>Cameron Cabo</h3>
+          <h3>{ this.state.firstName + " " + this.state.lastName }</h3>
         </div>
 
         <div className="container-fluid">
@@ -79,11 +91,12 @@ class Profile extends React.Component {
                     Learn more
                   </strong>
                   <p>
-                    This is my biography
+                    { this.state.bio }
                   </p>
                   <strong>
                     Interests
                   </strong>
+                  { this.state.interests }
                   <ul className="tags">
                     <li>NETS 212</li>
                     <li>Scalable cloud computing</li>
