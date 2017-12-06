@@ -16,10 +16,10 @@ statuses.init(() => {});
 
 /**
  * Get all statuses in the table
+ * TODO sort chronologically
  */
 function getStatuses(callback) {
   statuses.scanKeys((err, values) => {
-    console.log(values);
     if (err || !values) {
       callback(null, "Failed to retrieve keys.");
     } else {
@@ -38,7 +38,7 @@ function getStatuses(callback) {
             callback(null, "An error occured: " + statusErr);
           } else {
             // Push the status onto the array
-            statusArr.push(statusData[0].value);
+            statusArr.push(JSON.parse(statusData[0].value));
 
             // Alert that the async call is done
             keysCallback();
@@ -156,6 +156,10 @@ function createUser(user, callback) {
         if (userNotFound || !userData) {
           // Remove the confirm password
           delete user.confirmPassword;
+
+          // Initialize timestamps
+          user.createdAt = Date.now();
+          user.updatedAt = Date.now();
 
           // Put the user into the table
           const username = user.username;

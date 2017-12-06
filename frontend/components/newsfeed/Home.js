@@ -5,6 +5,7 @@ import FriendRecommendations from './FriendRecommendations';
 import OnlineNow from './OnlineNow';
 import uuid from 'uuid-v4';
 import PropTypes from 'prop-types';
+import axios from 'axios';
 
 /**
  * Component to render a user's newsfeed.
@@ -22,22 +23,32 @@ class Home extends React.Component {
      * TODO REPLACE DUMMY DATA
      */
     this.state = {
-      statuses: [
-        {
-          name: "Terry Jo",
-          status: "I'm a fool loool",
-          userImg: "https://scontent-lga3-1.xx.fbcdn.net/v/t31.0-8/15585239_1133593586737791_6146771975815537560_o.jpg?oh=1f5bfe8e714b99b823263e2db7fa3329&oe=5A88DA92",
-          username: "terry",
-        },
-        {
-          name: "Terry Jo",
-          status: "Look at this dog",
-          userImg: "https://scontent-lga3-1.xx.fbcdn.net/v/t31.0-8/15585239_1133593586737791_6146771975815537560_o.jpg?oh=1f5bfe8e714b99b823263e2db7fa3329&oe=5A88DA92",
-          username: "terry",
-          image: "https://static.boredpanda.com/blog/wp-content/uploads/2016/01/bear-dogs-310__605.jpg",
-        },
-      ],
+      pending: true,
+      statuses: null,
+      // statuses: [
+      //   {
+      //     name: "Terry Jo",
+      //     status: "I'm a fool loool",
+      //     userImg: "https://scontent-lga3-1.xx.fbcdn.net/v/t31.0-8/15585239_1133593586737791_6146771975815537560_o.jpg?oh=1f5bfe8e714b99b823263e2db7fa3329&oe=5A88DA92",
+      //     username: "terry",
+      //   },
+      //   {
+      //     name: "Terry Jo",
+      //     status: "Look at this dog",
+      //     userImg: "https://scontent-lga3-1.xx.fbcdn.net/v/t31.0-8/15585239_1133593586737791_6146771975815537560_o.jpg?oh=1f5bfe8e714b99b823263e2db7fa3329&oe=5A88DA92",
+      //     username: "terry",
+      //     image: "https://static.boredpanda.com/blog/wp-content/uploads/2016/01/bear-dogs-310__605.jpg",
+      //   },
+      // ],
     };
+  }
+
+  /**
+   * Pull the statuses from the database
+   * TODO pull only statuses from friends
+   */
+  componentDidMount() {
+
   }
 
   /**
@@ -79,7 +90,7 @@ class Home extends React.Component {
               )
             }
             <StatusForm placeholder="What's on your mind?" />
-            { this.renderStatuses() }
+            { !this.state.pending && this.renderStatuses() }
             <div className="space-4" />
           </div>
           <div className="col-md-3 col-xl-4 hidden-md-down">
