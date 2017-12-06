@@ -7,6 +7,23 @@ import uuid from 'uuid-v4';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 
+
+// statuses: [
+//   {
+//     name: "Terry Jo",
+//     status: "I'm a fool loool",
+//     userImg: "https://scontent-lga3-1.xx.fbcdn.net/v/t31.0-8/15585239_1133593586737791_6146771975815537560_o.jpg?oh=1f5bfe8e714b99b823263e2db7fa3329&oe=5A88DA92",
+//     username: "terry",
+//   },
+//   {
+//     name: "Terry Jo",
+//     status: "Look at this dog",
+//     userImg: "https://scontent-lga3-1.xx.fbcdn.net/v/t31.0-8/15585239_1133593586737791_6146771975815537560_o.jpg?oh=1f5bfe8e714b99b823263e2db7fa3329&oe=5A88DA92",
+//     username: "terry",
+//     image: "https://static.boredpanda.com/blog/wp-content/uploads/2016/01/bear-dogs-310__605.jpg",
+//   },
+// ],
+
 /**
  * Component to render a user's newsfeed.
  *
@@ -24,45 +41,52 @@ class Home extends React.Component {
      */
     this.state = {
       pending: true,
-      statuses: null,
-      // statuses: [
-      //   {
-      //     name: "Terry Jo",
-      //     status: "I'm a fool loool",
-      //     userImg: "https://scontent-lga3-1.xx.fbcdn.net/v/t31.0-8/15585239_1133593586737791_6146771975815537560_o.jpg?oh=1f5bfe8e714b99b823263e2db7fa3329&oe=5A88DA92",
-      //     username: "terry",
-      //   },
-      //   {
-      //     name: "Terry Jo",
-      //     status: "Look at this dog",
-      //     userImg: "https://scontent-lga3-1.xx.fbcdn.net/v/t31.0-8/15585239_1133593586737791_6146771975815537560_o.jpg?oh=1f5bfe8e714b99b823263e2db7fa3329&oe=5A88DA92",
-      //     username: "terry",
-      //     image: "https://static.boredpanda.com/blog/wp-content/uploads/2016/01/bear-dogs-310__605.jpg",
-      //   },
-      // ],
+      statuses: [],
     };
+
+    // Bind this
+    this.renderStatuses = this.renderStatuses.bind(this);
   }
 
   /**
    * Pull the statuses from the database
    * TODO pull only statuses from friends
+   * TODO denote errors to the user
    */
   componentDidMount() {
-
+    axios.get('/api/statuses')
+      .then(res => {
+        console.log(res);
+        if (res.data.success) {
+          this.setState({
+            pending: false,
+            statuses: res.data.data.statusArr,
+          });
+        } else {
+          this.setState({
+            error: "There was an error pulling information from the database."
+          });
+        }
+      })
+      .catch(err => {
+        // Update the state to have an error
+        this.setState({
+          error: err,
+        });
+      });
   }
 
   /**
    * Helper function to render statuses on the homepage
    * This renders the statuses contained in the state of the component
    * NOTE map is a funcitonal iterator method
+   * TODO add like counts
    */
   renderStatuses() {
     return this.state.statuses.map((status) => {
       return (
         <Status
-          name={ status.name }
-          status={ status.status }
-          userImg={ status.userImg }
+          content={ status.content }
           image={ status.image }
           username={ status.username }
           key={ uuid() }

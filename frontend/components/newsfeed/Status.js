@@ -12,15 +12,20 @@ import PropTypes from 'prop-types';
  * Toggle the comments box by clicking on the comments icon or text.
  *
  * TODO stateful likes
+ * TODO pull user information from DB
  */
 class Status extends React.Component {
   // Constructor method
   constructor(props) {
     super(props);
+
+    // Set the state
     this.state = {
       toggledComments: false,
       isLiked: false,
     };
+
+    // Bind this to helper functions
     this.commentOnClick = this.commentOnClick.bind(this);
     this.likeOnClick = this.likeOnClick.bind(this);
   }
@@ -57,9 +62,9 @@ class Status extends React.Component {
           </p>
         </div>
         <p className="marg-bot-0 text">
-          { this.props.status }
+          { this.props.content }
         </p>
-        { this.props.image ? <img alt={ this.props.status } src={ this.props.image } className="img-fluid image" /> : "" }
+        { this.props.image ? <img alt={ this.props.content } src={ this.props.image } className="img-fluid image" /> : "" }
         <div className="interact">
           <div className="like" onClick={ this.likeOnClick }>
             <i className={ this.state.isLiked ? "fa fa-heart" : "fa fa-heart-o" } />
@@ -86,7 +91,7 @@ Status.propTypes = {
   userImg: PropTypes.string,
   name: PropTypes.string,
   image: PropTypes.string,
-  status: PropTypes.string,
+  content: PropTypes.string,
   username: PropTypes.string,
 };
 
