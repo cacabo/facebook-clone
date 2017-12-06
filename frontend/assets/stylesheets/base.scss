@@ -127,6 +127,18 @@ a {
   }
 }
 
+// Loading component
+.loading {
+  width: 100%;
+  display: block;
+  padding: 1rem 0rem;
+  text-align: center;
+
+  .fa {
+    color: $light-gray;
+  }
+}
+
 // Styling user previews
 .user {
   display: flex;

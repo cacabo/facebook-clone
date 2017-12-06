@@ -6,23 +6,7 @@ import OnlineNow from './OnlineNow';
 import uuid from 'uuid-v4';
 import PropTypes from 'prop-types';
 import axios from 'axios';
-
-
-// statuses: [
-//   {
-//     name: "Terry Jo",
-//     status: "I'm a fool loool",
-//     userImg: "https://scontent-lga3-1.xx.fbcdn.net/v/t31.0-8/15585239_1133593586737791_6146771975815537560_o.jpg?oh=1f5bfe8e714b99b823263e2db7fa3329&oe=5A88DA92",
-//     username: "terry",
-//   },
-//   {
-//     name: "Terry Jo",
-//     status: "Look at this dog",
-//     userImg: "https://scontent-lga3-1.xx.fbcdn.net/v/t31.0-8/15585239_1133593586737791_6146771975815537560_o.jpg?oh=1f5bfe8e714b99b823263e2db7fa3329&oe=5A88DA92",
-//     username: "terry",
-//     image: "https://static.boredpanda.com/blog/wp-content/uploads/2016/01/bear-dogs-310__605.jpg",
-//   },
-// ],
+import Loading from '../shared/Loading';
 
 /**
  * Component to render a user's newsfeed.
@@ -30,15 +14,16 @@ import axios from 'axios';
  * On smaller screens, exclusively the newsfeed shows up. On larger screens,
  * however, a user sees 1. recommended friends (to the left), 2. their newsfeed,
  * 3. a list of friends currently online.
+ *
+ * TODO handle success / push notifications when the user successfully logs in,
+ * creates a post, etc.
  */
 class Home extends React.Component {
   // Constructor method
   constructor(props) {
     super(props);
 
-    /**
-     * TODO REPLACE DUMMY DATA
-     */
+    // Set the state
     this.state = {
       pending: true,
       statuses: [],
@@ -114,7 +99,7 @@ class Home extends React.Component {
               )
             }
             <StatusForm placeholder="What's on your mind?" />
-            { !this.state.pending && this.renderStatuses() }
+            { this.state.pending ? (<Loading />) : (this.renderStatuses()) }
             <div className="space-4" />
           </div>
           <div className="col-md-3 col-xl-4 hidden-md-down">
