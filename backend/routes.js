@@ -200,4 +200,11 @@ router.post('/users/new', (req, res) => {
   });
 });
 
+/**
+ * Handle a 404
+ */
+router.get('*', (req, res) => {
+  res.status(404).send("404: page not found");
+});
+
 module.exports = router;
