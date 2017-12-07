@@ -164,8 +164,6 @@ class Register extends React.Component {
       // Send a post request to create the user
       axios.post("/api/users/new", data)
       .then((postRes) => {
-        console.log("Porstres", postRes);
-
         if (postRes.data.success) {
           // Find the username in the response
           const username = postRes.data.username;

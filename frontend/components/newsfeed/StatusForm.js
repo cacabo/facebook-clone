@@ -62,9 +62,18 @@ class StatusForm extends React.Component {
       });
 
       // Create the new status
-      axios.post("/api/statuses/new", { content: this.state.status })
+      /**
+       * TODO receiver should not always be null
+       * for example, if this is on a user's wall
+       */
+      axios.post("/api/statuses/new", {
+        content: this.state.status,
+        receiver: null,
+      })
         .then(res => {
-          // TODO
+          /**
+           * TODO
+           */
           console.log(res);
         })
         .catch(err => {

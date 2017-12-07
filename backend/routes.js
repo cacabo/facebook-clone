@@ -61,14 +61,39 @@ router.get('/statuses', (req, res) => {
  * Create a new status
  */
 router.post('/statuses/new', (req, res) => {
-  console.log(req.session);
+  if (!req.session.username) {
+    // If the current user is not logged in
+    res.send({
+      success: false,
+      error: "User must be logged in.",
+    });
+  }
+
+  // Otherwise, construct the status object
   const obj = req.body;
+  obj.user = req.session.username;
+  obj.commentsCount = 0;
+  obj.likesCount = 0;
+  obj.type = "STATUS";
 
   // Add timestamps
   obj.createdAt = Date.now();
   obj.updatedAt = Date.now();
-  // console.log(req.body);
-  res.send({ success: true });
+
+  // Add the status to the database
+  db.createStatus(obj, (data, err) => {
+    if (err || !data) {
+      res.send({
+        success: false,
+        error: "Error adding user to database.",
+      });
+    } else {
+      res.send({
+        success: true,
+        data,
+      });
+    }
+  });
 });
 
 /**
@@ -88,11 +113,10 @@ router.get('/users/:username/statuses/', (req, res) => {
         error: err,
       });
     } else {
-      // TO
+      // If there is a success, relay the data to the user
       res.send({
-        // If there is a success, relay the data to the user
         success: true,
-        data: data,
+        data,
       });
     }
   });
