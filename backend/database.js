@@ -1,6 +1,7 @@
 // Import the keyvaluestore
 const keyvaluestore = require('./keyvaluestore.js');
 const async = require('async');
+const uuid = require('uuid-v4');
 
 // Create users table and initialize it
 const users = new keyvaluestore('users');
@@ -76,10 +77,41 @@ function getStatus(id, callback) {
 
 /**
  * Create a status
- * TODO
+ * TODO find the key
  */
-function createStatus(key, data, callback) {
-  callback(null, "Not yet implemented");
+function createStatus(content, receiver, user, callback) {
+  // Data validation
+  if (!content) {
+    callback(null, "Content must be populated");
+  } else if (!user) {
+    callback(null, "User must be populated");
+  } else {
+    /**
+     * TODO find the key-- based on the inx? Unique ID?
+     */
+    const obj = {
+      content,
+      receiver,
+      user,
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+      type: "STATUS",
+      commentsCount: 0,
+      likesCount: 0,
+    };
+
+    // Find a unique key identifier
+    const key = obj.user + ":" + uuid();
+
+    // Put the status in to the database
+    statuses.put(key, JSON.stringify(obj), (err, data) => {
+      if (err || !data) {
+        callback(null, "Failed to put status in database.");
+      } else {
+        callback(data, null);
+      }
+    });
+  }
 }
 
 /**

@@ -69,19 +69,13 @@ router.post('/statuses/new', (req, res) => {
     });
   }
 
-  // Otherwise, construct the status object
-  const obj = req.body;
-  obj.user = req.session.username;
-  obj.commentsCount = 0;
-  obj.likesCount = 0;
-  obj.type = "STATUS";
-
-  // Add timestamps
-  obj.createdAt = Date.now();
-  obj.updatedAt = Date.now();
+  // Find instance variables
+  const content = req.body.content;
+  const receiver = req.body.receiver;
+  const user = req.session.username;
 
   // Add the status to the database
-  db.createStatus(obj, (data, err) => {
+  db.createStatus(content, receiver, user, (data, err) => {
     if (err || !data) {
       res.send({
         success: false,

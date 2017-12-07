@@ -8,6 +8,8 @@ import axios from 'axios';
  * of a user's profile page.
  *
  * Post button only shows after the user clicks on the form.
+ *
+ * TODO render newly created status
  */
 class StatusForm extends React.Component {
   // Constructor method
