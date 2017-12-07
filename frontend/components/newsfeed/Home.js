@@ -64,6 +64,14 @@ class Home extends React.Component {
   }
 
   /**
+   * Helper method to render a newly created status
+   */
+  newStatusCallback(data) {
+    console.log("CALLBACK");
+    console.log(data);
+  }
+
+  /**
    * Helper function to render statuses on the homepage
    * This renders the statuses contained in the state of the component
    * NOTE map is a funcitonal iterator method
@@ -100,7 +108,7 @@ class Home extends React.Component {
                 ""
               )
             }
-            <StatusForm placeholder="What's on your mind?" />
+            <StatusForm placeholder="What's on your mind?" callback={ this.newStatusCallback }/>
             { this.state.pending ? (<Loading />) : (this.renderStatuses()) }
             <div className="space-4" />
           </div>

@@ -108,7 +108,7 @@ function createStatus(content, receiver, user, callback) {
       if (err || !data) {
         callback(null, "Failed to put status in database.");
       } else {
-        callback(data, null);
+        callback({ inx: data, key }, null);
       }
     });
   }

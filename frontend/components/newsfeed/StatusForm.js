@@ -73,10 +73,23 @@ class StatusForm extends React.Component {
         receiver: null,
       })
         .then(res => {
-          /**
-           * TODO
-           */
+          console.log("RESPONSE");
           console.log(res);
+          if (!res.data.success) {
+            this.setState({
+              error: res.data.error,
+            });
+          } else {
+            // Reset the state
+            this.setState({
+              error: "",
+              status: "",
+              active: false,
+            });
+
+            // Propogate the data up to the home components
+            this.props.callback(res.data);
+          }
         })
         .catch(err => {
           // Catch an error on the post request
@@ -138,6 +151,7 @@ class StatusForm extends React.Component {
 
 StatusForm.propTypes = {
   placeholder: PropTypes.string,
+  callback: PropTypes.func,
 };
 
 export default StatusForm;
