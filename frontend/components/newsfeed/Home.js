@@ -18,7 +18,7 @@ import Loading from '../shared/Loading';
  * TODO handle success / push notifications when the user successfully logs in,
  * creates a post, etc.
  *
- * TODO render errors when loading conent
+ * TODO render errors when loading content
  */
 class Home extends React.Component {
   // Constructor method

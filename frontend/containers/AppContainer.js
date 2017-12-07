@@ -22,6 +22,8 @@ import LoggedInAuth from '../components/users/LoggedInAuth';
  * Component to render the app
  *
  * isLoggedIn: prop pulled from Redux state denoting the current user session
+ *
+ * TODO better sync user state and express session
  */
 const AppContainer = ({ isLoggedIn }) => {
   // Handle the root path

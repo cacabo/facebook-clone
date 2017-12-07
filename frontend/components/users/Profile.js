@@ -3,9 +3,6 @@ import StatusForm from '../newsfeed/StatusForm';
 import Status from '../newsfeed/Status';
 import axios from 'axios';
 import PropTypes from 'prop-types';
-import Thin from '../shared/Thin';
-import { Link } from 'react-router';
-import NotFound from '../NotFound';
 
 /**
  * Render's a user's profile

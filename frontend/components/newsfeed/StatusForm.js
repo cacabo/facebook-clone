@@ -1,6 +1,7 @@
 import React from 'react';
 import autosize from 'autosize';
 import PropTypes from 'prop-types';
+import axios from 'axios';
 
 /**
  * Render the status form to appear at the top of the newsfeed and at the top
@@ -49,27 +50,35 @@ class StatusForm extends React.Component {
     // Prevent the default submit action
     event.preventDefault();
 
-    // Keep track of if an error has occured or not
-    let isValid = true;
-
     // Ensure that the status is valid
     if (!this.state.status || this.state.status.length < 2) {
       this.setState({
         error: "Status must be at least 2 characters long."
       });
-      isValid = false;
     } else {
+      // Remove any existing error
       this.setState({
         error: "",
       });
-    }
-    /**
-     * TODO
-     */
-    if (isValid) {
-      /**
-       * Make the request
-       */
+
+      // Create the new status
+      axios.post("/api/statuses/new", { content: this.state.status })
+        .then(res => {
+          // TODO
+          console.log(res);
+        })
+        .catch(err => {
+          // Catch an error on the post request
+          if (err) {
+            this.setState({
+              error: err,
+            });
+          } else {
+            this.setState({
+              error: "Failed to create status."
+            });
+          }
+        });
     }
   }
 

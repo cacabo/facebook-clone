@@ -58,6 +58,20 @@ router.get('/statuses', (req, res) => {
 });
 
 /**
+ * Create a new status
+ */
+router.post('/statuses/new', (req, res) => {
+  console.log(req.session);
+  const obj = req.body;
+
+  // Add timestamps
+  obj.createdAt = Date.now();
+  obj.updatedAt = Date.now();
+  // console.log(req.body);
+  res.send({ success: true });
+});
+
+/**
  * Get all statuses by a particular user
  * TODO test that this works / implement
  */
@@ -156,7 +170,11 @@ router.post('/users/sessions/new', (req, res) => {
           success: false,
           err: "Username and password do not match."
         });
-      } else{
+      } else {
+        // Update the user session
+        req.session.username = req.body.username;
+
+        // Send success to the user
         res.send({
           success: true,
           data: data,
