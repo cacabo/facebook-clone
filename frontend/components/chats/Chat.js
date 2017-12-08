@@ -25,11 +25,8 @@ class Chat extends React.Component {
       currentUser: "12",
       messages: [],
     }
-
-<<<<<<< HEAD
-=======
+    
     // Bind this to helper methods
->>>>>>> 9962c7c2232fb6ce8dcd55f2ca202949e7f4d8e3
     this.handleChangeMessage = this.handleChangeMessage.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleInvite = this.handleInvite.bind(this);

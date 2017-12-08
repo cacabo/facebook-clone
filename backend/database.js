@@ -100,6 +100,14 @@ function createUser(user, callback) {
   }
 }
 
+// function getMessages(user, callback) {
+//   messages.get(user.username, (err, messageData) => {
+//     if (err || !messageData) {
+      
+//     }
+//   });
+// }
+
 // Create the database object to export
 const database = {
   createUser: createUser,
