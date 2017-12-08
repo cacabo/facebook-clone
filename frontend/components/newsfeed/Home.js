@@ -79,13 +79,12 @@ class Home extends React.Component {
    * TODO add like counts
    */
   renderStatuses() {
-    console.log(this.state.statuses[0]);
     return this.state.statuses.map((status) => {
       return (
         <Status
           content={ status.content }
           image={ status.image }
-          username={ status.username }
+          user={ status.user }
           key={ uuid() }
           userData={ status.userData }
           commentsCount={ status.commentsCount }

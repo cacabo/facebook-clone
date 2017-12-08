@@ -60,7 +60,7 @@ class Status extends React.Component {
             { backgroundImage: "url(" + this.props.userData.profilePicture + ")" }
           } />
           <p>
-            <Link to={ "/users/" + this.props.username } >
+            <Link to={ "/users/" + this.props.user } >
               { this.props.userData.firstName + " " + this.props.userData.lastName }
             </Link>
           </p>
@@ -93,10 +93,9 @@ class Status extends React.Component {
 
 Status.propTypes = {
   userImg: PropTypes.string,
-  name: PropTypes.string,
   image: PropTypes.string,
   content: PropTypes.string,
-  username: PropTypes.string,
+  user: PropTypes.string,
   userData: PropTypes.object,
   commentsCount: PropTypes.number,
   likesCount: PropTypes.number,

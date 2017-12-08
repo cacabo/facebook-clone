@@ -24,7 +24,11 @@ router.get('/', (req, res) => {
  */
 router.get('/session', (req, res) => {
   // Check the session cookie
-  res.send({ success: !!req.session.username });
+  if (req.session.username) {
+    res.send({ success: true, username: req.session.username });
+  } else {
+    res.send({ success: false });
+  }
 });
 
 /**

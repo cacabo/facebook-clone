@@ -56,7 +56,9 @@ class Profile extends React.Component {
     axios.get('/api/users/' + this.props.match.params.username + '/statuses')
       .then(data => {
         console.log(data);
-        // TODO
+        /**
+         * TODO
+         */
       })
       .catch(err => {
         this.setState({
