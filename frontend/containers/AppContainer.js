@@ -28,7 +28,7 @@ import LoggedInAuth from '../components/users/LoggedInAuth';
  * TODO better sync user state and express session
  */
 class AppContainer extends React.Component {
-  // Ensure the user is logged in
+  // Ensure the user is logged in on loading the app
   componentDidMount() {
     axios.get("/api/session")
       .then(data => {

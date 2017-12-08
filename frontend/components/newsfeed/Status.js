@@ -56,7 +56,9 @@ class Status extends React.Component {
     return(
       <div className="card status">
         <div className="user">
-          <div className="userImg" style={{backgroundImage: "url(" + this.props.userData.profilePicture + ")"}} />
+          <div className="userImg" style={
+            { backgroundImage: "url(" + this.props.userData.profilePicture + ")" }
+          } />
           <p>
             <Link to={ "/users/" + this.props.username } >
               { this.props.userData.firstName + " " + this.props.userData.lastName }

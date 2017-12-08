@@ -23,9 +23,6 @@ router.get('/', (req, res) => {
  * Return the current session if there is one
  */
 router.get('/session', (req, res) => {
-  console.log("SESSION");
-  console.log(req.session);
-
   // Check the session cookie
   res.send({ success: !!req.session.username });
 });
