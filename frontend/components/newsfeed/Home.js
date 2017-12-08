@@ -29,10 +29,12 @@ class Home extends React.Component {
     this.state = {
       pending: true,
       statuses: [],
+      newStatuses: [],
     };
 
-    // Bind this
+    // Bind this to helper methods
     this.renderStatuses = this.renderStatuses.bind(this);
+    this.newStatusCallback = this.newStatusCallback.bind(this);
   }
 
   /**
@@ -71,10 +73,18 @@ class Home extends React.Component {
     // Get the status key from the response from the status form
     const statusKey = data.data.key;
 
+    console.log("IN CALLBACK");
+
     // Get the status information
     axios.get("/api/statuses/" + statusKey)
       .then(statusData => {
-        console.log(statusData);
+        // Update state to contain the new status
+        this.setState({
+          statuses: [
+            statusData.data.data,
+            ...this.state.statuses
+          ],
+        });
       })
       .catch(() => {});
   }
@@ -82,7 +92,7 @@ class Home extends React.Component {
   /**
    * Helper function to render statuses on the homepage
    * This renders the statuses contained in the state of the component
-   * NOTE map is a funcitonal iterator method
+   *
    * TODO add like counts
    */
   renderStatuses() {

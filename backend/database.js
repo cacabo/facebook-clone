@@ -94,9 +94,9 @@ function getStatus(id, callback) {
       if (err || !statusData) {
         callback(null, "Status not found");
       } else {
+        // Find the status information from the data
         const status = JSON.parse(statusData[0].value);
-        console.log("STATUS");
-        console.log(status);
+
         // Find the user of the status
         users.get(status.user, (userErr, userData) => {
           if (userErr || !userData) {
