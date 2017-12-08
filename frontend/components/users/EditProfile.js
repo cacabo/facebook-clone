@@ -7,16 +7,15 @@ import Loading from '../shared/Loading';
 import axios from 'axios';
 
 /**
- * Component to render a form to edit a user's profile
+ * Component to render a form to edit a user's profile\
+ *
+ * TODO better error checking for images
+ * TODO non-resizable text areas
  */
 class EditProfile extends React.Component {
   // Constructor method
   constructor(props) {
     super(props);
-
-    /**
-     * TODO pull actual data from dynamodb
-     */
 
     // Set the state
     this.state = {
@@ -131,9 +130,33 @@ class EditProfile extends React.Component {
     // Prevent the default submission
     event.preventDefault();
 
+    // Regular expression for validating URL's
     /**
-     * TODO error checking and make the request
+     * TODO test that this works
      */
+    const urlRegex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/;
+
+    // Error checking
+    if (!this.state.username) {
+      this.setState({
+        error: "Username must be populated.",
+      });
+    } else if (!this.state.firstName || !this.state.lastName) {
+      this.setState({
+        error: "First and last name must be populated",
+      });
+    } else if (this.state.affiliation && this.state.affiliation.length > 140) {
+      this.setState({
+        error: "Affiliation length capped at 140 characters",
+      });
+    } else if (this.state.bio && this.state.bio.length > 280) {
+      this.setState({
+        error: "Bio length capped at 280 characters.",
+      });
+    } else if (this.state.profilePicture) {
+      const validProfilePicture = urlRegex.test(this.state.profilePicture);
+      console.log("Valid profile picture?", validProfilePicture);
+    }
   }
 
   // Render the component
@@ -146,7 +169,7 @@ class EditProfile extends React.Component {
               <h3 className="marg-bot-1 bold">
                 Edit profile information
               </h3>
-              <form className="line-form">
+              <form className="line-form" onSubmit={ this.handleSubmit }>
                 <label>
                   Username
                 </label>
@@ -246,18 +269,15 @@ class EditProfile extends React.Component {
                   className={
                     this.state.username &&
                     this.state.firstName &&
-                    this.state.lastName &&
-                    this.state.affiliation &&
-                    this.state.bio &&
-                    this.state.interests ?
-                    "btn btn-primary full-width" :
+                    this.state.lastName ?
+                    "btn btn-primary full-width cursor" :
                     "btn btn-primary full-width disabled"
                   }
                   value="Update information"
                 />
               </form>
               <p className="marg-top-1 marg-bot-0">
-                Nevermind? <Link to={ "/users/" + "TODO" } className="inline">Back to your profile.</Link>
+                Nevermind? <Link to={ "/users/" + this.state.username } className="inline">Back to your profile.</Link>
               </p>
             </div>
           )
