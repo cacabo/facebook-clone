@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const SHA3 = require('crypto-js/sha3');
 const db = require('./database.js');
+const uuid = require('uuid-v4');
 
 // API routes
 router.get('/', (req, res) => {
@@ -68,6 +69,49 @@ router.get('/users/:username', (req, res) => {
       res.send({
         success: true,
         data: data,
+      });
+    }
+  });
+});
+
+// Add friends
+router.get('/users/:username/friends/new', (req, res) => {
+  // Friend of page we are on
+  const friend2 = req.params.username;
+  // Current friend logged in
+  const friend1 = req.session.username;
+
+  // Create the friendship
+  db.createFriendship("ccabo", friend2, (data, err) => {
+    if(err || !data) {
+      res.send({
+        success: false,
+        err: err,
+      });
+    } else{
+      res.send({
+        success: true,
+      });
+    }
+  });
+});
+
+// Add like to statuses
+router.get('/statuses/:statusID/likes', (req, res) => {
+  // Get the status and liker
+  const status = req.params.statusID;
+  const liker = req.session.username;
+
+  // Add like and update status
+  db.addLike(liker, status, (data, err) =>{
+    if (err || !data) {
+      res.send({
+        success: false,
+        err: err,
+      });
+    } else {
+      res.send({
+        success: true,
       });
     }
   });
