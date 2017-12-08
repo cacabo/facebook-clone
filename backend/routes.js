@@ -73,6 +73,16 @@ router.get('/users/:username', (req, res) => {
   });
 });
 
+// Add friends
+router.get('/users/:username/friends/new', (req, res) => {
+  console.log("Reached url");
+  const friend2 = req.params.username;
+  console.log("FRIEND2 IS" + friend2);
+  const friend1 = req.session.username;
+  db.createFriendship("ccabo", friend2, (data, err) => {
+  });
+});
+
 // Register a new user
 router.post('/users/new', (req, res) => {
   // Hash the password and confirm password
