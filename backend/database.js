@@ -105,6 +105,7 @@ function createUser(user, callback) {
   }
 }
 
+
 // Create friendship
 function createFriendship(friend1, friend2, callback) {
   console.log("reached1");
@@ -225,6 +226,14 @@ function addLike(liker, status, callback) {
     });
   }
 }
+
+// function getMessages(user, callback) {
+//   messages.get(user.username, (err, messageData) => {
+//     if (err || !messageData) {
+      
+//     }
+//   });
+// }
 
 // Create the database object to export
 const database = {
