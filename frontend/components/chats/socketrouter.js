@@ -11,7 +11,7 @@ function subscribeToMessages(cb) {
 
 function subscribeToinvitations(cb) {
 	socket.on('invite', (data) => {
-		var info = JSON.parse(data);
+		const info = JSON.parse(data);
 
 		//popup indicator in cb
 		cb(true); //passes to client
@@ -19,8 +19,8 @@ function subscribeToinvitations(cb) {
 }
 
 function sendMessage(message, cb) {
-	var messageData = JSON.parse(message);
-	var room = messageData.room;
+	const messageData = JSON.parse(message);
+	const room = messageData.room;
 
 	//store message in database mapped to room
 
@@ -32,7 +32,7 @@ function sendMessage(message, cb) {
 
 //room - the username of the friend you want to invite
 function invite(room, username, inviter, cb) {
-	var params = {
+	const params = {
 		sender: inviter,
 		roomToReceive: username,
 		roomToJoin: room

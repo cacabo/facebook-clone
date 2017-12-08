@@ -37,10 +37,10 @@ class Chat extends React.Component {
     //listens for new messages received
     subscribeToMessages((message) => this.setState((prevState, props) => {
         console.log("received message: " + message)
-        var messageInfo = JSON.parse(message);
+        const messageInfo = JSON.parse(message);
 
         if (messageInfo.room == this.props.match.params.id) {
-          var oldMessage = this.state.messages;
+          let oldMessage = this.state.messages;
           oldMessage.push(messageInfo);
           return {messages: oldMessage}
         }
@@ -60,12 +60,12 @@ class Chat extends React.Component {
 
   //do socket sending here. Append this to own message list. 
   handleSubmit(event) {
-    var messageToSend = this.state.message; //have to do this.state not this alone
+    const messageToSend = this.state.message; //have to do this.state not this alone
 
     console.log("Current Room from send: " + this.props.match.params.id);
     console.log("Chat ID: " + this.props.match.params.id);
 
-    var messageParams = {
+    const messageParams = {
       user: this.state.currentUser,
       body: messageToSend,
       createdAt: Date.now,
@@ -75,7 +75,7 @@ class Chat extends React.Component {
     sendMessage(JSON.stringify(messageParams), (success) => { 
       if (success) {
         this.setState((prevState, props) => {
-          var oldMessage = this.state.messages;
+          let oldMessage = this.state.messages;
           oldMessage.push(messageParams);
           return {
             messages: oldMessage,

@@ -44,8 +44,8 @@ socket.on('connection', (socket) => {
     //maybe have info of which room message came from in message json
     //emit only to that room once query room out of JSON object
 	socket.on('message', (message) => {
-		var messageData = JSON.parse(message);
-		var room = messageData.room;
+		const messageData = JSON.parse(message);
+		const room = messageData.room;
 
 		console.log("Broadcast reached " + message.body + " " + room);
 		socket.broadcast.to(room).emit('message', message);
@@ -53,7 +53,7 @@ socket.on('connection', (socket) => {
 
 	//hardcoded for now - username
 	socket.on('invite', (data) => {
-		var rooms = JSON.parse(data);
+		const rooms = JSON.parse(data);
 		socket.join(rooms.roomToReceive);
 		socket.broadcast.to(rooms.roomToReceive).emit('invite', data);
 	});
