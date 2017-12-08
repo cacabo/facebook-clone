@@ -1,6 +1,7 @@
 import React from 'react';
 import Thin from '../shared/Thin';
 import { Link } from 'react-router-dom';
+import { Redirect } from 'react-router';
 import autosize from 'autosize';
 import PropTypes from 'prop-types';
 import Loading from '../shared/Loading';
@@ -29,6 +30,7 @@ class EditProfile extends React.Component {
       interests: "",
       profilePicture: "",
       coverPhoto: "",
+      redirect: false,
     };
 
     // Bind this to functions
@@ -161,9 +163,13 @@ class EditProfile extends React.Component {
       });
     } else {
       // Input data is properly formatted
+      // Update the user information in the database
       axios.post("/api/users/" + this.state.username + "/update/", this.state)
-        .then(data => {
-          console.log(data);
+        .then(() => {
+          // Redirect the user away from the page
+          this.setState({
+            redirect: true,
+          });
         })
         .catch(() => {
           this.setState({
@@ -180,6 +186,9 @@ class EditProfile extends React.Component {
         {
           this.state.pending ? (<Loading />) : (
             <div className="card">
+              {
+                this.state.redirect && (<Redirect to={ "/users/" + this.state.username } />)
+              }
               <h3 className="marg-bot-1 bold">
                 Edit profile information
               </h3>
