@@ -30,6 +30,10 @@ userChats.init(() => {});
 var messages = new keyvaluestore('messagesTable');
 messages.init(() => {});
 
+// Create likes table
+var likes = new keyvaluestore('likesTable');
+likes.init(() => {});
+
 // Get a user with the specified username
 function getUser(username, callback) {
   users.get(username, (err, data) => {
@@ -119,8 +123,6 @@ function createFriendship(friend1, friend2, callback) {
       }
     });
 
-    console.log(friend2);
-
     // Check if the friendship already exists
     friendships.getPrefix(friend1, (err, data) => {
       console.log("get prefix reached");
@@ -131,16 +133,16 @@ function createFriendship(friend1, friend2, callback) {
       } else if(data) {
         console.log("reached data exists");
         // Go through data and see if it is friendship between 1 and 2
-        for(var i in data) {
-          if(i) {
-            console.log(i);
+        data.forEach((friendRelationship) => {
+          if (friendRelationship) {
+            console.log(friendRelationship);
+            if (friendRelationship.value.user2 === friend2) {
+              callback(null, "The friendship already exists.");
+            }
           }
-        }
-        callback(null, "The friendship already exists.");
+        });
       }
     });
-
-
 
     // // Friendship for user that is adding
     // const friendship1Object = {
@@ -178,11 +180,58 @@ function createFriendship(friend1, friend2, callback) {
   }
 }
 
+function addLike(liker, status, callback) {
+  if (!liker || !status) {
+    callback(null, "Either the liker or status is null.");
+  } else {
+    // Check that the status exists
+    statuses.get(status, (err, data) => {
+      if (err || !data) {
+        if (err) {
+          callback(null, "There was an error looking up status: " + err);
+        } else {
+          callback(null, "Status does not exist.");
+        }
+      } else {
+        // Create like object
+        const likeObject = {
+          status: status,
+          liker: liker,
+        };
+
+        const key = status + ":" + uuid();
+        // Put like object in table
+        likes.put(key, JSON.stringify(likeObject), (errLike, dataLike) =>  {
+          if(errLike || !dataLike) {
+            callback(null, "There was an error adding like to the table.");
+          } else {
+            // noice
+            const oldStatus = JSON.parse(data[0].value);
+
+            // Increase likesCount by 1
+            oldStatus.likesCount = parseInt(oldStatus.likesCount, 10) + 1;
+
+            // Update likes count of status in table
+            statuses.update(status, data[0].inx, oldStatus, (err3, data3) => {
+              if(err3 || !data3) {
+                callback(null, "There was an error updating likes count.");
+              } else{
+                callback({success: true}, null);
+              }
+            });
+          }
+        });
+      }
+    });
+  }
+}
+
 // Create the database object to export
 const database = {
   createUser: createUser,
   getUser: getUser,
   createFriendship: createFriendship,
+  addLike: addLike
 };
 
 module.exports = database;
