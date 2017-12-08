@@ -235,8 +235,39 @@ function createUser(user, callback) {
  * Update a user based on the passed in information
  * TODO
  */
-function updateUser(data, callback) {
-  callback(null, "Not implemented");
+function updateUser(updatedUser, callback) {
+  // TODO ERROR CHECKING
+  const username = updatedUser.username;
+  users.get(username, (err, data) => {
+    if (err || !data) {
+      callback(null, "User not found");
+    } else {
+      // Get the object for the old user
+      const oldUser = JSON.parse(data[0].value);
+
+      // Get the inx
+      const inx = data[0].inx;
+
+      // Update the user's fields
+      oldUser.firstName = updatedUser.firstName;
+      oldUser.lastName = updatedUser.lastName;
+      oldUser.affiliation = updatedUser.affiliation;
+      oldUser.bio = updatedUser.bio;
+      oldUser.interests = updatedUser.interests;
+      oldUser.profilePicture = updatedUser.profilePicture;
+      oldUser.coverPhoto = updatedUser.coverPhoto;
+      oldUser.updatedAt = Date.now();
+
+      // Put the updated user into the database
+      users.update(username, inx, oldUser, (updateErr, updatedData) => {
+        if (updateErr || !updatedData) {
+          callback(null, "Failed to update user");
+        } else {
+          callback(updatedData, null);
+        }
+      });
+    }
+  });
 }
 
 // Create the database object to export

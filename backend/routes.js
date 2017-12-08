@@ -126,13 +126,17 @@ router.post('/users/:username/update/', (req, res) => {
     // Send the object to the database
     db.updateUser(obj, (data, err) => {
       if (err || !data) {
-        this.setStat({
+        // If there was an error updating
+        res.send({
+          success: false,
           error: err,
         });
       } else {
-        /**
-         * TODO redirect to user show page
-         */
+        // If the update was successful
+        res.send({
+          success: true,
+          data: data,
+        });
       }
     });
   } else {
