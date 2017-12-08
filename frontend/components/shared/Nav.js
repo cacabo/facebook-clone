@@ -32,13 +32,13 @@ class Nav extends React.Component {
           this.props.onLogout();
         } else {
           /**
-           * TODO
+           * TODO handle error
            */
         }
       })
       .catch(err => {
         /**
-         * TODO
+         * TODO handle error
          */
       });
   }

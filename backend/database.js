@@ -38,11 +38,27 @@ function getStatuses(callback) {
             // If we failed to retrieve data
             callback(null, "An error occured: " + statusErr);
           } else {
-            // Push the status onto the array
-            statusArr.push(JSON.parse(statusData[0].value));
+            // Get the status object
+            const status = JSON.parse(statusData[0].value);
 
-            // Alert that the async call is done
-            keysCallback();
+            // Get the status's user's info
+            users.get(status.user, (userErr, userData) => {
+              if (userErr || !userData) {
+                callback(null, "Failed to retrieve status information.");
+              } else {
+                // Parse for the user data as an object
+                const userDataObj = JSON.parse(userData[0].value);
+
+                // Put the user information into the status object
+                status.userData = userDataObj;
+
+                // Push the status onto the array
+                statusArr.push(status);
+
+                // Alert that the async call is done
+                keysCallback();
+              }
+            });
           }
         });
       }, (asyncErr) => {

@@ -14,6 +14,7 @@ import PropTypes from 'prop-types';
  * TODO stateful likes
  * TODO pull user information from DB
  * TODO actually render comments
+ * TODO put in timestamp at bottom right
  */
 class Status extends React.Component {
   // Constructor method
@@ -55,10 +56,10 @@ class Status extends React.Component {
     return(
       <div className="card status">
         <div className="user">
-          <div className="userImg" style={{backgroundImage: "url(" + this.props.userImg + ")"}} />
+          <div className="userImg" style={{backgroundImage: "url(" + this.props.userData.profilePicture + ")"}} />
           <p>
             <Link to={ "/users/" + this.props.username } >
-              { this.props.name }
+              { this.props.userData.firstName + " " + this.props.userData.lastName }
             </Link>
           </p>
         </div>
@@ -69,11 +70,11 @@ class Status extends React.Component {
         <div className="interact">
           <div className="like" onClick={ this.likeOnClick }>
             <i className={ this.state.isLiked ? "fa fa-heart" : "fa fa-heart-o" } />
-            12 likes
+            { this.props.likesCount } likes
           </div>
           <div className="comment" onClick={ this.commentOnClick }>
             <i className={ this.state.toggledComments ? "fa fa-comment" : "fa fa-comment-o" } />
-            4 comments
+            { this.props.commentsCount } comments
           </div>
         </div>
         <div className={ this.state.toggledComments ? "comments" : "comments hidden" }>
@@ -94,6 +95,9 @@ Status.propTypes = {
   image: PropTypes.string,
   content: PropTypes.string,
   username: PropTypes.string,
+  userData: PropTypes.object,
+  commentsCount: PropTypes.number,
+  likesCount: PropTypes.number,
 };
 
 export default Status;

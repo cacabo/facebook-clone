@@ -41,9 +41,10 @@ class Home extends React.Component {
    * TODO denote errors to the user
    */
   componentDidMount() {
+    // Make the AJAX request
     axios.get('/api/statuses')
       .then(res => {
-        console.log(res);
+        // Check if the response was successful
         if (res.data.success) {
           this.setState({
             pending: false,
@@ -78,6 +79,7 @@ class Home extends React.Component {
    * TODO add like counts
    */
   renderStatuses() {
+    console.log(this.state.statuses[0]);
     return this.state.statuses.map((status) => {
       return (
         <Status
@@ -85,6 +87,11 @@ class Home extends React.Component {
           image={ status.image }
           username={ status.username }
           key={ uuid() }
+          userData={ status.userData }
+          commentsCount={ status.commentsCount }
+          likesCount={ status.likesCount }
+          type={ status.type }
+          updatedAt={ status.updatedAt }
         />
       );
     });
