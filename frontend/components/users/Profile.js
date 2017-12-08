@@ -16,6 +16,8 @@ import PropTypes from 'prop-types';
  * TODO render user statuses
  * TODO handle posts on user's wall
  * TODO have different errors (statuses, user not found, post error, etc)
+ * TODO count num posts
+ * TODO count num friends
  */
 class Profile extends React.Component {
   // Constructor method
@@ -75,15 +77,21 @@ class Profile extends React.Component {
     }
     return (
       <div className="profile">
-        <div className="cover-photo" />
+        <div
+          className="cover-photo"
+          style={{ backgroundImage: `url(${this.state.coverPhoto})` }}
+        />
         <div className="menu">
           <h3>{ this.state.firstName + " " + this.state.lastName }</h3>
         </div>
 
         <div className="container-fluid">
           <div className="row">
-            <div className="col-12 col-lg-10 offset-lg-1">
-              <div className="profile-picture" />
+          <div className="col-12 col-lg-10 offset-lg-1">
+              <div
+                className="profile-picture"
+                style={{ backgroundImage: `url(${this.state.profilePicture})` }}
+              />
 
               <div className="row">
                 <div className="col-12 col-md-4 about">
@@ -96,18 +104,14 @@ class Profile extends React.Component {
                   <strong>
                     Interests
                   </strong>
-                  { this.state.interests }
+                  <p>
+                    { this.state.interests }
+                  </p>
                   <ul className="tags">
                     <li>NETS 212</li>
                     <li>Scalable cloud computing</li>
                     <li>Computer science</li>
                   </ul>
-                  <p>
-                    <strong>Friends:</strong> 212
-                  </p>
-                  <p>
-                    <strong>Posts:</strong> 41
-                  </p>
                 </div>
                 <div className="col-12 col-md-8 col-lg-7">
                   <StatusForm placeholder="Write on this user's wall" />
