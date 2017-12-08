@@ -5,7 +5,7 @@ import { Redirect } from 'react-router';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import axios from 'axios';
-import { logout } from '../../actions/index';
+import { logout } from '../actions/index';
 
 // Import components to render
 import Home from '../components/newsfeed/Home';
@@ -29,11 +29,13 @@ import LoggedInAuth from '../components/users/LoggedInAuth';
  */
 class AppContainer extends React.Component {
   // Ensure the user is logged in
-  componentWillMount() {
+  componentDidMount() {
     axios.get("/api/session")
       .then(data => {
-        console.log("DATA");
-        console.log(data);
+        // Log the user out if the user is not logged in on express
+        if (!data.data.success) {
+          this.props.logout();
+        }
       })
       .catch(() => {
         // Purge the user's redux state
