@@ -134,7 +134,7 @@ class EditProfile extends React.Component {
     /**
      * TODO test that this works
      */
-    const urlRegex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/;
+    const urlRegex = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
 
     // Error checking
     if (!this.state.username) {
@@ -153,9 +153,19 @@ class EditProfile extends React.Component {
       this.setState({
         error: "Bio length capped at 280 characters.",
       });
-    } else if (this.state.profilePicture) {
-      const validProfilePicture = urlRegex.test(this.state.profilePicture);
-      console.log("Valid profile picture?", validProfilePicture);
+    } else if (this.state.profilePicture && !urlRegex.test(this.state.profilePicture)) {
+      this.setState({
+        error: "Profile picture must be a valid URL.",
+      });
+    } else if (this.state.coverPhoto && !urlRegex.test(this.state.coverPhoto)) {
+      this.setState({
+        error: "Cover photo must be a valid URL.",
+      });
+    } else {
+      // Input data is properly formatted
+      /**
+       * TODO
+       */
     }
   }
 
@@ -246,7 +256,7 @@ class EditProfile extends React.Component {
                   Profile picture
                 </label>
                 <input
-                  type="url"
+                  type="text"
                   name="profilePicture"
                   className="form-control marg-bot-1"
                   value={ this.state.profilePicture }
@@ -257,7 +267,7 @@ class EditProfile extends React.Component {
                   Cover photo
                 </label>
                 <input
-                  type="url"
+                  type="text"
                   name="coverPhoto"
                   className="form-control marg-bot-1"
                   value={ this.state.coverPhoto }
