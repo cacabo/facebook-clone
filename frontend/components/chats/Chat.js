@@ -19,12 +19,14 @@ class Chat extends React.Component {
   constructor(props) {
     super(props);
      
+    // Set the state of the application
     this.state = {
       message: "",
       currentUser: "12",
       messages: [],
     }
 
+    // Bind this to helper methods
     this.handleChangeMessage = this.handleChangeMessage.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleInvite = this.handleInvite.bind(this);
