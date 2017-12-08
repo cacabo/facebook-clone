@@ -68,8 +68,15 @@ class Home extends React.Component {
    * Helper method to render a newly created status
    */
   newStatusCallback(data) {
-    console.log("CALLBACK");
-    console.log(data);
+    // Get the status key from the response from the status form
+    const statusKey = data.data.key;
+
+    // Get the status information
+    axios.get("/api/statuses/" + statusKey)
+      .then(statusData => {
+        console.log(statusData);
+      })
+      .catch(() => {});
   }
 
   /**

@@ -73,8 +73,6 @@ class StatusForm extends React.Component {
         receiver: null,
       })
         .then(res => {
-          console.log("RESPONSE");
-          console.log(res);
           if (!res.data.success) {
             this.setState({
               error: res.data.error,

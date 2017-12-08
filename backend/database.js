@@ -233,10 +233,9 @@ function createUser(user, callback) {
 
 /**
  * Update a user based on the passed in information
- * TODO
+ * TODO error checking
  */
 function updateUser(updatedUser, callback) {
-  // TODO ERROR CHECKING
   const username = updatedUser.username;
   users.get(username, (err, data) => {
     if (err || !data) {
