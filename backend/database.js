@@ -1,40 +1,43 @@
 // Import the keyvaluestore
-var keyvaluestore = require('./keyvaluestore.js');
+const keyvaluestore = require('./keyvaluestore.js');
 const uuid = require('uuid-v4');
 
 // Create the usersTable
-var users = new keyvaluestore('usersTable');
+const users = new keyvaluestore('usersTable');
 users.init(() => {});
 
 // Create the friendRelationshipTable
-var friendships = new keyvaluestore('friendshipsTable');
+const friendships = new keyvaluestore('friendshipsTable');
 friendships.init(() => {});
 
 // Create the status table
-var statuses = new keyvaluestore('statusTable');
+const statuses = new keyvaluestore('statusTable');
 statuses.init(() => {});
 
 // Create comments table
-var comments = new keyvaluestore('commentsTable');
+const comments = new keyvaluestore('commentsTable');
 comments.init(() => {});
 
 // Create chats table
-var chats = new keyvaluestore('chatsTable');
+const chats = new keyvaluestore('chatsTable');
 chats.init(() => {});
 
 // Create userChatRelationship table
-var userChats = new keyvaluestore('userChatsTable');
+const userChats = new keyvaluestore('userChatsTable');
 userChats.init(() => {});
 
 // Create messages table
-var messages = new keyvaluestore('messagesTable');
+const messages = new keyvaluestore('messagesTable');
 messages.init(() => {});
 
 // Create likes table
-var likes = new keyvaluestore('likesTable');
+const likes = new keyvaluestore('likesTable');
 likes.init(() => {});
 
-// Get a user with the specified username
+
+/**
+ * Get a user with the specified username
+ */
 function getUser(username, callback) {
   users.get(username, (err, data) => {
     if (err || !data) {
@@ -50,7 +53,9 @@ function getUser(username, callback) {
   });
 }
 
-// Create a new user
+/**
+ * Create a new user
+ */
 function createUser(user, callback) {
   // Perform error checking
   if (!user.username ||
@@ -106,15 +111,16 @@ function createUser(user, callback) {
 }
 
 
-// Create friendship
+/**
+ * Create a friendship. friend1 is adding, and friend2 is being added
+ * TODO After fixing error with range query, we need to create friendships
+ *      and add them to the friendshipsTable
+ */
 function createFriendship(friend1, friend2, callback) {
-  console.log("reached1");
   // Check if any of friends are null
   if (!friend1 || !friend2) {
-    console.log("reached2");
     callback(null, "One of the friends are null.");
   } else {
-    console.log("reached");
     // Check if friend2 doesn't exist
     users.get(friend2, (err, data) => {
       if(err) {
@@ -126,13 +132,12 @@ function createFriendship(friend1, friend2, callback) {
 
     // Check if the friendship already exists
     friendships.getPrefix(friend1, (err, data) => {
-      console.log("get prefix reached");
+      // Check for errors in getting prefix set
       if (err) {
-        console.log(err);
-        console.log("error in prefix search reached");
         callback(null, "Error looking for friendship:" + err);
       } else if(data) {
         console.log("reached data exists");
+
         // Go through data and see if it is friendship between 1 and 2
         data.forEach((friendRelationship) => {
           if (friendRelationship) {
@@ -181,6 +186,9 @@ function createFriendship(friend1, friend2, callback) {
   }
 }
 
+/**
+ * Adds a Like object to the likesTable and updates the likeCount in the status
+ */
 function addLike(liker, status, callback) {
   if (!liker || !status) {
     callback(null, "Either the liker or status is null.");
@@ -230,7 +238,7 @@ function addLike(liker, status, callback) {
 // function getMessages(user, callback) {
 //   messages.get(user.username, (err, messageData) => {
 //     if (err || !messageData) {
-      
+
 //     }
 //   });
 // }
