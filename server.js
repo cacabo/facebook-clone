@@ -1,24 +1,36 @@
 const path = require('path');
 const express = require('express');
+const session = require('express-session');
 const app = express();
 const PORT = process.env.PORT || 3000;
 const api = require('./backend/routes');
-
+const bodyParser = require('body-parser');
 const socket = require('socket.io')();
 socket.listen(8000);
 
+// Express sessions configuration
+app.set('trust proxy', 1);
+app.use(session({
+  secret: 'perky puppy',
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: false }
+}));
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/api', api);
 
 app.get('*', (request, response) => {
-    response.sendFile(__dirname + '/public/index.html'); // For React/Redux
+  response.sendFile(__dirname + '/public/index.html'); // For React/Redux
 });
 
 app.listen(PORT, error => {
-    error
-    ? console.error(error)
-    : console.info(`==> 🌎 Listening on port ${PORT}. Visit http://localhost:${PORT}/ in your browser.`);
+  error
+  ? console.error(error)
+  : console.info(`==> 🌎 Listening on port ${PORT}. Visit http://localhost:${PORT}/ in your browser.`);
 });
 
 // The event will be called when a client is connected. Right when the app opens

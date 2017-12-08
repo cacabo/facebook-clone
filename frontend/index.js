@@ -1,13 +1,28 @@
 import React from 'react';
 import { render } from 'react-dom';
-import { configureStore, history } from './store/configureStore';
+import { createStore, applyMiddleware } from 'redux';
+import rootReducer from './reducers';
+import logger from 'redux-logger';
+import { persistStore } from 'redux-persist';
 import Root from './containers/Root';
+
 
 import './assets/stylesheets/base.scss';
 
-const store = configureStore();
+// Create the redux store
+const store = createStore(
+  rootReducer,
+  applyMiddleware(logger),
+);
+
+// Persist store allows redux state to not reset when page refresh
+const persistor = persistStore(
+  store,
+  null,
+  () => store.getState()
+);
 
 render(
-    <Root store={store} history={history} />,
-    document.getElementById('root')
+  <Root store={store} persistor={persistor} />,
+  document.getElementById('root')
 );
