@@ -112,15 +112,16 @@ class Chat extends React.Component {
             </div>
           </div>
         );
-      } else {
-        return (
-          <div className="message-wrapper" key={ uuid() }>
-            <div className="message">
-              { m.body }
-            </div>
-          </div>
-        );
       }
+
+      // Otherwise
+      return (
+        <div className="message-wrapper" key={ uuid() }>
+          <div className="message">
+            { m.body }
+          </div>
+        </div>
+      );
     });
   }
 
@@ -138,8 +139,7 @@ class Chat extends React.Component {
             onChange={ this.handleChangeMessage }
             className="form-control card-shade"
             type="text"
-          >
-          </textarea>
+          />
           <input
             type="submit"
             className={
@@ -154,6 +154,6 @@ class Chat extends React.Component {
       </Chats>
     );
   }
-};
+}
 
 export default Chat;

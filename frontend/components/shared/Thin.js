@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 /**
  * Wrapper component of thin width which renders whatever component you put
@@ -14,6 +15,10 @@ const Thin = ({ children }) => {
       </div>
     </div>
   );
+};
+
+Thin.propTypes = {
+  children: PropTypes.object,
 };
 
 export default Thin;

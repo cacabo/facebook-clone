@@ -1,11 +1,13 @@
 import React from 'react';
 import Thin from '../shared/Thin';
 import { Link } from 'react-router-dom';
+import PropTypes from 'prop-types';
+import { login } from '../../actions/index';
+import { connect } from 'react-redux';
+import axios from 'axios';
 
 /**
  * Component to render a user's login form
- *
- * TODO check for valid email
  */
 class Login extends React.Component {
   // Constructor method
@@ -15,7 +17,7 @@ class Login extends React.Component {
       username: "",
       password: "",
       error: "",
-    }
+    };
 
     // Bind this
     this.handleChangeUsername = this.handleChangeUsername.bind(this);
@@ -72,10 +74,31 @@ class Login extends React.Component {
       this.setState({
         error: "",
       });
-      
-      /**
-       * TODO make the request
-       */
+
+      // Check if the user exists/password is right
+      axios.post("/api/users/sessions/new", {
+        username: this.state.username,
+        password: this.state.password,
+      })
+        .then(res => {
+          // If there is an error in the response
+          if (res.data.err) {
+            this.setState({
+              error: res.data.err,
+            });
+          } else {
+            // Find the username from the response
+            const username = res.data.data.username;
+
+            // Dispatch the login event to Redux
+            this.props.onLogin(username);
+          }
+        })
+        .catch(err => {
+          this.setState({
+            error: err
+          });
+        });
     }
   }
 
@@ -83,63 +106,89 @@ class Login extends React.Component {
   render() {
     return (
       <Thin>
-        <div className="card">
-          <h3 className="bold marg-bot-1">
-            Login
-          </h3>
+        <div>
           {
-            this.state.error ?
-            <div className="alert alert-danger error">
-              <p className="bold marg-bot-025">
-                There was an error:
-              </p>
-              <p className="marg-bot-0">
-                { this.state.error }
-              </p>
-            </div>
-            : ""
+            this.props.notice && (
+              <div className="alert alert-warning alert-card card-shade">
+                { this.props.notice }
+              </div>
+            )
           }
-          <form className="line-form" onSubmit={ this.handleSubmit }>
-            <label>
-              Username
-            </label>
-            <input
-              value={ this.state.username }
-              onChange={ this.handleChangeUsername }
-              type="text"
-              name="username"
-              className="form-control marg-bot-1"
-              autoFocus="true"
-            />
+          <div className="card">
+            <h3 className="bold marg-bot-1">
+              Login
+            </h3>
+            {
+              this.state.error ?
+              <div className="alert alert-danger error">
+                <p className="bold marg-bot-025">
+                  There was an error:
+                </p>
+                <p className="marg-bot-0">
+                  { this.state.error }
+                </p>
+              </div>
+              : ""
+            }
+            <form className="line-form" onSubmit={ this.handleSubmit }>
+              <label>
+                Username
+              </label>
+              <input
+                value={ this.state.username }
+                onChange={ this.handleChangeUsername }
+                type="text"
+                name="username"
+                className="form-control marg-bot-1"
+                autoFocus="true"
+              />
 
-            <label>
-              Password
-            </label>
-            <input
-              value={ this.state.password }
-              onChange={ this.handleChangePassword }
-              type="password"
-              name="password"
-              className="form-control marg-bot-1"
-            />
-
-            <input
-              type="submit"
-              className={
-                (this.state.username && this.state.password) ?
-                "btn btn-primary full-width cursor" :
-                "btn btn-primary full-width disabled"
-              }
-              value="Create account"
-            />
-          </form>
-          <p className="marg-top-1 marg-bot-0">
-            Don't have an account? <Link to="/register" className="inline">create one here.</Link>
-          </p>
+              <label>
+                Password
+              </label>
+              <input
+                value={ this.state.password }
+                onChange={ this.handleChangePassword }
+                type="password"
+                name="password"
+                className="form-control marg-bot-1"
+              />
+              <input
+                type="submit"
+                className={
+                  (this.state.username && this.state.password) ?
+                  "btn btn-primary full-width cursor" :
+                  "btn btn-primary full-width disabled"
+                }
+                value="Login"
+              />
+            </form>
+            <p className="marg-top-1 marg-bot-0">
+              Don't have an account? <Link to="/register" className="inline">create one here.</Link>
+            </p>
+          </div>
         </div>
       </Thin>
     );
   }
+}
+
+Login.propTypes = {
+  notice: PropTypes.string,
+  onLogin: PropTypes.func,
 };
 
-export default Login;
+const mapStateToProps = (/* state */) => {
+  return {};
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    onLogin: (username) => dispatch(login(username)),
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Login);

@@ -1,19 +1,23 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import {Provider} from 'react-redux';
+import { Provider } from 'react-redux';
 import AppContainer from './AppContainer.js';
-import DevTools from './DevTools';
+import { PersistGate } from 'redux-persist/es/integration/react';
 
-export default function Root({ store }) {
-    return (
-        <Provider store={store}>
-            <div>
-                <AppContainer />
-            </div>
-        </Provider>
-    );
+export default function Root({ store, persistor }) {
+  return (
+    <Provider store={store}>
+      <PersistGate
+        loading={null}
+        onBeforeLift={null}
+        persistor={persistor}>
+        <AppContainer />
+      </PersistGate>
+    </Provider>
+  );
 }
 
 Root.propTypes = {
-    store: PropTypes.object.isRequired
+  store: PropTypes.object.isRequired,
+  persistor: PropTypes.object.isRequired,
 };

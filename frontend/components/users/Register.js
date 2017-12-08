@@ -1,6 +1,10 @@
 import React from 'react';
 import Thin from '../shared/Thin';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
+import { login } from '../../actions/index';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 
 /**
  * Component to render a form to register a user
@@ -140,21 +144,45 @@ class Register extends React.Component {
       }
     }
 
-    /**
-     * TODO ensure the username is unique
-     * TODO handle the submit
-     */
-
     // If no error has been found to this point
     if (isValid) {
       // Remove any existing error
       this.setState({
         error: "",
       });
-      
-      /**
-       * TODO make the request
-       */
+
+      // Check if the username is already taken
+      // Store the data from the form
+      const data = {
+        username: this.state.username,
+        firstName: this.state.firstName,
+        lastName: this.state.lastName,
+        password: this.state.password,
+        confirmPassword: this.state.confirmPassword,
+      };
+
+      // Send a post request to create the user
+      axios.post("/api/users/new", data)
+      .then((postRes) => {
+        console.log("Porstres", postRes);
+
+        if (postRes.data.success) {
+          // Find the username in the response
+          const username = postRes.data.username;
+
+          // Dispatch the login event to Redux
+          this.props.onRegister(username);
+        } else {
+          this.setState({
+            error: postRes.data.error,
+          });
+        }
+      })
+      .catch((err) => {
+        this.setState({
+          error: "There was an issue creating your account: " + err,
+        });
+      });
     }
   }
 
@@ -263,6 +291,23 @@ class Register extends React.Component {
       </Thin>
     );
   }
+}
+
+Register.propTypes = {
+  onRegister: PropTypes.func,
 };
 
-export default Register;
+const mapStateToProps = (/* state */) => {
+  return {};
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    onRegister: (username) => dispatch(login(username)),
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Register);
