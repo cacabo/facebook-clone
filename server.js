@@ -24,11 +24,10 @@ app.listen(PORT, error => {
 // The event will be called when a client is connected. Right when the app opens
 socket.on('connection', (socket) => {
 	console.log('A client just joined on', socket.id);
+	//socket.id = client's id
 
 	//pull from database all chats pertaining to user and connect to them
-    socket.join('1');
-    socket.join('12');
-    socket.join('4');
+    socket.join('username')
 
     //maybe have info of which room message came from in message json
     //emit only to that room once query room out of JSON object
@@ -39,4 +38,23 @@ socket.on('connection', (socket) => {
 		console.log("Broadcast reached " + message.body + " " + room);
 		socket.broadcast.to(room).emit('message', message);
 	});
+
+	//hardcoded for now - username
+	socket.on('invite', (data) => {
+		var rooms = JSON.parse(data);
+		socket.join(rooms.roomToReceive);
+		socket.broadcast.to(rooms.roomToReceive).emit('invite', data);
+	});
+
+	socket.on('joinRoom', (room) => {
+		socket.join(room);
+		console.log("joined room " + room);
+	});
+
+	socket.on('leaveRoom', (room) => {
+		socket.leave(room);
+
+		//emit the fact that this user has left the room
+	});
 });
+

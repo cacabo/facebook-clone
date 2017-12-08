@@ -4,7 +4,9 @@ import Chats from './Chats';
 import uuid from 'uuid-v4';
 import SocketIOClient from 'socket.io-client';
 import { subscribeToMessages } from './socketrouter';
+import { subscribeToinvitations } from './socketrouter';
 import { sendMessage } from './socketrouter';
+import { invite } from './socketrouter';
 
 /**
  * Component to render one of a user's group chats.
@@ -24,7 +26,8 @@ class Chat extends React.Component {
     }
 
     this.handleChangeMessage = this.handleChangeMessage.bind(this);
-    this.submit = this.handleSubmit.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleInvite = this.handleInvite.bind(this);
   }
 
   // Autosize the text area to fit the text that's pasted into it
@@ -42,6 +45,10 @@ class Chat extends React.Component {
           return {messages: oldMessage}
         }
     }));
+
+    subscribeToinvitations((success) => {
+      console.log("received invitation!!!");
+    });
   }
 
   // Helper method to handle a change to state
@@ -59,13 +66,13 @@ class Chat extends React.Component {
     console.log("Chat ID: " + this.props.match.params.id);
 
     var messageParams = {
-      user: this.state.user,
+      user: this.state.currentUser,
       body: messageToSend,
       createdAt: Date.now,
       room: this.props.match.params.id
     };
 
-    sendMessage(this.props.match.params.id, JSON.stringify(messageParams), (success) => { 
+    sendMessage(JSON.stringify(messageParams), (success) => { 
       if (success) {
         this.setState((prevState, props) => {
           var oldMessage = this.state.messages;
@@ -80,6 +87,13 @@ class Chat extends React.Component {
       }
     });
     event.preventDefault();
+  }
+
+  handleInvite(event) {
+    //username - user we are inviting
+    invite(this.props.match.params.id, 'username', this.state.currentUser, (success) => {
+        if (success) {console.log("Invite successful");}
+    });
   }
 
   /**
@@ -117,11 +131,11 @@ class Chat extends React.Component {
         <div className="messages">
           { this.renderMessages() }
         </div>
-        <form className="message-form" onSubmit={ this.handleSubmit.bind(this) }>
+        <form className="message-form" onSubmit={ this.handleSubmit }>
           <textarea
             name="message"
             value={ this.state.message }
-            onChange={ this.handleChangeMessage.bind(this) }
+            onChange={ this.handleChangeMessage }
             className="form-control card-shade"
             type="text"
           >
@@ -136,6 +150,7 @@ class Chat extends React.Component {
             value="Send"
           />
         </form>
+        <button onClick={ this.handleInvite }>Invite</button>
       </Chats>
     );
   }
