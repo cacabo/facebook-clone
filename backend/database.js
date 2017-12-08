@@ -49,6 +49,15 @@ function getStatuses(callback) {
                 // Parse for the user data as an object
                 const userDataObj = JSON.parse(userData[0].value);
 
+                // Remove unnecessary fields
+                delete userDataObj.password;
+                delete userDataObj.bio;
+                delete userDataObj.coverPhoto;
+                delete userDataObj.updatedAt;
+                delete userDataObj.createdAt;
+                delete userDataObj.interests;
+                delete userDataObj.affiliation;
+
                 // Put the user information into the status object
                 status.userData = userDataObj;
 
@@ -81,11 +90,37 @@ function getStatus(id, callback) {
   if (!id || id.length === 0) {
     callback(null, "Status ID must be well-defined");
   } else {
-    statuses.get(id, (err, data) => {
-      if (err || !data) {
+    statuses.get(id, (err, statusData) => {
+      if (err || !statusData) {
         callback(null, "Status not found");
       } else {
-        callback(data, null);
+        const status = JSON.parse(statusData[0].value);
+        console.log("STATUS");
+        console.log(status);
+        // Find the user of the status
+        users.get(status.user, (userErr, userData) => {
+          if (userErr || !userData) {
+            callback(null, "Failed to retrieve status information.");
+          } else {
+            // Parse for the user data as an object
+            const userDataObj = JSON.parse(userData[0].value);
+
+            // Remove unnecessary fields
+            delete userDataObj.password;
+            delete userDataObj.bio;
+            delete userDataObj.coverPhoto;
+            delete userDataObj.updatedAt;
+            delete userDataObj.createdAt;
+            delete userDataObj.interests;
+            delete userDataObj.affiliation;
+
+            // Put the user information into the status object
+            status.userData = userDataObj;
+
+            // Return the status
+            callback(status, null);
+          }
+        });
       }
     });
   }

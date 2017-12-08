@@ -70,6 +70,37 @@ router.get('/statuses', (req, res) => {
 });
 
 /**
+ * Get a single status
+ */
+router.get('/statuses/:id', (req, res) => {
+  if (!req.session.username) {
+    // If the current user is not logged in
+    res.send({
+      success: false,
+      error: "User must be logged in",
+    });
+  }
+
+  // Find the ID
+  const id = req.params.id;
+
+  // Find the status in the database
+  db.getStatus(id, (data, err) => {
+    if (err || !data) {
+      res.send({
+        success: false,
+        error: err,
+      });
+    } else {
+      res.send({
+        success: true,
+        data: data,
+      });
+    }
+  });
+});
+
+/**
  * Create a new status
  */
 router.post('/statuses/new', (req, res) => {
