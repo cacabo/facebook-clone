@@ -73,8 +73,6 @@ class Home extends React.Component {
     // Get the status key from the response from the status form
     const statusKey = data.data.key;
 
-    console.log("IN CALLBACK");
-
     // Get the status information
     axios.get("/api/statuses/" + statusKey)
       .then(statusData => {
