@@ -44,19 +44,20 @@ class EditProfile extends React.Component {
 
   // Once the component mounts
   componentDidMount() {
-    // Autosize textareas when the component mounts
-    autosize(document.querySelectorAll('textarea'));
-
     // Get the current session
     axios.get("/api/session")
       .then(data => {
         if (data.data.success) {
           axios.get("/api/users/" + data.data.username)
             .then(userData => {
+              // Update the state
               this.setState({
                 ...userData.data.data,
                 pending: false,
               });
+
+              // Autosize textareas when the component mounts
+              autosize(document.querySelectorAll('textarea'));
             })
             .catch(() => {
               /**
@@ -131,9 +132,6 @@ class EditProfile extends React.Component {
     event.preventDefault();
 
     // Regular expression for validating URL's
-    /**
-     * TODO test that this works
-     */
     const urlRegex = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
 
     // Error checking
@@ -163,9 +161,15 @@ class EditProfile extends React.Component {
       });
     } else {
       // Input data is properly formatted
-      /**
-       * TODO
-       */
+      axios.post("/api/users/" + this.state.username + "/update/", this.state)
+        .then(data => {
+          console.log(data);
+        })
+        .catch(() => {
+          /**
+           * TODO
+           */
+        });
     }
   }
 

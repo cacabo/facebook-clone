@@ -129,6 +129,7 @@ class AppContainer extends React.Component {
               { chatsRoute }
               { notFoundRoute }
             </Switch>
+            <div className="space-2" />
           </div>
         </Router>
       </div>

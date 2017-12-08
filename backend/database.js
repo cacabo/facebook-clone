@@ -137,10 +137,15 @@ function createStatus(content, receiver, user, callback) {
 function getUserStatuses(username, callback) {
   if (!username || username.length === 0) {
     callback(null, "Username must be well-defined");
+  } else {
+    users.getPrefix(username + ":", (err, data) => {
+      if (err || !data) {
+        callback(null, err);
+      } else {
+        callback(data, null);
+      }
+    });
   }
-
-  console.log(username);
-  callback(null, "Not yet implemented");
 }
 
 /**
@@ -226,6 +231,14 @@ function createUser(user, callback) {
   }
 }
 
+/**
+ * Update a user based on the passed in information
+ * TODO
+ */
+function updateUser(data, callback) {
+  callback(null, "Not implemented");
+}
+
 // Create the database object to export
 const database = {
   createUser: createUser,
@@ -234,6 +247,7 @@ const database = {
   getStatus: getStatus,
   getUserStatuses: getUserStatuses,
   createStatus: createStatus,
+  updateUser: updateUser,
 };
 
 module.exports = database;

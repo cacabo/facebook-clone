@@ -103,6 +103,48 @@ router.post('/statuses/new', (req, res) => {
 });
 
 /**
+ * Update a user object
+ */
+router.post('/users/:username/update/', (req, res) => {
+  const sessionUsername = req.session.username;
+  const reqUsername = req.params.username;
+
+  // Ensure that the two uesernames are the same
+  if (sessionUsername === reqUsername) {
+    // Update the object to contain the information we want
+    const obj = {
+      username: sessionUsername,
+      firstName: req.body.firstName,
+      lastName: req.body.lastName,
+      affiliation: req.body.affiliation,
+      bio: req.body.bio,
+      interests: req.body.interests,
+      profilePicture: req.body.profilePicture,
+      coverPhoto: req.body.coverPhoto,
+    };
+
+    // Send the object to the database
+    db.updateUser(obj, (data, err) => {
+      if (err || !data) {
+        this.setStat({
+          error: err,
+        });
+      } else {
+        /**
+         * TODO redirect to user show page
+         */
+      }
+    });
+  } else {
+    // If there is no username match
+    res.send({
+      success: false,
+      error: "Invalid user credentials.",
+    });
+  }
+});
+
+/**
  * Get all statuses by a particular user
  * TODO test that this works / implement
  */
