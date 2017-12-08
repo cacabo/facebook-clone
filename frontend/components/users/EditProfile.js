@@ -183,6 +183,18 @@ class EditProfile extends React.Component {
               <h3 className="marg-bot-1 bold">
                 Edit profile information
               </h3>
+              {
+                this.state.error ?
+                <div className="alert alert-danger error">
+                  <p className="bold marg-bot-025">
+                    There was an error:
+                  </p>
+                  <p className="marg-bot-0">
+                    { this.state.error }
+                  </p>
+                </div>
+                : ""
+              }
               <form className="line-form" onSubmit={ this.handleSubmit }>
                 <label>
                   Username
