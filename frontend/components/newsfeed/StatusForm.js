@@ -1,12 +1,15 @@
 import React from 'react';
 import autosize from 'autosize';
 import PropTypes from 'prop-types';
+import axios from 'axios';
 
 /**
  * Render the status form to appear at the top of the newsfeed and at the top
  * of a user's profile page.
  *
  * Post button only shows after the user clicks on the form.
+ *
+ * TODO render newly created status
  */
 class StatusForm extends React.Component {
   // Constructor method
@@ -49,27 +52,55 @@ class StatusForm extends React.Component {
     // Prevent the default submit action
     event.preventDefault();
 
-    // Keep track of if an error has occured or not
-    let isValid = true;
-
     // Ensure that the status is valid
     if (!this.state.status || this.state.status.length < 2) {
       this.setState({
         error: "Status must be at least 2 characters long."
       });
-      isValid = false;
     } else {
+      // Remove any existing error
       this.setState({
         error: "",
       });
-    }
-    /**
-     * TODO
-     */
-    if (isValid) {
+
+      // Create the new status
       /**
-       * Make the request
+       * TODO receiver should not always be null
+       * for example, if this is on a user's wall
        */
+      axios.post("/api/statuses/new", {
+        content: this.state.status,
+        receiver: null,
+      })
+        .then(res => {
+          if (!res.data.success) {
+            this.setState({
+              error: res.data.error,
+            });
+          } else {
+            // Reset the state
+            this.setState({
+              error: "",
+              status: "",
+              active: false,
+            });
+
+            // Propogate the data up to the home components
+            this.props.callback(res.data);
+          }
+        })
+        .catch(err => {
+          // Catch an error on the post request
+          if (err) {
+            this.setState({
+              error: err,
+            });
+          } else {
+            this.setState({
+              error: "Failed to create status."
+            });
+          }
+        });
     }
   }
 
@@ -118,6 +149,7 @@ class StatusForm extends React.Component {
 
 StatusForm.propTypes = {
   placeholder: PropTypes.string,
+  callback: PropTypes.func,
 };
 
 export default StatusForm;

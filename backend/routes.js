@@ -1,10 +1,18 @@
+// Import frameworks
 const express = require('express');
 const router = express.Router();
 const SHA3 = require('crypto-js/sha3');
 const db = require('./database.js');
 const uuid = require('uuid-v4');
 
-// API routes
+/**
+ * TODO handle 404 error
+ * TODO ensure that a user is logged in
+ */
+
+/**
+ * Denote that the API is up and running
+ */
 router.get('/', (req, res) => {
   res.send({
     success: true,
@@ -12,7 +20,21 @@ router.get('/', (req, res) => {
   });
 });
 
-// Sign the user out
+/**
+ * Return the current session if there is one
+ */
+router.get('/session', (req, res) => {
+  // Check the session cookie
+  if (req.session.username) {
+    res.send({ success: true, username: req.session.username });
+  } else {
+    res.send({ success: false });
+  }
+});
+
+/**
+ * Sign the user out
+ */
 router.get('/logout', (req, res) => {
   // Delete the current session
   req.session.destroy();
@@ -23,7 +45,226 @@ router.get('/logout', (req, res) => {
   });
 });
 
-// Login the user
+/**
+ * Get all statuses
+ * NOTE this likely is not userful though can be used to start off before we
+ * have more targetted database methods
+ * TODO test that this works
+ */
+router.get('/statuses', (req, res) => {
+  // Find all statuses in the database
+  db.getStatuses((data, err) => {
+    if (err || !data) {
+      // If there is an error or no data is sent
+      res.send({
+        success: false,
+        error: err,
+      });
+    } else {
+      res.send({
+        // If there is a success, relay the data to the user
+        success: true,
+        data: data,
+      });
+    }
+  });
+});
+
+/**
+ * Get a single status
+ */
+router.get('/statuses/:id', (req, res) => {
+  if (!req.session.username) {
+    // If the current user is not logged in
+    res.send({
+      success: false,
+      error: "User must be logged in",
+    });
+  }
+
+  // Find the ID
+  const id = req.params.id;
+
+  // Find the status in the database
+  db.getStatus(id, (data, err) => {
+    if (err || !data) {
+      res.send({
+        success: false,
+        error: err,
+      });
+    } else {
+      res.send({
+        success: true,
+        data: data,
+      });
+    }
+  });
+});
+
+/**
+ * Create a new status
+ */
+router.post('/statuses/new', (req, res) => {
+  if (!req.session.username) {
+    // If the current user is not logged in
+    res.send({
+      success: false,
+      error: "User must be logged in.",
+    });
+  }
+
+  // Find instance variables
+  const content = req.body.content;
+  const receiver = req.body.receiver;
+  const user = req.session.username;
+
+  // Add the status to the database
+  db.createStatus(content, receiver, user, (data, err) => {
+    if (err || !data) {
+      res.send({
+        success: false,
+        error: "Error adding user to database.",
+      });
+    } else {
+      res.send({
+        success: true,
+        data,
+      });
+    }
+  });
+});
+
+/**
+ * Update a user object
+ */
+router.post('/users/:username/update/', (req, res) => {
+  const sessionUsername = req.session.username;
+  const reqUsername = req.params.username;
+
+  // Ensure that the two uesernames are the same
+  if (sessionUsername === reqUsername) {
+    // Update the object to contain the information we want
+    const obj = {
+      username: sessionUsername,
+      firstName: req.body.firstName,
+      lastName: req.body.lastName,
+      affiliation: req.body.affiliation,
+      bio: req.body.bio,
+      interests: req.body.interests,
+      profilePicture: req.body.profilePicture,
+      coverPhoto: req.body.coverPhoto,
+    };
+
+    // Send the object to the database
+    db.updateUser(obj, (data, err) => {
+      if (err || !data) {
+        // If there was an error updating
+        res.send({
+          success: false,
+          error: err,
+        });
+      } else {
+        // If the update was successful
+        res.send({
+          success: true,
+          data: data,
+        });
+      }
+    });
+  } else {
+    // If there is no username match
+    res.send({
+      success: false,
+      error: "Invalid user credentials.",
+    });
+  }
+});
+
+/**
+ * Get all statuses by a particular user
+ * TODO test that this works / implement
+ */
+router.get('/users/:username/statuses/', (req, res) => {
+  // Find the username in the URL
+  const username = req.params.username;
+
+  // Get the statuses from the database
+  db.getUserStatuses(username, (data, err) => {
+    if (err) {
+      // If there is an error or no data is sent
+      res.send({
+        success: false,
+        error: err,
+      });
+    } else if (!data) {
+      // If no data was returned
+      res.send({
+        success: false,
+        error: "No data returned."
+      });
+    } else {
+      // If there is a success, relay the data to the user
+      res.send({
+        success: true,
+        data,
+      });
+    }
+  });
+});
+
+/**
+ * Get a single status
+ * TODO
+ */
+router.get('/statuses/:id', (req, res) => {
+  // Find the id in the URL
+  const id = req.params.id;
+
+  // Get the status from the database
+  db.getStatus(id, (data, err) => {
+    if (err || !data) {
+      // If there is an error or no data is sent
+      res.send({
+        success: false,
+        error: err,
+      });
+    } else {
+      // TO
+      res.send({
+        // If there is a success, relay the data to the user
+        success: true,
+        data: data,
+      });
+    }
+  });
+});
+
+/**
+ * Find a user with the specified username
+ */
+router.get('/users/:username', (req, res) => {
+  // Find the username in the URL
+  const username = req.params.username;
+
+  // Find the user in the database
+  db.getUser(username, (data, err) => {
+    if (err || !data) {
+      res.send({
+        success: false,
+        error: err,
+      });
+    } else {
+      res.send({
+        success: true,
+        data: data,
+      });
+    }
+  });
+});
+
+/**
+ * Login the user (start a new express session)
+ */
 router.post('/users/sessions/new', (req, res) => {
   // Hash the password
   const hash = SHA3(req.body.password).toString();
@@ -43,7 +284,11 @@ router.post('/users/sessions/new', (req, res) => {
           success: false,
           err: "Username and password do not match."
         });
-      } else{
+      } else {
+        // Update the user session
+        req.session.username = req.body.username;
+
+        // Send success to the user
         res.send({
           success: true,
           data: data,
@@ -52,29 +297,10 @@ router.post('/users/sessions/new', (req, res) => {
     }
   });
 });
-
-// Find a user with the specified username
-router.get('/users/:username', (req, res) => {
-  // Find the username in the URL
-  const username = req.params.username;
-
-  // Find the user in the database
-  db.getUser(username, (data, err) => {
-    if (err || !data) {
-      res.send({
-        success: false,
-        err: err,
-      });
-    } else {
-      res.send({
-        success: true,
-        data: data,
-      });
-    }
-  });
-});
-
-// Add friends
+      
+/**
+ * Add friends
+ */
 router.get('/users/:username/friends/new', (req, res) => {
   // Friend of page we are on
   const friend2 = req.params.username;
@@ -96,7 +322,9 @@ router.get('/users/:username/friends/new', (req, res) => {
   });
 });
 
-// Add like to statuses
+/**
+ * Add like to statuses
+ */
 router.get('/statuses/:statusID/likes', (req, res) => {
   // Get the status and liker
   const status = req.params.statusID;
@@ -116,8 +344,10 @@ router.get('/statuses/:statusID/likes', (req, res) => {
     }
   });
 });
-
-// Register a new user
+      
+/**
+ * Register a new user
+ */
 router.post('/users/new', (req, res) => {
   // Hash the password and confirm password
   const obj = req.body;
@@ -147,6 +377,13 @@ router.post('/users/new', (req, res) => {
       });
     }
   });
+});
+
+/**
+ * Handle a 404
+ */
+router.get('*', (req, res) => {
+  res.status(404).send("404: page not found");
 });
 
 module.exports = router;

@@ -203,15 +203,22 @@
       callback("Error using table - call init first!", null);
       return;
     }
+    // var params = {
+    //   KeyConditions: {
+    //     keyword: {
+    //       ComparisonOperator: 'BEGINS_WITH',
+    //       AttributeValueList: [ { S: search } ]
+    //     }
+    //   },
+    //   TableName: self.tableName,
+    //   AttributesToGet: [ 'value' ]
+    // };
     var params = {
-      KeyConditions: {
-        keyword: {
-          ComparisonOperator: 'BEGINS_WITH',
-          AttributeValueList: [ { S: search} ]
-        }
-      },
       TableName: self.tableName,
-      AttributesToGet: [ 'value' ]
+      KeyConditionExpression: "begins_with(keyword, :k)",
+      ExpressionAttributeValues: {
+        ":k": { S: search },
+      },
     };
 
     db.query(params, (err, data) => {
@@ -365,8 +372,8 @@
       if (!err) {
         for (var i = 0; i < data.Count; i++) {
           values.push({
-            "key": data.Items[i].keyword['S'],
-            "inx": data.Items[i].inx['N']
+            "key": data.Items[i].keyword["S"],
+            "inx": data.Items[i].inx["N"]
           });
         }
       }

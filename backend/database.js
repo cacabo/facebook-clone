@@ -1,48 +1,223 @@
 // Import the keyvaluestore
 const keyvaluestore = require('./keyvaluestore.js');
+const async = require('async');
 const uuid = require('uuid-v4');
 
 // Create the usersTable
-const users = new keyvaluestore('usersTable');
+const users = new keyvaluestore('users');
 users.init(() => {});
 
 // Create the friendRelationshipTable
-const friendships = new keyvaluestore('friendshipsTable');
+const friendships = new keyvaluestore('friends');
 friendships.init(() => {});
 
 // Create the status table
-const statuses = new keyvaluestore('statusTable');
+const statuses = new keyvaluestore('statuses');
 statuses.init(() => {});
 
 // Create comments table
-const comments = new keyvaluestore('commentsTable');
+const comments = new keyvaluestore('comments');
 comments.init(() => {});
 
 // Create chats table
-const chats = new keyvaluestore('chatsTable');
+const chats = new keyvaluestore('chats');
 chats.init(() => {});
 
 // Create userChatRelationship table
-const userChats = new keyvaluestore('userChatsTable');
+const userChats = new keyvaluestore('userChats');
 userChats.init(() => {});
 
 // Create messages table
-const messages = new keyvaluestore('messagesTable');
+const messages = new keyvaluestore('messages');
 messages.init(() => {});
 
 // Create likes table
-const likes = new keyvaluestore('likesTable');
+const likes = new keyvaluestore('likes');
 likes.init(() => {});
 
+/**
+ * Get all statuses in the table
+ * TODO sort chronologically
+ */
+function getStatuses(callback) {
+  statuses.scanKeys((err, values) => {
+    if (err || !values) {
+      callback(null, "Failed to retrieve keys.");
+    } else {
+      // Construct a status array
+      const statusArr = [];
+
+      // Iterate over the keys in the statuses array
+      async.each(values, (value, keysCallback) => {
+        // Find the username associated with the key
+        const keyword = value.key;
+
+        // Find the status with the given key
+        statuses.get(keyword, (statusErr, statusData) => {
+          if (statusErr || !statusData) {
+            // If we failed to retrieve data
+            callback(null, "An error occured: " + statusErr);
+          } else {
+            // Get the status object
+            const status = JSON.parse(statusData[0].value);
+
+            // Get the status's user's info
+            users.get(status.user, (userErr, userData) => {
+              if (userErr || !userData) {
+                callback(null, "Failed to retrieve status information.");
+              } else {
+                // Parse for the user data as an object
+                const userDataObj = JSON.parse(userData[0].value);
+
+                // Remove unnecessary fields
+                delete userDataObj.password;
+                delete userDataObj.bio;
+                delete userDataObj.coverPhoto;
+                delete userDataObj.updatedAt;
+                delete userDataObj.interests;
+                delete userDataObj.affiliation;
+
+                // Put the user information into the status object
+                status.userData = userDataObj;
+
+                // Push the status onto the array
+                statusArr.push(status);
+
+                // Alert that the async call is done
+                keysCallback();
+              }
+            });
+          }
+        });
+      }, (asyncErr) => {
+        if (asyncErr) {
+          // If there is an error with the async operation
+          callback(null, asyncErr);
+        } else {
+          // Sort the staus array
+          statusArr.sort((a, b) => {
+            return b.createdAt - a.createdAt;
+          });
+
+          // Send the statuses to the user
+          callback({ statusArr }, null);
+        }
+      });
+    }
+  });
+}
+
+/**
+ * Get a single status based on the passed in ID
+ */
+function getStatus(id, callback) {
+  if (!id || id.length === 0) {
+    callback(null, "Status ID must be well-defined");
+  } else {
+    statuses.get(id, (err, statusData) => {
+      if (err || !statusData) {
+        callback(null, "Status not found");
+      } else {
+        // Find the status information from the data
+        const status = JSON.parse(statusData[0].value);
+
+        // Find the user of the status
+        users.get(status.user, (userErr, userData) => {
+          if (userErr || !userData) {
+            callback(null, "Failed to retrieve status information.");
+          } else {
+            // Parse for the user data as an object
+            const userDataObj = JSON.parse(userData[0].value);
+
+            // Remove unnecessary fields
+            delete userDataObj.password;
+            delete userDataObj.bio;
+            delete userDataObj.coverPhoto;
+            delete userDataObj.updatedAt;
+            delete userDataObj.interests;
+            delete userDataObj.affiliation;
+
+            // Put the user information into the status object
+            status.userData = userDataObj;
+
+            // Return the status
+            callback(status, null);
+          }
+        });
+      }
+    });
+  }
+}
+
+/**
+ * Create a status
+ * TODO find the key
+ */
+function createStatus(content, receiver, user, callback) {
+  // Data validation
+  if (!content) {
+    callback(null, "Content must be populated");
+  } else if (!user) {
+    callback(null, "User must be populated");
+  } else {
+    /**
+     * TODO find the key-- based on the inx? Unique ID?
+     */
+    const obj = {
+      content,
+      receiver,
+      user,
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+      type: "STATUS",
+      commentsCount: 0,
+      likesCount: 0,
+    };
+
+    // Find a unique key identifier
+    const key = obj.user + ":" + uuid();
+
+    // Put the status in to the database
+    statuses.put(key, JSON.stringify(obj), (err, data) => {
+      if (err || !data) {
+        callback(null, "Failed to put status in database.");
+      } else {
+        callback({ inx: data, key }, null);
+      }
+    });
+  }
+}
+
+/**
+ * Get all statuses by a user
+ * TODO perform a range query for the specific statuses we want
+ */
+function getUserStatuses(username, callback) {
+  if (!username || username.length === 0) {
+    callback(null, "Username must be well-defined");
+  } else {
+    users.getPrefix(username + ":", (err, data) => {
+      if (err || !data) {
+        callback(null, err);
+      } else {
+        callback(data, null);
+      }
+    });
+  }
+}
 
 /**
  * Get a user with the specified username
  */
 function getUser(username, callback) {
+  if (!username || username.length === 0) {
+    callback(null, "Username must be well-defined");
+  }
+
   users.get(username, (err, data) => {
     if (err || !data) {
       // If there was an issue getting the data
-      callback(null, "User not found: " + err);
+      callback(null, "User not found");
     } else {
       // Find the value in the returned data
       var value = JSON.parse(data[0].value);
@@ -93,6 +268,10 @@ function createUser(user, callback) {
           // Remove the confirm password
           delete user.confirmPassword;
 
+          // Initialize timestamps
+          user.createdAt = Date.now();
+          user.updatedAt = Date.now();
+
           // Put the user into the table
           const username = user.username;
           users.put(username, JSON.stringify(user), (err, data) => {
@@ -110,6 +289,43 @@ function createUser(user, callback) {
   }
 }
 
+/**
+ * Update a user based on the passed in information
+ * TODO error checking
+ */
+function updateUser(updatedUser, callback) {
+  const username = updatedUser.username;
+  users.get(username, (err, data) => {
+    if (err || !data) {
+      callback(null, "User not found");
+    } else {
+      // Get the object for the old user
+      const oldUser = JSON.parse(data[0].value);
+
+      // Get the inx
+      const inx = data[0].inx;
+
+      // Update the user's fields
+      oldUser.firstName = updatedUser.firstName;
+      oldUser.lastName = updatedUser.lastName;
+      oldUser.affiliation = updatedUser.affiliation;
+      oldUser.bio = updatedUser.bio;
+      oldUser.interests = updatedUser.interests;
+      oldUser.profilePicture = updatedUser.profilePicture;
+      oldUser.coverPhoto = updatedUser.coverPhoto;
+      oldUser.updatedAt = Date.now();
+
+      // Put the updated user into the database
+      users.update(username, inx, oldUser, (updateErr, updatedData) => {
+        if (updateErr || !updatedData) {
+          callback(null, "Failed to update user");
+        } else {
+          callback(updatedData, null);
+        }
+      });
+    }
+  });
+}
 
 /**
  * Create a friendship. friend1 is adding, and friend2 is being added
@@ -247,8 +463,13 @@ function addLike(liker, status, callback) {
 const database = {
   createUser: createUser,
   getUser: getUser,
+  getStatuses: getStatuses,
+  getStatus: getStatus,
+  getUserStatuses: getUserStatuses,
+  createStatus: createStatus,
+  updateUser: updateUser,
   createFriendship: createFriendship,
-  addLike: addLike
+  addLike: addLike,
 };
 
 module.exports = database;

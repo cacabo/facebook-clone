@@ -3,6 +3,7 @@ import autosize from 'autosize';
 import { Link } from 'react-router-dom';
 import Comment from './Comment';
 import PropTypes from 'prop-types';
+import moment from 'moment';
 
 /**
  * Renders a status posted by a user. This can show up either on the newsfeed
@@ -12,15 +13,22 @@ import PropTypes from 'prop-types';
  * Toggle the comments box by clicking on the comments icon or text.
  *
  * TODO stateful likes
+ * TODO pull user information from DB
+ * TODO actually render comments
+ * TODO put in timestamp at bottom right
  */
 class Status extends React.Component {
   // Constructor method
   constructor(props) {
     super(props);
+
+    // Set the state
     this.state = {
       toggledComments: false,
       isLiked: false,
     };
+
+    // Bind this to helper functions
     this.commentOnClick = this.commentOnClick.bind(this);
     this.likeOnClick = this.likeOnClick.bind(this);
   }
@@ -46,34 +54,43 @@ class Status extends React.Component {
 
   // Render method
   render() {
+    // Find the date from the timestamp
+    const d = new Date(this.props.createdAt);
+    const timestamp = moment(d).fromNow();
+
     return(
       <div className="card status">
         <div className="user">
-          <div className="userImg" style={{backgroundImage: "url(" + this.props.userImg + ")"}} />
-          <p>
-            <Link to={ "/users/" + this.props.username } >
-              { this.props.name }
+          <div className="userImg" style={
+            { backgroundImage: "url(" + this.props.userData.profilePicture + ")" }
+          } />
+          <div className="header-text">
+            <Link to={ "/users/" + this.props.user } >
+              { this.props.userData.firstName + " " + this.props.userData.lastName }
             </Link>
-          </p>
+            <p className="timestamp">
+              { timestamp }
+            </p>
+          </div>
         </div>
         <p className="marg-bot-0 text">
-          { this.props.status }
+          { this.props.content }
         </p>
-        { this.props.image ? <img alt={ this.props.status } src={ this.props.image } className="img-fluid image" /> : "" }
+        { this.props.image ? <img alt={ this.props.content } src={ this.props.image } className="img-fluid image" /> : "" }
         <div className="interact">
           <div className="like" onClick={ this.likeOnClick }>
             <i className={ this.state.isLiked ? "fa fa-heart" : "fa fa-heart-o" } />
-            12 likes
+            { this.props.likesCount } likes
           </div>
           <div className="comment" onClick={ this.commentOnClick }>
             <i className={ this.state.toggledComments ? "fa fa-comment" : "fa fa-comment-o" } />
-            4 comments
+            { this.props.commentsCount } comments
           </div>
         </div>
         <div className={ this.state.toggledComments ? "comments" : "comments hidden" }>
           <form className="comments-form">
             <textarea className="form-control animate" placeholder="Leave a comment..." name="comment" type="text" rows="1" />
-            <input className="btn btn-gray btn-sm" type="submit" name="submit" value="Reply" />
+            <input className="btn btn-gray btn-sm marg-left-05" type="submit" name="submit" value="Reply" />
           </form>
           <Comment text="Nice post" />
         </div>
@@ -84,10 +101,13 @@ class Status extends React.Component {
 
 Status.propTypes = {
   userImg: PropTypes.string,
-  name: PropTypes.string,
   image: PropTypes.string,
-  status: PropTypes.string,
-  username: PropTypes.string,
+  content: PropTypes.string,
+  user: PropTypes.string,
+  userData: PropTypes.object,
+  commentsCount: PropTypes.number,
+  likesCount: PropTypes.number,
+  createdAt: PropTypes.number,
 };
 
 export default Status;

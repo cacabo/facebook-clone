@@ -1,0 +1,24 @@
+/**
+ * Styling for navbar
+ */
+.navbar {
+  background: white;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+  box-shadow: 0rem 0.1rem 0.2rem rgba(0, 0, 0, 0.1);
+  z-index: 1300;
+
+  .navbar-brand {
+    font-weight: bold;
+  }
+
+  .navbar-toggler {
+    border: 0px solid transparent;
+    outline: 0 !important;
+  }
+
+  .nav-link {
+    font-weight: bold;
+    cursor: hand;
+    cursor: pointer;
+  }
+}

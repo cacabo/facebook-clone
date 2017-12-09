@@ -3,8 +3,6 @@ import StatusForm from '../newsfeed/StatusForm';
 import Status from '../newsfeed/Status';
 import axios from 'axios';
 import PropTypes from 'prop-types';
-import Thin from '../shared/Thin';
-import { Link } from 'react-router';
 
 /**
  * Render's a user's profile
@@ -12,6 +10,14 @@ import { Link } from 'react-router';
  * Cover photo and profile picture at the top
  * Information about the user (bio, interests, friend count, etc.) to left
  * List of posts and ability to write on their wall to the right / middle
+ *
+ * TODO handle errors
+ * TODO pull user information
+ * TODO render user statuses
+ * TODO handle posts on user's wall
+ * TODO have different errors (statuses, user not found, post error, etc)
+ * TODO count num posts
+ * TODO count num friends
  */
 class Profile extends React.Component {
   // Constructor method
@@ -25,20 +31,40 @@ class Profile extends React.Component {
       coverPhoto: "",
       bio: "",
       interests: "",
+      statuses: null,
+      profilePending: true,
+      statusesPending: true,
     };
   }
 
   // Set the state upon load
   componentDidMount() {
+    // Get the user information
     axios.get('/api/users/' + this.props.match.params.username)
       .then(data => {
         this.setState({
           ...data.data.data,
+          profilePending: false,
         });
       })
       .catch(() => {
         this.setState({
-          error: "User with the specified username not found"
+          error: "User with the specified username not found",
+          profilePending: false,
+        });
+      });
+
+    // Get the users statuses
+    axios.get('/api/users/' + this.props.match.params.username + '/statuses')
+      .then(data => {
+        console.log(data);
+        /**
+         * TODO
+         */
+      })
+      .catch(err => {
+        this.setState({
+          error: err,
         });
       });
   }
@@ -46,32 +72,26 @@ class Profile extends React.Component {
   // Render the component
   render() {
     if (this.state.error) {
-      console.log("There is an error");
-      return (
-        <Thin>
-          <div className="card">
-            <h2>Content not found</h2>
-            <p>
-              { this.state.error }
-            </p>
-            <Link to="/" className="btn btn-primary">
-              Back to home
-            </Link>
-          </div>
-        </Thin>
-      );
+      // TODO
+      console.log(this.state.error);
     }
     return (
       <div className="profile">
-        <div className="cover-photo" />
+        <div
+          className="cover-photo"
+          style={{ backgroundImage: `url(${this.state.coverPhoto})` }}
+        />
         <div className="menu">
-          <h3>Cameron Cabo</h3>
+          <h3>{ this.state.firstName + " " + this.state.lastName }</h3>
         </div>
 
         <div className="container-fluid">
           <div className="row">
-            <div className="col-12 col-lg-10 offset-lg-1">
-              <div className="profile-picture" />
+          <div className="col-12 col-lg-10 offset-lg-1">
+              <div
+                className="profile-picture"
+                style={{ backgroundImage: `url(${this.state.profilePicture})` }}
+              />
 
               <div className="row">
                 <div className="col-12 col-md-4 about">
@@ -79,39 +99,44 @@ class Profile extends React.Component {
                     Learn more
                   </strong>
                   <p>
-                    This is my biography
+                    { this.state.bio }
                   </p>
                   <strong>
                     Interests
                   </strong>
+                  <p>
+                    { this.state.interests }
+                  </p>
                   <ul className="tags">
                     <li>NETS 212</li>
                     <li>Scalable cloud computing</li>
                     <li>Computer science</li>
                   </ul>
-                  <p>
-                    <strong>Friends:</strong> 212
-                  </p>
-                  <p>
-                    <strong>Posts:</strong> 41
-                  </p>
                 </div>
                 <div className="col-12 col-md-8 col-lg-7">
                   <StatusForm placeholder="Write on this user's wall" />
 
                   <Status
                     name="Terry Jo"
-                    status="I'm a fool loool"
+                    content="I'm a fool loool"
                     userImg="https://scontent-lga3-1.xx.fbcdn.net/v/t31.0-8/15585239_1133593586737791_6146771975815537560_o.jpg?oh=1f5bfe8e714b99b823263e2db7fa3329&oe=5A88DA92"
                     id="1"
+                    userData={{
+                      firstName: "Terry",
+                      lastName: "Jo",
+                    }}
                   />
 
                   <Status
                     name="Terry Jo"
-                    status="Look at this dog"
+                    content="Look at this dog"
                     userImg="https://scontent-lga3-1.xx.fbcdn.net/v/t31.0-8/15585239_1133593586737791_6146771975815537560_o.jpg?oh=1f5bfe8e714b99b823263e2db7fa3329&oe=5A88DA92"
                     id="1"
                     image="http://www.insidedogsworld.com/wp-content/uploads/2016/03/Dog-Pictures.jpg"
+                    userData={{
+                      firstName: "Terry",
+                      lastName: "Jo",
+                    }}
                   />
                 </div>
               </div>

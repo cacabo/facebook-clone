@@ -4,6 +4,8 @@ import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import axios from 'axios';
+import { logout } from '../actions/index';
 
 // Import components to render
 import Home from '../components/newsfeed/Home';
@@ -22,100 +24,122 @@ import LoggedInAuth from '../components/users/LoggedInAuth';
  * Component to render the app
  *
  * isLoggedIn: prop pulled from Redux state denoting the current user session
+ *
+ * TODO better sync user state and express session
  */
-const AppContainer = ({ isLoggedIn }) => {
-  // Handle the root path
-  const homeRoute = (
-    <Route exact path="/" render={() => (
-      <LoggedInAuth toBeRendered={<Home />} />
-    )} />
-  );
+class AppContainer extends React.Component {
+  // Ensure the user is logged in on loading the app
+  componentDidMount() {
+    axios.get("/api/session")
+      .then(data => {
+        // Log the user out if the user is not logged in on express
+        if (!data.data.success) {
+          this.props.logout();
+        }
+      })
+      .catch(() => {
+        // Purge the user's redux state
+        this.props.logout();
+      });
+  }
 
-  // Handle the user registration route
-  const registerRoute = (
-    <Route path="/register" render={() => (
-      isLoggedIn ? (
-        <Redirect to="/" />
-      ) : (
-        <Register />
-      )
-    )} />
-  );
+  // Render the component
+  render() {
+    // Handle the root path
+    const homeRoute = (
+      <Route exact path="/" render={() => (
+        <LoggedInAuth toBeRendered={<Home />} />
+      )} />
+    );
 
-  // Handle user login route
-  const loginRoute = (
-    <Route path="/login" render={() => (
-      isLoggedIn ? (
-        <Redirect to="/" />
-      ) : (
-        <Login />
-      )
-    )} />
-  );
+    // Handle the user registration route
+    const registerRoute = (
+      <Route path="/register" render={() => (
+        this.props.isLoggedIn ? (
+          <Redirect to="/" />
+        ) : (
+          <Register />
+        )
+      )} />
+    );
 
-  // Handle edit profile route
-  const editProfileRoute = (
-    <Route exact path="/users/edit" render={() => (
-      <LoggedInAuth toBeRendered={<EditProfile />} />
-    )} />
-  );
+    // Handle user login route
+    const loginRoute = (
+      <Route path="/login" render={() => (
+        this.props.isLoggedIn ? (
+          <Redirect to="/" />
+        ) : (
+          <Login />
+        )
+      )} />
+    );
 
-  // Handle a user's profile route
-  const userProfileRoute = (
-    <Route exact path="/users/:username" component={Profile} />
-  );
+    // Handle edit profile route
+    const editProfileRoute = (
+      <Route exact path="/users/edit" render={() => (
+        <LoggedInAuth toBeRendered={<EditProfile />} />
+      )} />
+    );
 
-  // Handle new chat route
-  const newChatRoute = (
-    <Route exact path="/chats/new" render={() => (
-      <LoggedInAuth toBeRendered={<NewChat />} />
-    )} />
-  );
+    // Handle a user's profile route
+    const userProfileRoute = (
+      <Route exact path="/users/:username" component={Profile} />
+    );
 
-  // Handle chat show route
-  const chatRoute = (
-    <Route exact path="/chats/:id" render={() => (
-      <LoggedInAuth toBeRendered={<Chat />} />
-    )} />
-  );
+    // Handle new chat route
+    const newChatRoute = (
+      <Route exact path="/chats/new" render={() => (
+        <LoggedInAuth toBeRendered={<NewChat />} />
+      )} />
+    );
 
-  // Handle chat index route
-  const chatsRoute = (
-    <Route exact path="/chats" render={() => (
-      <LoggedInAuth toBeRendered={<Chats />} />
-    )} />
-  );
+    // Handle chat show route
+    const chatRoute = (
+      <Route exact path="/chats/:id" render={() => (
+        <LoggedInAuth toBeRendered={<Chat />} />
+      )} />
+    );
 
-  // Handle not found router
-  const notFoundRoute = (
-    <Route path="*" component={NotFound} />
-  );
+    // Handle chat index route
+    const chatsRoute = (
+      <Route exact path="/chats" render={() => (
+        <LoggedInAuth toBeRendered={<Chats />} />
+      )} />
+    );
 
-  // Actually render the component
-  return(
-    <div className="app-wrapper">
-      <Router>
-        <div>
-          <Nav />
-          <Switch>
-            { homeRoute }
-            { registerRoute }
-            { loginRoute }
-            { editProfileRoute }
-            { userProfileRoute }
-            { newChatRoute }
-            { chatRoute }
-            { chatsRoute }
-            { notFoundRoute }
-          </Switch>
-        </div>
-      </Router>
-    </div>
-  );
-};
+    // Handle not found router
+    const notFoundRoute = (
+      <Route path="*" component={NotFound} />
+    );
+
+    // Actually render the component
+    return(
+      <div className="app-wrapper">
+        <Router>
+          <div>
+            <Nav />
+            <Switch>
+              { homeRoute }
+              { registerRoute }
+              { loginRoute }
+              { editProfileRoute }
+              { userProfileRoute }
+              { newChatRoute }
+              { chatRoute }
+              { chatsRoute }
+              { notFoundRoute }
+            </Switch>
+            <div className="space-2" />
+          </div>
+        </Router>
+      </div>
+    );
+  }
+}
 
 AppContainer.propTypes = {
   isLoggedIn: PropTypes.bool,
+  logout: PropTypes.func,
 };
 
 const mapStateToProps = (state) => {
@@ -124,8 +148,10 @@ const mapStateToProps = (state) => {
   };
 };
 
-const mapDispatchToProps = (/* dispatch */) => {
-  return {};
+const mapDispatchToProps = (dispatch) => {
+  return {
+    logout: () => dispatch(logout()),
+  };
 };
 
 export default connect(
