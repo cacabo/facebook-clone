@@ -53,7 +53,7 @@ router.get('/logout', (req, res) => {
  */
 router.get('/statuses', (req, res) => {
   // Find all statuses in the database
-  db.getStatuses((data, err) => {
+  db.getStatuses((err, data) => {
     if (err || !data) {
       // If there is an error or no data is sent
       res.send({

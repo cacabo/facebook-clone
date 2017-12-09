@@ -1,76 +1,5 @@
 const users = require('./users');
-
-/**
- * Get all statuses in the table
- * TODO sort chronologically
- */
-function getStatuses(callback) {
-  // statuses.scanKeys((err, values) => {
-  //   if (err || !values) {
-  //     callback(null, "Failed to retrieve keys.");
-  //   } else {
-  //     // Construct a status array
-  //     const statusArr = [];
-  //
-  //     // Iterate over the keys in the statuses array
-  //     async.each(values, (value, keysCallback) => {
-  //       // Find the username associated with the key
-  //       const keyword = value.key;
-  //
-  //       // Find the status with the given key
-  //       statuses.get(keyword, (statusErr, statusData) => {
-  //         if (statusErr || !statusData) {
-  //           // If we failed to retrieve data
-  //           callback(null, "An error occured: " + statusErr);
-  //         } else {
-  //           // Get the status object
-  //           const status = JSON.parse(statusData[0].value);
-  //
-  //           // Get the status's user's info
-  //           users.get(status.user, (userErr, userData) => {
-  //             if (userErr || !userData) {
-  //               callback(null, "Failed to retrieve status information.");
-  //             } else {
-  //               // Parse for the user data as an object
-  //               const userDataObj = JSON.parse(userData[0].value);
-  //
-  //               // Remove unnecessary fields
-  //               delete userDataObj.password;
-  //               delete userDataObj.bio;
-  //               delete userDataObj.coverPhoto;
-  //               delete userDataObj.updatedAt;
-  //               delete userDataObj.interests;
-  //               delete userDataObj.affiliation;
-  //
-  //               // Put the user information into the status object
-  //               status.userData = userDataObj;
-  //
-  //               // Push the status onto the array
-  //               statusArr.push(status);
-  //
-  //               // Alert that the async call is done
-  //               keysCallback();
-  //             }
-  //           });
-  //         }
-  //       });
-  //     }, (asyncErr) => {
-  //       if (asyncErr) {
-  //         // If there is an error with the async operation
-  //         callback(null, asyncErr);
-  //       } else {
-  //         // Sort the staus array
-  //         statusArr.sort((a, b) => {
-  //           return b.createdAt - a.createdAt;
-  //         });
-  //
-  //         // Send the statuses to the user
-  //         callback({ statusArr }, null);
-  //       }
-  //     });
-  //   }
-  // });
-}
+const statuses = require('./statuses');
 
 /**
  * Get a single status based on the passed in ID
@@ -109,45 +38,6 @@ function getStatus(id, callback) {
   //           callback(status, null);
   //         }
   //       });
-  //     }
-  //   });
-  // }
-}
-
-/**
- * Create a status
- * TODO find the key
- */
-function createStatus(content, receiver, user, callback) {
-  // // Data validation
-  // if (!content) {
-  //   callback(null, "Content must be populated");
-  // } else if (!user) {
-  //   callback(null, "User must be populated");
-  // } else {
-  //   /**
-  //    * TODO find the key-- based on the inx? Unique ID?
-  //    */
-  //   const obj = {
-  //     content,
-  //     receiver,
-  //     user,
-  //     createdAt: Date.now(),
-  //     updatedAt: Date.now(),
-  //     type: "STATUS",
-  //     commentsCount: 0,
-  //     likesCount: 0,
-  //   };
-  //
-  //   // Find a unique key identifier
-  //   const key = obj.user + ":" + uuid();
-  //
-  //   // Put the status in to the database
-  //   statuses.put(key, JSON.stringify(obj), (err, data) => {
-  //     if (err || !data) {
-  //       callback(null, "Failed to put status in database.");
-  //     } else {
-  //       callback({ inx: data, key }, null);
   //     }
   //   });
   // }
@@ -308,12 +198,12 @@ const database = {
   getUser: users.getUser,
   createUser: users.createUser,
   updateUser: users.updateUser,
-  getStatuses: getStatuses,
-  getStatus: getStatus,
-  getUserStatuses: getUserStatuses,
-  createStatus: createStatus,
-  createFriendship: createFriendship,
-  addLike: addLike,
+  createStatus: statuses.createStatus,
+  getStatuses: statuses.getStatuses,
+  getStatus,
+  getUserStatuses,
+  createFriendship,
+  addLike,
 };
 
 module.exports = database;

@@ -23,15 +23,17 @@ const User = vogels.define("User", {
 
 // Define a schema for statuses
 const Status = vogels.define("Status", {
-  hashKey: "keyword",
+  hashKey: "user",
+  rangeKey: "id",
   timestamps: true,
   schema: {
-    keyword: Joi.string(),
+    id: Joi.string(),
     image: Joi.string().allow(null).allow("").optional(),
     content: Joi.string(),
     user: Joi.string(),
     receiver: Joi.string().allow(null).allow("").optional(),
     likesCount: Joi.number(),
+    commentsCount: Joi.number(),
     type: Joi.string(),
   },
   tableName: "statuses",
@@ -45,27 +47,6 @@ vogels.createTables((err) => {
     console.log('Tables have been created');
   }
 });
-
-// // Sample object
-// const obj = {
-//   username: "ccabo",
-//   name: "Cameron Cabo",
-//   password: "password",
-//   bio: "This is my bio",
-//   interests: "interest1, interest2",
-//   affiliation: "affilation1, affiliation2",
-//   profilePicture: "",
-//   coverPhoto: "",
-// };
-//
-// // Add the object to the users table
-// User.create(obj, (err, user) => {
-//   if (err) {
-//     console.log(err);
-//   } else {
-//     console.log(user);
-//   }
-// });
 
 // Create an object storing all the tables
 const tables = {

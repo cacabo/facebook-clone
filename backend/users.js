@@ -7,7 +7,7 @@ const { User } = require('./vogels.js');
 function getUser(username, callback) {
   // Ensure the username is properly formatted
   if (!username || username.length === 0) {
-    callback(null, "Username must be well-defined");
+    callback(null, "Username must be well-defined.");
   }
 
   // Find the user in the database
