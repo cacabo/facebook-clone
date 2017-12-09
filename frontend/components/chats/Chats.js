@@ -20,7 +20,7 @@ class Chats extends React.Component {
     this.state = {
       //store room names here after making a query to the database
       //temporary storage. Should be an array
-      currentInvitation: 'testRoom',
+      currentInvitation: '',
       chats: [
         {
           name: "Dope group chat",
@@ -51,9 +51,10 @@ class Chats extends React.Component {
   }
 
   handleAcceptInvite(event) {
-    console.log("joined room " + this.state.currentInvitation);
-    joinRoom(this.state.currentInvitation, function(success) {
-    })
+    if (this.state.currentInvitation != "") {
+      console.log("joined room " + this.state.currentInvitation);
+      joinRoom(this.state.currentInvitation, function(success) {})
+    } 
     event.preventDefault();
   }
 
@@ -70,7 +71,7 @@ class Chats extends React.Component {
     });
   }
 
-  // Render the chats component
+  // Render the chats co mponent
   render() {
     return (
       <div className="chat-container">
@@ -85,7 +86,13 @@ class Chats extends React.Component {
         <div className="chat">
          { this.props.children }
         </div>
-        <button onClick={ this.handleAcceptInvite }>Accept</button>
+        <button onClick={ this.handleAcceptInvite } 
+            className={
+              this.state.message ?
+              "btn btn-gray card-shade" :
+              "btn btn-gray card-shade disabled"
+            }> Accept </button>
+        <div> invited to join { this.state.currentInvitation } </div>
       </div>
     );
   }

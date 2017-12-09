@@ -25,8 +25,10 @@ class Chat extends React.Component {
       message: "",
       currentUser: this.props.username,
       messages: [],
+      users: [],
     } 
 
+    console.log("Current User " + this.state.currentUser);
     // Everyone is part of a room for receving invitations
     joinRoom(this.state.currentUser + 'inviteRoom', function(success) {})
 
@@ -36,11 +38,8 @@ class Chat extends React.Component {
     this.handleInvite = this.handleInvite.bind(this);
   }
 
-  // Autosize the text area to fit the text that's pasted into it
-  componentDidMount() {
-    autosize(document.querySelectorAll('textarea'));
-
-    //listens for new messages received
+  componentWillMount() {
+    // Listens for new messages received
     subscribeToMessages((message) => this.setState((prevState, props) => {
         console.log("received message: " + message)
         const messageInfo = JSON.parse(message);
@@ -51,6 +50,11 @@ class Chat extends React.Component {
           return {messages: oldMessage}
         }
     }));
+  }
+
+  // Autosize the text area to fit the text that's pasted into it
+  componentDidMount() {
+    autosize(document.querySelectorAll('textarea'));    
   }
 
   // Helper method to handle a change to state
@@ -154,7 +158,11 @@ class Chat extends React.Component {
             value="Send"
           />
         </form>
-        <button onClick={ this.handleInvite }>Invite</button>
+        <button onClick={ this.handleInvite } 
+            className={
+              "btn btn-gray card-shade",
+              "btn btn-gray card-shade disabled"
+            }>Invite</button>
       </Chats>
     );
   }

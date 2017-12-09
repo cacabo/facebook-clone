@@ -59,14 +59,25 @@ socket.on('connection', (socket) => {
 	});
 
 	socket.on('joinRoom', (room) => {
-		socket.join(room);
 		console.log("joined room " + room);
+		socket.join(room);
 	});
 
 	socket.on('leaveRoom', (room) => {
+		socket.broadcast.to(room).emit('message', "left room");
 		socket.leave(room);
 
 		//emit the fact that this user has left the room
 	});
+
+	// For creating a new room when thid person joins
+
+	socket.on('autoJoin', (data) => {
+		const rooms = JSON.parse(data);
+
+		socket.join(room);
+		console.log("joined room " + room);
+	});
+
 });
 
