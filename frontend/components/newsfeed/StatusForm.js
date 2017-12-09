@@ -106,7 +106,7 @@ class StatusForm extends React.Component {
       <div>
         {
           this.state.error ?
-          <div className="alert alert-danger error card-shade marg-bot-1">
+          <div className="alert alert-danger error marg-bot-1">
             <p className="bold marg-bot-025">
               There was an error:
             </p>
@@ -132,7 +132,7 @@ class StatusForm extends React.Component {
                   type="submit"
                   value="Post"
                   className={
-                    (this.state.status && this.state.status.length > 0) ? "btn btn-gray btn-sm card-shade" : "btn btn-gray btn-sm card-shade disabled"
+                    (this.state.status && this.state.status.length > 0) ? "btn btn-gray btn-sm" : "btn btn-gray btn-sm disabled"
                   } />
               </div>
             </div>

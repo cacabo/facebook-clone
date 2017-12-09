@@ -109,7 +109,7 @@ class Login extends React.Component {
         <div>
           {
             this.props.notice && (
-              <div className="alert alert-warning alert-card card-shade">
+              <div className="alert alert-warning alert-card">
                 { this.props.notice }
               </div>
             )
