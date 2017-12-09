@@ -189,11 +189,17 @@ router.get('/users/:username/statuses/', (req, res) => {
 
   // Get the statuses from the database
   db.getUserStatuses(username, (data, err) => {
-    if (err || !data) {
+    if (err) {
       // If there is an error or no data is sent
       res.send({
         success: false,
         error: err,
+      });
+    } else if (!data) {
+      // If no data was returned
+      res.send({
+        success: false,
+        error: "No data returned."
       });
     } else {
       // If there is a success, relay the data to the user

@@ -11,6 +11,7 @@ import axios from 'axios';
  * Component to render a form to edit a user's profile\
  *
  * TODO better error checking for images
+ * TODO change password
  */
 class EditProfile extends React.Component {
   // Constructor method

@@ -3,6 +3,7 @@ import autosize from 'autosize';
 import { Link } from 'react-router-dom';
 import Comment from './Comment';
 import PropTypes from 'prop-types';
+import moment from 'moment';
 
 /**
  * Renders a status posted by a user. This can show up either on the newsfeed
@@ -53,17 +54,24 @@ class Status extends React.Component {
 
   // Render method
   render() {
+    // Find the date from the timestamp
+    const d = new Date(this.props.createdAt);
+    const timestamp = moment(d).fromNow();
+
     return(
       <div className="card status">
         <div className="user">
           <div className="userImg" style={
             { backgroundImage: "url(" + this.props.userData.profilePicture + ")" }
           } />
-          <p>
+          <div className="header-text">
             <Link to={ "/users/" + this.props.user } >
               { this.props.userData.firstName + " " + this.props.userData.lastName }
             </Link>
-          </p>
+            <p className="timestamp">
+              { timestamp }
+            </p>
+          </div>
         </div>
         <p className="marg-bot-0 text">
           { this.props.content }
@@ -99,6 +107,7 @@ Status.propTypes = {
   userData: PropTypes.object,
   commentsCount: PropTypes.number,
   likesCount: PropTypes.number,
+  createdAt: PropTypes.number,
 };
 
 export default Status;

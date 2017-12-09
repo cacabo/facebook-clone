@@ -11,10 +11,38 @@
 
   .user {
     padding: 1rem 1rem 0.5rem 1rem;
+
+    .header-text {
+      padding-top: 0.1rem;
+      padding-left: 0.1rem;
+
+      a {
+        font-weight: bold;
+        margin-bottom: 0rem;
+        display: block;
+      }
+
+      p {
+        margin-top: 0rem;
+        font-weight: normal;
+        font-size: 0.8rem;
+        text-align: left;
+      }
+    }
   }
 
   .text {
     padding: 0rem 1rem;
+  }
+
+  .timestamp {
+    text-align: right;
+    font-style: italic;
+    color: $gray;
+
+    &::first-letter {
+      text-transform: capitalize;
+    }
   }
 
   .interact {

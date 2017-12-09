@@ -54,7 +54,6 @@ function getStatuses(callback) {
                 delete userDataObj.bio;
                 delete userDataObj.coverPhoto;
                 delete userDataObj.updatedAt;
-                delete userDataObj.createdAt;
                 delete userDataObj.interests;
                 delete userDataObj.affiliation;
 
@@ -75,6 +74,11 @@ function getStatuses(callback) {
           // If there is an error with the async operation
           callback(null, asyncErr);
         } else {
+          // Sort the staus array
+          statusArr.sort((a, b) => {
+            return b.createdAt - a.createdAt;
+          });
+
           // Send the statuses to the user
           callback({ statusArr }, null);
         }
@@ -110,7 +114,6 @@ function getStatus(id, callback) {
             delete userDataObj.bio;
             delete userDataObj.coverPhoto;
             delete userDataObj.updatedAt;
-            delete userDataObj.createdAt;
             delete userDataObj.interests;
             delete userDataObj.affiliation;
 

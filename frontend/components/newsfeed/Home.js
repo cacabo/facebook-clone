@@ -103,6 +103,7 @@ class Home extends React.Component {
           key={ uuid() }
           userData={ status.userData }
           commentsCount={ status.commentsCount }
+          createdAt={ status.createdAt }
           likesCount={ status.likesCount }
           type={ status.type }
           updatedAt={ status.updatedAt }
