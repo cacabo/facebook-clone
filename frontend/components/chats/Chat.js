@@ -2,6 +2,11 @@ import React from 'react';
 import autosize from 'autosize';
 import Chats from './Chats';
 import uuid from 'uuid-v4';
+import SocketIOClient from 'socket.io-client';
+import { subscribeToMessages } from './socketrouter';
+import { subscribeToinvitations } from './socketrouter';
+import { sendMessage } from './socketrouter';
+import { invite } from './socketrouter';
 
 /**
  * Component to render one of a user's group chats.
@@ -13,36 +18,39 @@ class Chat extends React.Component {
   // Constructor method
   constructor(props) {
     super(props);
+     
+    // Set the state of the application
     this.state = {
       message: "",
       currentUser: "12",
-      messages: [
-        {
-          inx: "0",
-          user: "12",
-          body: "This is the first message",
-          createdAt: 1511894393650,
-        },
-        {
-          inx: "1",
-          user: "13",
-          body: "This is the second message",
-          createdAt: 1511894551346,
-        },
-        {
-          inx: "1",
-          user: "12",
-          body: "This is a longer message than the other messages and should take up more space",
-          createdAt: 1511894607965,
-        },
-      ],
-    };
+      messages: [],
+    }
+    
+    // Bind this to helper methods
     this.handleChangeMessage = this.handleChangeMessage.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleInvite = this.handleInvite.bind(this);
   }
 
   // Autosize the text area to fit the text that's pasted into it
   componentDidMount() {
     autosize(document.querySelectorAll('textarea'));
+
+    //listens for new messages received
+    subscribeToMessages((message) => this.setState((prevState, props) => {
+        console.log("received message: " + message)
+        const messageInfo = JSON.parse(message);
+
+        if (messageInfo.room == this.props.match.params.id) {
+          let oldMessage = this.state.messages;
+          oldMessage.push(messageInfo);
+          return {messages: oldMessage}
+        }
+    }));
+
+    subscribeToinvitations((success) => {
+      console.log("received invitation!!!");
+    });
   }
 
   // Helper method to handle a change to state
@@ -52,12 +60,42 @@ class Chat extends React.Component {
     });
   }
 
-  // Handle when the status form is submitted
+  //do socket sending here. Append this to own message list. 
   handleSubmit(event) {
-    /**
-     * TODO
-     */
+    const messageToSend = this.state.message; //have to do this.state not this alone
+
+    console.log("Current Room from send: " + this.props.match.params.id);
+    console.log("Chat ID: " + this.props.match.params.id);
+
+    const messageParams = {
+      user: this.state.currentUser,
+      body: messageToSend,
+      createdAt: Date.now,
+      room: this.props.match.params.id
+    };
+
+    sendMessage(JSON.stringify(messageParams), (success) => { 
+      if (success) {
+        this.setState((prevState, props) => {
+          let oldMessage = this.state.messages;
+          oldMessage.push(messageParams);
+          return {
+            messages: oldMessage,
+            message: ""
+          }
+        });
+      } else {
+        //message unsent
+      }
+    });
     event.preventDefault();
+  }
+
+  handleInvite(event) {
+    //username - user we are inviting
+    invite(this.props.match.params.id, 'username', this.state.currentUser, (success) => {
+        if (success) {console.log("Invite successful");}
+    });
   }
 
   /**
@@ -114,6 +152,7 @@ class Chat extends React.Component {
             value="Send"
           />
         </form>
+        <button onClick={ this.handleInvite }>Invite</button>
       </Chats>
     );
   }
