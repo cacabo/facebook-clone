@@ -1,14 +1,17 @@
+// Import libraries
 const vogels = require('vogels');
 const Joi = require('joi');
+
+// Configure AWS
 vogels.AWS.config.loadFromPath('./config.json');
 
-var User = vogels.define("User", {
+// Define the schema for users
+const User = vogels.define("User", {
   hashKey: "username",
   timestamps: true,
   schema: {
     username: Joi.string(),
-    firstName: Joi.string(),
-    lastName: Joi.string(),
+    name: Joi.string(),
     password: Joi.string(),
     bio: Joi.string().allow(null),
     interests: Joi.string().allow(null).allow("").optional(),
@@ -18,6 +21,7 @@ var User = vogels.define("User", {
   }
 });
 
+// Create the above tables
 vogels.createTables((err) => {
   if (err) {
     console.log('Error creating tables: ', err);
@@ -26,10 +30,11 @@ vogels.createTables((err) => {
   }
 });
 
+// // Sample object
 // const obj = {
 //   username: "ccabo",
-//   firstName: "Cameron",
-//   lastName: "Cabo",
+//   name: "Cameron Cabo",
+//   password: "password",
 //   bio: "This is my bio",
 //   interests: "interest1, interest2",
 //   affiliation: "affilation1, affiliation2",
@@ -37,7 +42,8 @@ vogels.createTables((err) => {
 //   coverPhoto: "",
 // };
 //
-// Table.create(obj, (err, user) => {
+// // Add the object to the users table
+// User.create(obj, (err, user) => {
 //   if (err) {
 //     console.log(err);
 //   } else {
@@ -45,6 +51,7 @@ vogels.createTables((err) => {
 //   }
 // });
 
+// Create an object storing all the tables
 const tables = {
   User,
 };
