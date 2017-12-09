@@ -107,7 +107,7 @@ Status.propTypes = {
   userData: PropTypes.object,
   commentsCount: PropTypes.number,
   likesCount: PropTypes.number,
-  createdAt: PropTypes.number,
+  createdAt: PropTypes.string,
 };
 
 export default Status;

@@ -49,10 +49,11 @@ class Home extends React.Component {
         if (res.data.success) {
           this.setState({
             pending: false,
-            statuses: res.data.data.statusArr,
+            statuses: res.data.data,
           });
         } else {
           this.setState({
+            pending: false,
             error: "There was an error pulling information from the database."
           });
         }
@@ -60,6 +61,7 @@ class Home extends React.Component {
       .catch(err => {
         // Update the state to have an error
         this.setState({
+          pending: false,
           error: err,
         });
       });

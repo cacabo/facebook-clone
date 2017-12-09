@@ -1,6 +1,7 @@
 // Import the user table
-const { Status } = require('./vogels.js');
+const { Status, User } = require('./vogels.js');
 const uuid = require('uuid-v4');
+const async = require('async');
 
 /**
  * Create a status
@@ -43,13 +44,46 @@ function getStatuses(callback) {
     .scan()
     .loadAll()
     .exec((err, data) => {
-      const statuses = data.Items;
-      statuses.sort((a, b) => {
-        const aCreatedAt = new Date(a.createdAt);
-        const bCreatedAt = new Date(b.createdAt);
-        return aCreatedAt - bCreatedAt;
+      // Prune out the status data
+      const statuses = data.Items.map(item => item.attrs);
+
+      // Get the userData for each status
+      async.each(statuses, (status, keysCallback) => {
+        User.get(status.user, (userErr, userData) => {
+          if (userErr || !userData) {
+            callback(userErr, null);
+          } else {
+            // Find the user object
+            const userObj = userData.attrs;
+
+            // Delete unneeded info
+            delete userObj.password;
+            delete userObj.affiliation;
+            delete userObj.interests;
+            delete userObj.bio;
+            delete userObj.coverPhoto;
+
+            // Update the status object
+            status.userData = userObj;
+            keysCallback();
+          }
+        });
+      }, (asyncErr) => {
+        if (asyncErr) {
+          // If there is an error with the async operation
+          callback(asyncErr, null);
+        } else {
+          // Sort the statuses
+          statuses.sort((a, b) => {
+            const aCreatedAt = new Date(a.createdAt);
+            const bCreatedAt = new Date(b.createdAt);
+            return bCreatedAt - aCreatedAt;
+          });
+
+          // Return the statuses to the user
+          callback(err, statuses);
+        }
       });
-      callback(err, data.Items);
     });
 }
 
