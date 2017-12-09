@@ -40,6 +40,7 @@ class Profile extends React.Component {
 
     // Bind this to helper methods
     this.renderStatuses = this.renderStatuses.bind(this);
+    this.newStatusCallback = this.newStatusCallback.bind(this);
   }
 
   // Set the state upon load
@@ -77,6 +78,38 @@ class Profile extends React.Component {
       });
   }
 
+  // Helper method to render a newly created status
+  newStatusCallback(data) {
+    // Get the object
+    const status = data.data;
+
+    // Get the status information
+    axios.get("/api/users/" + status.user)
+      .then(userData => {
+        // Update the status user data and receiver data
+        const userObj = userData.data.data;
+        status.userData = userObj;
+        status.receiverData = {
+          name: this.state.name,
+          username: this.state.username,
+        };
+
+        // Update state to contain the new status
+        this.setState({
+          statuses: [
+            status,
+            ...this.state.statuses
+          ],
+        });
+      })
+      .catch(err => {
+        /**
+         * TODO
+         */
+        console.log(err);
+      });
+  }
+
   // Helper function to render the statuses
   renderStatuses() {
     return this.state.statuses.map(status => (
@@ -89,6 +122,7 @@ class Profile extends React.Component {
         image={ status.image }
         user={ status.user }
         userData={ status.userData }
+        receiverData={ status.receiverData }
         receiver={ status.receiver }
         key={ uuid() }
       />
@@ -143,6 +177,7 @@ class Profile extends React.Component {
                   <StatusForm
                     placeholder="Write on this user's wall"
                     receiver={ this.state.username }
+                    callback={ this.newStatusCallback }
                   />
                   { !this.state.statusesPending ? (this.renderStatuses()) : (<Loading />) }
                 </div>
