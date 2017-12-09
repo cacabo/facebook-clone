@@ -4,7 +4,6 @@ import Chats from './Chats';
 import uuid from 'uuid-v4';
 import SocketIOClient from 'socket.io-client';
 import { subscribeToMessages } from './socketrouter';
-import { subscribeToinvitations } from './socketrouter';
 import { sendMessage } from './socketrouter';
 import { invite } from './socketrouter';
 
@@ -25,11 +24,8 @@ class Chat extends React.Component {
       currentUser: "12",
       messages: [],
     }
-
-<<<<<<< HEAD
-=======
+ 
     // Bind this to helper methods
->>>>>>> 9962c7c2232fb6ce8dcd55f2ca202949e7f4d8e3
     this.handleChangeMessage = this.handleChangeMessage.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleInvite = this.handleInvite.bind(this);
@@ -50,10 +46,6 @@ class Chat extends React.Component {
           return {messages: oldMessage}
         }
     }));
-
-    subscribeToinvitations((success) => {
-      console.log("received invitation!!!");
-    });
   }
 
   // Helper method to handle a change to state
@@ -95,10 +87,11 @@ class Chat extends React.Component {
   }
 
   handleInvite(event) {
-    //username - user we are inviting
+    // username - user we are inviting
     invite(this.props.match.params.id, 'username', this.state.currentUser, (success) => {
         if (success) {console.log("Invite successful");}
     });
+    event.preventDefault();
   }
 
   /**

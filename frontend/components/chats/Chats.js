@@ -3,6 +3,8 @@ import ChatPreview from './ChatPreview';
 import uuid from 'uuid-v4';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import { subscribeToInvitations } from './socketrouter';
+import { joinRoom } from './socketrouter';
 
 /**
  * Component to render all of a user's groupchats
@@ -17,6 +19,7 @@ class Chats extends React.Component {
 
     this.state = {
       //store room names here after making a query to the database
+      currentInvitation: 'testRoom',
       chats: [
         {
           name: "Dope group chat",
@@ -32,6 +35,25 @@ class Chats extends React.Component {
         }
       ],
     };
+    this.handleAcceptInvite = this.handleAcceptInvite.bind(this);
+  }
+
+  componentDidMount() {
+    subscribeToInvitations((data) => {
+      const invitationData = JSON.parse(data);
+      console.log("invited to join " + invitationData.roomToJoin);
+      this.setState({
+        currentInvitation: invitationData.roomToJoin
+      })
+      console.log("received invitation!!!");
+    });
+  }
+
+  handleAcceptInvite(event) {
+    console.log("joined room " + this.state.currentInvitation);
+    joinRoom(this.state.currentInvitation, function(success) {
+    })
+    event.preventDefault();
   }
 
   // Helper method to render chats based on state
@@ -62,6 +84,7 @@ class Chats extends React.Component {
         <div className="chat">
          { this.props.children }
         </div>
+        <button onClick={ this.handleAcceptInvite }>Accept</button>
       </div>
     );
   }
