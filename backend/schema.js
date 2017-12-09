@@ -41,11 +41,11 @@ const Status = vogels.define("Status", {
 
 // Define a schema for likes
 const Like = vogels.define("Like", {
-  hashKey: "status",
-  rangeKey: "id",
+  hashKey: "statusID",
+  rangeKey: "liker",
   timestamps: true,
   schema: {
-    status: Joi.string(),
+    statusID: Joi.string(),
     id: Joi.string(),
     liker: Joi.string(),
   },

@@ -325,6 +325,7 @@ router.get('/users/:username/friends/new', (req, res) => {
 
 /**
  * Add like to statuses
+ * TODO: checkLike, and then either go to addLike or deleteLike
  */
 router.get('/users/:username/statuses/:statusID/likes', (req, res) => {
   // Get the status and liker
@@ -332,8 +333,11 @@ router.get('/users/:username/statuses/:statusID/likes', (req, res) => {
   const statusUser = req.params.username;
   const liker = req.session.username;
 
+  console.log(statusID);
+  console.log(liker);
+
   // Add like and update status
-  db.addLike(liker, statusUser, statusID, (data, err) =>{
+  db.deleteLike("ccabo", statusUser, statusID, (data, err) =>{
     if (err || !data) {
       res.send({
         success: false,

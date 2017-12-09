@@ -14,7 +14,7 @@ function checkLike(liker, statusUser, statusID, callback) {
  * Adds a Like object to the likesTable and updates the likeCount in the status
  */
 function addLike(liker, statusUser, statusID, callback) {
-  if (!liker || !status) {
+  if (!liker || !statusID) {
     callback(null, "Either the liker or status is null.");
   } else {
     // Check that the status exists, query using statusID
@@ -35,7 +35,7 @@ function addLike(liker, statusUser, statusID, callback) {
 
         // Create like object
         const likeObject = {
-          status: statusID,
+          statusID: statusID,
           id: uuid(),
           liker: liker,
         };
@@ -43,7 +43,7 @@ function addLike(liker, statusUser, statusID, callback) {
         // Put Like object in table
         Like.create(likeObject, (errLike, dataLike) =>  {
           if(errLike || !dataLike) {
-            callback(null, "There was an error adding like to the table.");
+            callback(null, "There was an error adding like to the table: " + errLike.message);
           } else {
             // Old Status Object
             const oldStatus = statusObject;
@@ -70,7 +70,7 @@ function addLike(liker, statusUser, statusID, callback) {
  * Deletes Like object from the likesTable and updates likeCount in the status
  */
 function deleteLike(liker, statusUser, statusID, callback) {
-  if (!liker || !status) {
+  if (!liker || !statusID) {
     callback(null, "Either the liker or status is null.");
   } else {
     Status
@@ -90,22 +90,40 @@ function deleteLike(liker, statusUser, statusID, callback) {
 
         // Find like object and delete like
         Like
-        .query(statusID)
-        .where('liker').equals(liker)
-        .exec((likeErr, likeData) => {
-          // Like is not found or there is an error
-          if (likeErr || !likeData) {
-            if (likeErr) {
-              callback(null, "There was an error finding the like: " + err);
+          .query(statusID)
+          .where('liker').equals(liker)
+          .exec((likeErr, likeData) => {
+            // Like is not found or there is an error
+            if (likeErr || !likeData) {
+              if (likeErr) {
+                callback(null, "There was an error finding the like: " + likeErr);
+              } else {
+                callback(null, "Like does not exist");
+              }
             } else {
-              callback(null, "Like does not exist");
+              // Like object for the status by the current liker
+              const likeObject = likeData.Items[0].attrs;
+              Like
+                .destroy(likeObject.statusID, likeObject.liker, function(deleteErr) {
+                  if(deleteErr) {
+                    callback(null, "Error trying to delete like: " + deleteErr.message);
+                  } else {
+                    // Old status object
+                    const oldStatus = statusObject;
+
+                    // Decrement status's likeCount
+                    statusObject.likeCount = parseInt(oldStatus.likesCount, 10) - 1;
+                    Status.update(oldStatus, (updateErr, updateData) => {
+                      if(updateErr || !updateData) {
+                        callback(null, "There was an error updating likes count.");
+                      } else{
+                        callback({success: true}, null);
+                      }
+                    });
+                  }
+                });
             }
-          } else {
-            // Like object for the status by the current liker
-            const likeObject = likeData.Items[0].attrs;
-            console.log(likeObject);
-          }
-        });
+          });
       }
     });
   }
