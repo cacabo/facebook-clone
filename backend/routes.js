@@ -3,7 +3,6 @@ const express = require('express');
 const router = express.Router();
 const SHA3 = require('crypto-js/sha3');
 const db = require('./database.js');
-const tables = require('./vogels.js');
 
 /**
  * TODO handle 404 error

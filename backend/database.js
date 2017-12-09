@@ -125,14 +125,6 @@ function addLike(liker, status, callback) {
   // }
 }
 
-// function getMessages(user, callback) {
-//   messages.get(user.username, (err, messageData) => {
-//     if (err || !messageData) {
-
-//     }
-//   });
-// }
-
 // Create the database object to export
 const database = {
   getUser: users.getUser,

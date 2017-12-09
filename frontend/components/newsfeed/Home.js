@@ -113,7 +113,6 @@ class Home extends React.Component {
           createdAt={ status.createdAt }
           likesCount={ status.likesCount }
           type={ status.type }
-          updatedAt={ status.updatedAt }
         />
       );
     });

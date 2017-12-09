@@ -1,5 +1,5 @@
 // Import the user table
-const { User } = require('./vogels.js');
+const { User } = require('./schema.js');
 
 /**
  * Get a user with the specified username

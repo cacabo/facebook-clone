@@ -3,6 +3,8 @@ import StatusForm from '../newsfeed/StatusForm';
 import Status from '../newsfeed/Status';
 import axios from 'axios';
 import PropTypes from 'prop-types';
+import Loading from '../shared/Loading';
+import uuid from 'uuid-v4';
 
 /**
  * Render's a user's profile
@@ -31,10 +33,13 @@ class Profile extends React.Component {
       coverPhoto: "",
       bio: "",
       interests: "",
-      statuses: null,
+      statuses: [],
       profilePending: true,
       statusesPending: true,
     };
+
+    // Bind this to helper methods
+    this.renderStatuses = this.renderStatuses.bind(this);
   }
 
   // Set the state upon load
@@ -42,10 +47,27 @@ class Profile extends React.Component {
     // Get the user information
     axios.get('/api/users/' + this.props.match.params.username)
       .then(data => {
+        console.log(data.data.data);
+
+        // Update the state
         this.setState({
           ...data.data.data,
           profilePending: false,
         });
+
+        // Get the users statuses
+        axios.get('/api/users/' + this.props.match.params.username + '/statuses')
+          .then(statuses => {
+            this.setState({
+              statuses: statuses.data.data,
+              statusesPending: false,
+            });
+          })
+          .catch(err => {
+            this.setState({
+              error: err,
+            });
+          });
       })
       .catch(() => {
         this.setState({
@@ -53,20 +75,23 @@ class Profile extends React.Component {
           profilePending: false,
         });
       });
+  }
 
-    // Get the users statuses
-    axios.get('/api/users/' + this.props.match.params.username + '/statuses')
-      .then(data => {
-        console.log(data);
-        /**
-         * TODO
-         */
-      })
-      .catch(err => {
-        this.setState({
-          error: err,
-        });
-      });
+  // Helper function to render the statuses
+  renderStatuses() {
+    return this.state.statuses.map(status => (
+      <Status
+        content={ status.content }
+        createdAt={ status.createdAt }
+        likesCount={ status.likesCount }
+        commentsCount={ status.commentsCount }
+        type={ status.type }
+        image={ status.image }
+        user={ status.user }
+        userData={ status.userData }
+        key={ uuid() }
+      />
+    ));
   }
 
   // Render the component
@@ -82,7 +107,7 @@ class Profile extends React.Component {
           style={{ backgroundImage: `url(${this.state.coverPhoto})` }}
         />
         <div className="menu">
-          <h3>{ this.state.firstName + " " + this.state.lastName }</h3>
+          <h3>{ this.state.name }</h3>
         </div>
 
         <div className="container-fluid">
@@ -115,29 +140,7 @@ class Profile extends React.Component {
                 </div>
                 <div className="col-12 col-md-8 col-lg-7">
                   <StatusForm placeholder="Write on this user's wall" />
-
-                  <Status
-                    name="Terry Jo"
-                    content="I'm a fool loool"
-                    userImg="https://scontent-lga3-1.xx.fbcdn.net/v/t31.0-8/15585239_1133593586737791_6146771975815537560_o.jpg?oh=1f5bfe8e714b99b823263e2db7fa3329&oe=5A88DA92"
-                    id="1"
-                    userData={{
-                      firstName: "Terry",
-                      lastName: "Jo",
-                    }}
-                  />
-
-                  <Status
-                    name="Terry Jo"
-                    content="Look at this dog"
-                    userImg="https://scontent-lga3-1.xx.fbcdn.net/v/t31.0-8/15585239_1133593586737791_6146771975815537560_o.jpg?oh=1f5bfe8e714b99b823263e2db7fa3329&oe=5A88DA92"
-                    id="1"
-                    image="http://www.insidedogsworld.com/wp-content/uploads/2016/03/Dog-Pictures.jpg"
-                    userData={{
-                      firstName: "Terry",
-                      lastName: "Jo",
-                    }}
-                  />
+                  { !this.state.statusesPending ? (this.renderStatuses()) : (<Loading />) }
                 </div>
               </div>
             </div>

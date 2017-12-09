@@ -1,5 +1,5 @@
 // Import the user table
-const { Status, User } = require('./vogels.js');
+const { Status, User } = require('./schema.js');
 const uuid = require('uuid-v4');
 const async = require('async');
 
