@@ -5,6 +5,8 @@ import axios from 'axios';
 import PropTypes from 'prop-types';
 import Loading from '../shared/Loading';
 import uuid from 'uuid-v4';
+import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
 
 /**
  * Render's a user's profile
@@ -20,6 +22,7 @@ import uuid from 'uuid-v4';
  * TODO have different errors (statuses, user not found, post error, etc)
  * TODO count num posts
  * TODO count num friends
+ * TODO handle loading data visualization
  */
 class Profile extends React.Component {
   // Constructor method
@@ -48,8 +51,6 @@ class Profile extends React.Component {
     // Get the user information
     axios.get('/api/users/' + this.props.match.params.username)
       .then(data => {
-        console.log(data.data.data);
-
         // Update the state
         this.setState({
           ...data.data.data,
@@ -132,7 +133,9 @@ class Profile extends React.Component {
   // Render the component
   render() {
     if (this.state.error) {
-      // TODO
+      /**
+       * TODO handle error
+       */
       console.log(this.state.error);
     }
     return (
@@ -162,16 +165,24 @@ class Profile extends React.Component {
                     { this.state.bio }
                   </p>
                   <strong>
+                    Affiliations
+                  </strong>
+                  <p>
+                    { this.state.affiliation }
+                  </p>
+                  <strong>
                     Interests
                   </strong>
                   <p>
                     { this.state.interests }
                   </p>
-                  <ul className="tags">
-                    <li>NETS 212</li>
-                    <li>Scalable cloud computing</li>
-                    <li>Computer science</li>
-                  </ul>
+                  {
+                    (this.props.username === this.state.username) && (
+                      <Link to="/users/edit" className="btn btn-primary btn-sm">
+                        Edit profile
+                      </Link>
+                    )
+                  }
                 </div>
                 <div className="col-12 col-md-8 col-lg-7">
                   <StatusForm
@@ -192,6 +203,20 @@ class Profile extends React.Component {
 
 Profile.propTypes = {
   match: PropTypes.object,
+  username: PropTypes.string,
 };
 
-export default Profile;
+const mapStateToProps = (state) => {
+  return {
+    username: state.userState.username,
+  };
+};
+
+const mapDispatchToProps = () => {
+  return {};
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Profile);

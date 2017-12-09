@@ -82,7 +82,7 @@ class Home extends React.Component {
         this.setState({
           statuses: [
             status,
-            ...this.state.statuses
+            ...this.state.statuses,
           ],
         });
       })
@@ -126,7 +126,7 @@ class Home extends React.Component {
           <div className="col-lg-3 hidden-md-down">
             <FriendRecommendations />
           </div>
-          <div className="col-12 col-md-8 offset-md-2 col-lg-6 offset-lg-0 col-xl-5">
+          <div className="col-12 col-md-8 offset-md-2 col-lg-6 offset-lg-0 col-xl-5 no-pad-wide">
             {
               this.props.success ? (
                 <div className="alert alert-success">

@@ -179,3 +179,10 @@ a {
 .userPreview {
   border-top: 1px solid rgba(0, 0, 0, 0.15);
 }
+
+// Remove padding on large screens
+@media screen and (min-width: 992px) and (min-device-width: 992px) {
+  .no-pad-wide {
+    padding: 0rem !important;
+  }
+}
