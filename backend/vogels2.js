@@ -15,7 +15,7 @@ var User = vogels.define("User", {
     affiliation: Joi.string().allow(null).allow("").optional(),
     profilePicture: Joi.string().allow(null).allow("").optional(),
     coverPhoto: Joi.string().allow(null).allow("").optional(),
-  }
+  },
 });
 
 var Status = vogels.define("Status", {
@@ -29,7 +29,8 @@ var Status = vogels.define("Status", {
     receiver: Joi.string(),
     likesCount: Joi.number(),
     type: Joi.string(),
-  }
+  },
+  tableName: "statuses",
 });
 
 var Message = vogels.define("Message", {
@@ -79,42 +80,3 @@ var UserChat = vogels.define("UserChat", {
     chatID: Joi.string(),
   }
 });
-
-vogels.createTables((err) => {
-  if (err) {
-    console.log('Error creating tables: ', err);
-  } else {
-    console.log('Tables have been created');
-  }
-});
-
-// const obj = {
-//   username: "ccabo",
-//   firstName: "Cameron",
-//   lastName: "Cabo",
-//   bio: "This is my bio",
-//   interests: "interest1, interest2",
-//   affiliation: "affilation1, affiliation2",
-//   profilePicture: "",
-//   coverPhoto: "",
-// };
-//
-// Table.create(obj, (err, user) => {
-//   if (err) {
-//     console.log(err);
-//   } else {
-//     console.log(user);
-//   }
-// });
-
-const tables = {
-  User,
-  Status,
-  Message,
-  Friendship,
-  Comment,
-  Chat,
-  UserChat,
-};
-
-module.exports = tables;
