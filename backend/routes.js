@@ -3,7 +3,6 @@ const express = require('express');
 const router = express.Router();
 const SHA3 = require('crypto-js/sha3');
 const db = require('./database.js');
-const uuid = require('uuid-v4');
 
 /**
  * TODO handle 404 error
@@ -297,18 +296,20 @@ router.post('/users/sessions/new', (req, res) => {
     }
   });
 });
-      
+
 /**
  * Add friends
  */
 router.get('/users/:username/friends/new', (req, res) => {
   // Friend of page we are on
   const friend2 = req.params.username;
+
   // Current friend logged in
+  // TODO USE THIS
   const friend1 = req.session.username;
 
   // Create the friendship
-  db.createFriendship("ccabo", friend2, (data, err) => {
+  db.createFriendship(friend1, friend2, (data, err) => {
     if(err || !data) {
       res.send({
         success: false,
@@ -344,7 +345,7 @@ router.get('/statuses/:statusID/likes', (req, res) => {
     }
   });
 });
-      
+
 /**
  * Register a new user
  */
