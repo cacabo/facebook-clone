@@ -104,7 +104,7 @@ function deleteLike(liker, statusUser, statusID, callback) {
               // Like object for the status by the current liker
               const likeObject = likeData.Items[0].attrs;
               Like
-                .destroy(likeObject.statusID, likeObject.liker, function(deleteErr) {
+                .destroy(likeObject.statusID, likeObject.liker, (deleteErr) => {
                   if(deleteErr) {
                     callback(null, "Error trying to delete like: " + deleteErr.message);
                   } else {
