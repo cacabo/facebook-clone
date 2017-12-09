@@ -29,7 +29,6 @@ class Home extends React.Component {
     this.state = {
       pending: true,
       statuses: [],
-      newStatuses: [],
     };
 
     // Bind this to helper methods
