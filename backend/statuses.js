@@ -96,12 +96,15 @@ function getStatus(username, id, callback) {
     callback(null, "Username must be well-defined");
   } else {
     // If the id is properly formatted
-    Status.get(id, (err, statusData) => {
-      if (err || !statusData) {
-        callback(null, "Status not found");
-      } else {
-        // Find the status information from the data
-        const status = statusData.attrs;
+    Status
+      .query(username)
+      .where('id').equals(id)
+      .exec((err, data) => {
+        // Find the status in the data
+        const status = data.Items[0].attrs;
+
+        console.log("STATUS");
+        console.log(status);
 
         // Find the user of the status
         User.get(status.user, (userErr, userData) => {
@@ -125,8 +128,7 @@ function getStatus(username, id, callback) {
             callback(status, null);
           }
         });
-      }
-    });
+      });
   }
 }
 

@@ -74,13 +74,13 @@ router.get('/statuses', (req, res) => {
  * Get a single status
  */
 router.get('/users/:username/statuses/:id', (req, res) => {
-  if (!req.session.username) {
-    // If the current user is not logged in
-    res.send({
-      success: false,
-      error: "User must be logged in",
-    });
-  }
+  // if (!req.session.username) {
+  //   // If the current user is not logged in
+  //   res.send({
+  //     success: false,
+  //     error: "User must be logged in",
+  //   });
+  // }
 
   // Find the ID and username
   const username = req.params.username;
