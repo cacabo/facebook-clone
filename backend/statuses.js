@@ -148,6 +148,16 @@ function getUserStatuses(username, callback) {
       callback(null, "User not found.");
     }
 
+    // Store the user object
+    const userObj = userData.attrs;
+
+    // Delete unneeded info
+    delete userObj.password;
+    delete userObj.affiliation;
+    delete userObj.interests;
+    delete userObj.bio;
+    delete userObj.coverPhoto;
+
     // Else, query for the statuses
     Status
       .query(username)
@@ -156,16 +166,6 @@ function getUserStatuses(username, callback) {
         if (err || !data) {
           callback(null, err);
         } else {
-          // Find the user object
-          const userObj = userData;
-
-          // Delete unneeded info
-          delete userObj.password;
-          delete userObj.affiliation;
-          delete userObj.interests;
-          delete userObj.bio;
-          delete userObj.coverPhoto;
-
           // Prune out the status data
           const statuses = data.Items.map(item => {
             const status = item.attrs;
