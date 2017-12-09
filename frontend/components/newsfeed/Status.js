@@ -66,7 +66,7 @@ class Status extends React.Component {
           } />
           <div className="header-text">
             <Link to={ "/users/" + this.props.user } >
-              { this.props.userData.firstName + " " + this.props.userData.lastName }
+              { this.props.userData.name }
             </Link>
             <p className="timestamp">
               { timestamp }

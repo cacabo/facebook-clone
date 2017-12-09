@@ -5,7 +5,6 @@ const async = require('async');
 
 /**
  * Create a status
- * TODO find the key
  */
 function createStatus(content, receiver, user, callback) {
   // Ensure inputs are valid
@@ -37,7 +36,6 @@ function createStatus(content, receiver, user, callback) {
 
 /**
  * Get all statuses in the table
- * TODO sort chronologically
  */
 function getStatuses(callback) {
   Status
@@ -87,10 +85,56 @@ function getStatuses(callback) {
     });
 }
 
+/**
+ * Get a single status based on the passed in ID
+ */
+function getStatus(username, id, callback) {
+  // Error checking
+  if (!id) {
+    callback(null, "Status ID must be well-defined");
+  } else if (!username) {
+    callback(null, "Username must be well-defined");
+  } else {
+    // If the id is properly formatted
+    Status.get(id, (err, statusData) => {
+      if (err || !statusData) {
+        callback(null, "Status not found");
+      } else {
+        // Find the status information from the data
+        const status = statusData.attrs;
+
+        // Find the user of the status
+        User.get(status.user, (userErr, userData) => {
+          if (userErr || !userData) {
+            callback(null, "Failed to retrieve status information.");
+          } else {
+            // Parse for the user data as an object
+            const userDataObj = userData.attrs;
+
+            // Remove unnecessary fields
+            delete userDataObj.password;
+            delete userDataObj.bio;
+            delete userDataObj.coverPhoto;
+            delete userDataObj.interests;
+            delete userDataObj.affiliation;
+
+            // Put the user information into the status object
+            status.userData = userDataObj;
+
+            // Return the status
+            callback(status, null);
+          }
+        });
+      }
+    });
+  }
+}
+
 // Create an object to store the helper functions
 const statuses = {
   createStatus,
   getStatuses,
+  getStatus,
 };
 
 // Export the object

@@ -73,7 +73,7 @@ router.get('/statuses', (req, res) => {
 /**
  * Get a single status
  */
-router.get('/statuses/:id', (req, res) => {
+router.get('/users/:username/statuses/:id', (req, res) => {
   if (!req.session.username) {
     // If the current user is not logged in
     res.send({
@@ -82,11 +82,12 @@ router.get('/statuses/:id', (req, res) => {
     });
   }
 
-  // Find the ID
+  // Find the ID and username
+  const username = req.params.username;
   const id = req.params.id;
 
   // Find the status in the database
-  db.getStatus(id, (data, err) => {
+  db.getStatus(username, id, (data, err) => {
     if (err || !data) {
       res.send({
         success: false,
@@ -278,8 +279,6 @@ router.post('/users/sessions/new', (req, res) => {
         err: "User not found, consider signing up.",
       });
     } else if (data) {
-      console.log("DATA");
-      console.log(data);
       // Else the user exists: check the password
       if (hash !== data.password) {
         res.send({

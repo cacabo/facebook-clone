@@ -23,8 +23,7 @@ class EditProfile extends React.Component {
       pending: true,
       error: "",
       username: "",
-      firstName: "",
-      lastName: "",
+      name: "",
       affiliation: "",
       bio: "",
       interests: "",
@@ -34,8 +33,7 @@ class EditProfile extends React.Component {
     };
 
     // Bind this to functions
-    this.handleChangeFirstName = this.handleChangeFirstName.bind(this);
-    this.handleChangeLastName = this.handleChangeLastName.bind(this);
+    this.handleChangeName = this.handleChangeName.bind(this);
     this.handleChangeAffiliation = this.handleChangeAffiliation.bind(this);
     this.handleChangeBio = this.handleChangeBio.bind(this);
     this.handleChangeInterests = this.handleChangeInterests.bind(this);
@@ -79,17 +77,10 @@ class EditProfile extends React.Component {
       });
   }
 
-  // Handle a change to the first name state
-  handleChangeFirstName(event) {
+  // Handle a change to the name state
+  handleChangeName(event) {
     this.setState({
-      firstName: event.target.value,
-    });
-  }
-
-  // Handle a change to the last name state
-  handleChangeLastName(event) {
-    this.setState({
-      lastName: event.target.value,
+      name: event.target.value,
     });
   }
 
@@ -141,7 +132,7 @@ class EditProfile extends React.Component {
       this.setState({
         error: "Username must be populated.",
       });
-    } else if (!this.state.firstName || !this.state.lastName) {
+    } else if (!this.state.name) {
       this.setState({
         error: "First and last name must be populated",
       });
@@ -215,32 +206,17 @@ class EditProfile extends React.Component {
                   value={ this.state.username }
                   readOnly
                 />
-                <div className="row">
-                  <div className="col-6">
-                    <label>
-                      First name
-                    </label>
-                    <input
-                      type="text"
-                      name="firstName"
-                      className="form-control marg-bot-1"
-                      value={ this.state.firstName }
-                      onChange={ this.handleChangeFirstName }
-                    />
-                  </div>
-                  <div className="col-6">
-                    <label>
-                      Last name
-                    </label>
-                    <input
-                      type="text"
-                      name="lastName"
-                      className="form-control marg-bot-1"
-                      value={ this.state.lastName }
-                      onChange={ this.handleChangeLastName }
-                    />
-                  </div>
-                </div>
+
+                <label>
+                  Name
+                </label>
+                <input
+                  type="text"
+                  name="name"
+                  className="form-control marg-bot-1"
+                  value={ this.state.name }
+                  onChange={ this.handleChangeName }
+                />
 
                 <label>
                   Affiliation
@@ -303,8 +279,7 @@ class EditProfile extends React.Component {
                   type="submit"
                   className={
                     this.state.username &&
-                    this.state.firstName &&
-                    this.state.lastName ?
+                    this.state.name ?
                     "btn btn-primary full-width cursor" :
                     "btn btn-primary full-width disabled"
                   }

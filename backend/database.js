@@ -2,48 +2,6 @@ const users = require('./users');
 const statuses = require('./statuses');
 
 /**
- * Get a single status based on the passed in ID
- */
-function getStatus(id, callback) {
-  // if (!id || id.length === 0) {
-  //   callback(null, "Status ID must be well-defined");
-  // } else {
-  //   statuses.get(id, (err, statusData) => {
-  //     if (err || !statusData) {
-  //       callback(null, "Status not found");
-  //     } else {
-  //       // Find the status information from the data
-  //       const status = JSON.parse(statusData[0].value);
-  //
-  //       // Find the user of the status
-  //       users.get(status.user, (userErr, userData) => {
-  //         if (userErr || !userData) {
-  //           callback(null, "Failed to retrieve status information.");
-  //         } else {
-  //           // Parse for the user data as an object
-  //           const userDataObj = JSON.parse(userData[0].value);
-  //
-  //           // Remove unnecessary fields
-  //           delete userDataObj.password;
-  //           delete userDataObj.bio;
-  //           delete userDataObj.coverPhoto;
-  //           delete userDataObj.updatedAt;
-  //           delete userDataObj.interests;
-  //           delete userDataObj.affiliation;
-  //
-  //           // Put the user information into the status object
-  //           status.userData = userDataObj;
-  //
-  //           // Return the status
-  //           callback(status, null);
-  //         }
-  //       });
-  //     }
-  //   });
-  // }
-}
-
-/**
  * Get all statuses by a user
  * TODO perform a range query for the specific statuses we want
  */
@@ -200,7 +158,7 @@ const database = {
   updateUser: users.updateUser,
   createStatus: statuses.createStatus,
   getStatuses: statuses.getStatuses,
-  getStatus,
+  getStatus: statuses.getStatus,
   getUserStatuses,
   createFriendship,
   addLike,

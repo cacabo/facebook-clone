@@ -71,28 +71,34 @@ class Home extends React.Component {
    * Helper method to render a newly created status
    */
   newStatusCallback(data) {
-    // Get the status key from the response from the status form
-    const statusKey = data.data.key;
+    // Get the object
+    const status = data.data;
 
     // Get the status information
-    axios.get("/api/statuses/" + statusKey)
-      .then(statusData => {
+    axios.get("/api/users/" + status.user)
+      .then(userData => {
+        const userObj = userData.data.data;
+        status.userData = userObj;
+
         // Update state to contain the new status
         this.setState({
           statuses: [
-            statusData.data.data,
+            status,
             ...this.state.statuses
           ],
         });
       })
-      .catch(() => {});
+      .catch(err => {
+        /**
+         * TODO
+         */
+        console.log(err);
+      });
   }
 
   /**
    * Helper function to render statuses on the homepage
    * This renders the statuses contained in the state of the component
-   *
-   * TODO add like counts
    */
   renderStatuses() {
     return this.state.statuses.map((status) => {
