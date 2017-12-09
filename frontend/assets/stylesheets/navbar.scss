@@ -2,13 +2,15 @@
  * Styling for navbar
  */
 .navbar {
-  background: white;
+  background: $blue;
+  color: white;
   border-bottom: 1px solid rgba(0, 0, 0, 0.15);
-  box-shadow: 0rem 0.1rem 0.2rem rgba(0, 0, 0, 0.1);
+  box-shadow: 0rem 0.1rem 0.1rem rgba(0, 0, 0, 0.1);
   z-index: 1300;
 
   .navbar-brand {
     font-weight: bold;
+    color: white;
   }
 
   .navbar-toggler {
@@ -16,9 +18,20 @@
     outline: 0 !important;
   }
 
-  .nav-link {
+  .nav-item a.nav-link {
     font-weight: bold;
     cursor: hand;
     cursor: pointer;
+    color: rgba(255, 255, 255, 0.8);
+
+    &:visited {
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    &:hover,
+    &:active,
+    &:focus, {
+      color: white;
+    }
   }
 }

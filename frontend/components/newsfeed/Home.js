@@ -108,6 +108,7 @@ class Home extends React.Component {
           image={ status.image }
           user={ status.user }
           key={ uuid() }
+          receiver={ status.receiver }
           userData={ status.userData }
           commentsCount={ status.commentsCount }
           createdAt={ status.createdAt }

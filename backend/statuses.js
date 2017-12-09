@@ -71,15 +71,46 @@ function getStatuses(callback) {
           // If there is an error with the async operation
           callback(asyncErr, null);
         } else {
-          // Sort the statuses
-          statuses.sort((a, b) => {
-            const aCreatedAt = new Date(a.createdAt);
-            const bCreatedAt = new Date(b.createdAt);
-            return bCreatedAt - aCreatedAt;
-          });
+          // Get the recipient name
+          async.each(statuses, (status, keysCallback) => {
+            if (status.receiver) {
+              User.get(status.receiver, (userErr, userData) => {
+                if (userErr || !userData) {
+                  callback(userErr, null);
+                } else {
+                  // Find the user object
+                  const userObj = userData.attrs;
 
-          // Return the statuses to the user
-          callback(err, statuses);
+                  // Delete unneeded info
+                  delete userObj.password;
+                  delete userObj.affiliation;
+                  delete userObj.interests;
+                  delete userObj.bio;
+                  delete userObj.coverPhoto;
+
+                  // Update the status object
+                  status.receiverData = userObj;
+                  keysCallback();
+                }
+              });
+            } else {
+              keysCallback();
+            }
+          }, (asyncErr2) => {
+            if (asyncErr2) {
+              callback(asyncErr2, null);
+            }
+
+            // Sort the statuses
+            statuses.sort((a, b) => {
+              const aCreatedAt = new Date(a.createdAt);
+              const bCreatedAt = new Date(b.createdAt);
+              return bCreatedAt - aCreatedAt;
+            });
+
+            // Return the statuses to the user
+            callback(err, statuses);
+          });
         }
       });
     });

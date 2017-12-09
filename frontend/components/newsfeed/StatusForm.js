@@ -70,7 +70,7 @@ class StatusForm extends React.Component {
        */
       axios.post("/api/statuses/new", {
         content: this.state.status,
-        receiver: null,
+        receiver: this.props.receiver,
       })
         .then(res => {
           if (!res.data.success) {
@@ -150,6 +150,7 @@ class StatusForm extends React.Component {
 StatusForm.propTypes = {
   placeholder: PropTypes.string,
   callback: PropTypes.func,
+  receiver: PropTypes.string,
 };
 
 export default StatusForm;

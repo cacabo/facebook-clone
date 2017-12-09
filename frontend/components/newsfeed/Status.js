@@ -65,9 +65,18 @@ class Status extends React.Component {
             { backgroundImage: "url(" + this.props.userData.profilePicture + ")" }
           } />
           <div className="header-text">
-            <Link to={ "/users/" + this.props.user } >
-              { this.props.userData.name }
-            </Link>
+            <p className="name">
+              <Link to={ "/users/" + this.props.user }>
+                { this.props.userData.name }
+              </Link>
+              { this.props.receiver && (<i className="fa fa-caret-right" />) }
+              { this.props.receiver && (
+                <Link to={ "/users/" + this.props.receiver }>
+                  { this.props.receiver }
+                </Link>
+              ) }
+            </p>
+
             <p className="timestamp">
               { timestamp }
             </p>
@@ -108,6 +117,7 @@ Status.propTypes = {
   commentsCount: PropTypes.number,
   likesCount: PropTypes.number,
   createdAt: PropTypes.string,
+  receiver: PropTypes.string,
 };
 
 export default Status;

@@ -27,8 +27,8 @@ class Profile extends React.Component {
     super(props);
     this.state = {
       error: "",
-      firstName: "",
-      lastName: "",
+      name: "",
+      username: "",
       profilePicture: "",
       coverPhoto: "",
       bio: "",
@@ -89,6 +89,7 @@ class Profile extends React.Component {
         image={ status.image }
         user={ status.user }
         userData={ status.userData }
+        receiver={ status.receiver }
         key={ uuid() }
       />
     ));
@@ -139,7 +140,10 @@ class Profile extends React.Component {
                   </ul>
                 </div>
                 <div className="col-12 col-md-8 col-lg-7">
-                  <StatusForm placeholder="Write on this user's wall" />
+                  <StatusForm
+                    placeholder="Write on this user's wall"
+                    receiver={ this.state.username }
+                  />
                   { !this.state.statusesPending ? (this.renderStatuses()) : (<Loading />) }
                 </div>
               </div>
