@@ -8,17 +8,19 @@ const { User } = require('./vogels.js');
  * Get a user with the specified username
  */
 function getUser(username, callback) {
+  // Ensure the username is properly formatted
   if (!username || username.length === 0) {
     callback(null, "Username must be well-defined");
   }
 
+  // Find the user in the database
   User.get(username, (err, data) => {
     if (err || !data) {
       // If there was an issue getting the data
       callback(null, "User with username \"" + username + "\" not found.");
     } else {
       // Return the value without error
-      callback(data, null);
+      callback(data.attrs, null);
     }
   });
 }
@@ -84,6 +86,40 @@ function createUser(user, callback) {
       });
     }
   }
+}
+
+/**
+ * Update a user based on the passed in information
+ * TODO error checking
+ */
+function updateUser(updatedUser, callback) {
+  // Find the username from the updated user object
+  const username = updatedUser.username;
+
+  // Find the user in the database
+  User.get(username, (err, oldUser) => {
+    if (err || !oldUser) {
+      callback(null, "User not found");
+    } else {
+      // Update the user's fields
+      oldUser.name = updatedUser.firstName + " " + updatedUser.lastName;
+      oldUser.affiliation = updatedUser.affiliation;
+      oldUser.bio = updatedUser.bio;
+      oldUser.interests = updatedUser.interests;
+      oldUser.profilePicture = updatedUser.profilePicture;
+      oldUser.coverPhoto = updatedUser.coverPhoto;
+      oldUser.updatedAt = Date.now();
+
+      // Put the updated user into the database
+      User.update(oldUser, (updateErr, updatedData) => {
+        if (updateErr || !updatedData) {
+          callback(null, "Failed to update user");
+        } else {
+          callback(updatedData, null);
+        }
+      });
+    }
+  });
 }
 
 /**
@@ -255,44 +291,6 @@ function getUserStatuses(username, callback) {
   //     }
   //   });
   // }
-}
-
-/**
- * Update a user based on the passed in information
- * TODO error checking
- */
-function updateUser(updatedUser, callback) {
-  // const username = updatedUser.username;
-  // users.get(username, (err, data) => {
-  //   if (err || !data) {
-  //     callback(null, "User not found");
-  //   } else {
-  //     // Get the object for the old user
-  //     const oldUser = JSON.parse(data[0].value);
-  //
-  //     // Get the inx
-  //     const inx = data[0].inx;
-  //
-  //     // Update the user's fields
-  //     oldUser.firstName = updatedUser.firstName;
-  //     oldUser.lastName = updatedUser.lastName;
-  //     oldUser.affiliation = updatedUser.affiliation;
-  //     oldUser.bio = updatedUser.bio;
-  //     oldUser.interests = updatedUser.interests;
-  //     oldUser.profilePicture = updatedUser.profilePicture;
-  //     oldUser.coverPhoto = updatedUser.coverPhoto;
-  //     oldUser.updatedAt = Date.now();
-  //
-  //     // Put the updated user into the database
-  //     users.update(username, inx, oldUser, (updateErr, updatedData) => {
-  //       if (updateErr || !updatedData) {
-  //         callback(null, "Failed to update user");
-  //       } else {
-  //         callback(updatedData, null);
-  //       }
-  //     });
-  //   }
-  // });
 }
 
 /**

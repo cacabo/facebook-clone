@@ -271,15 +271,17 @@ router.post('/users/sessions/new', (req, res) => {
 
   // Query for the specified user
   db.getUser(req.body.username, (data, err) => {
-    //  there was an error looking up user
-    if (err) {
+    // There was an error looking up user
+    if (err || !data) {
       res.send({
         success: false,
         err: "User not found, consider signing up.",
       });
     } else if (data) {
+      console.log("DATA");
+      console.log(data);
       // Else the user exists: check the password
-      if(hash !== data.password) {
+      if (hash !== data.password) {
         res.send({
           success: false,
           err: "Username and password do not match."
