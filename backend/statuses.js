@@ -134,13 +134,10 @@ function getStatus(username, id, callback) {
         // Find the status in the data
         const status = data.Items[0].attrs;
 
-        console.log("STATUS");
-        console.log(status);
-
         // Find the user of the status
         User.get(status.user, (userErr, userData) => {
           if (userErr || !userData) {
-            callback(null, "Failed to retrieve status information.");
+            callback(null, "Failed to retrieve user information.");
           } else {
             // Parse for the user data as an object
             const userDataObj = userData.attrs;
@@ -155,8 +152,38 @@ function getStatus(username, id, callback) {
             // Put the user information into the status object
             status.userData = userDataObj;
 
-            // Return the status
-            callback(status, null);
+            // Find the receiver of the status if there is one
+            if (status.receiver) {
+              if (status.receiver === status.user) {
+                status.receiverData = status.userData;
+                callback(status, null);
+              } else {
+                User.get(status.receiver, (receiverErr, receiverData) => {
+                  if (receiverErr || !receiverData) {
+                    callback(null, receiverErr.message);
+                  } else {
+                    // Parse for the user data as an object
+                    const receiverDataObj = receiverData.attrs;
+
+                    // Remove unnecessary fields
+                    delete receiverDataObj.password;
+                    delete receiverDataObj.bio;
+                    delete receiverDataObj.coverPhoto;
+                    delete receiverDataObj.interests;
+                    delete receiverDataObj.affiliation;
+
+                    // Put the user information into the status object
+                    status.receiverData = receiverDataObj;
+
+                    // Return the status
+                    callback(status, null);
+                  }
+                });
+              }
+            } else {
+              // Return the status
+              callback(status, null);
+            }
           }
         });
       });
@@ -204,15 +231,46 @@ function getUserStatuses(username, callback) {
             return status;
           });
 
-          // Sort the statuses
-          statuses.sort((a, b) => {
-            const aCreatedAt = new Date(a.createdAt);
-            const bCreatedAt = new Date(b.createdAt);
-            return bCreatedAt - aCreatedAt;
-          });
+          // Get the recipient name
+          async.each(statuses, (status, keysCallback) => {
+            if (status.receiver) {
+              User.get(status.receiver, (receiverErr, receiverData) => {
+                if (receiverErr || !receiverData) {
+                  callback(receiverErr, null);
+                } else {
+                  // Find the user object
+                  const receiverObj = userData.attrs;
 
-          // Return the statuses to the user
-          callback(statuses, err);
+                  // Delete unneeded info
+                  delete receiverObj.password;
+                  delete receiverObj.affiliation;
+                  delete receiverObj.interests;
+                  delete receiverObj.bio;
+                  delete receiverObj.coverPhoto;
+
+                  // Update the status object
+                  status.receiverData = receiverObj;
+                  keysCallback();
+                }
+              });
+            } else {
+              keysCallback();
+            }
+          }, (asyncErr) => {
+            if (asyncErr) {
+              callback(asyncErr, null);
+            }
+
+            // Sort the statuses
+            statuses.sort((a, b) => {
+              const aCreatedAt = new Date(a.createdAt);
+              const bCreatedAt = new Date(b.createdAt);
+              return bCreatedAt - aCreatedAt;
+            });
+
+            // Return the statuses to the user
+            callback(statuses, err);
+          });
         }
       });
   });

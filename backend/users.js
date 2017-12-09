@@ -92,12 +92,15 @@ function updateUser(updatedUser, callback) {
   const username = updatedUser.username;
 
   // Find the user in the database
-  User.get(username, (err, oldUser) => {
-    if (err || !oldUser) {
+  User.get(username, (err, oldUserData) => {
+    if (err || !oldUserData) {
       callback(null, "User not found");
     } else {
+      // Isolate the old user object
+      const oldUser = oldUserData.attrs;
+
       // Update the user's fields
-      oldUser.name = updatedUser.firstName + " " + updatedUser.lastName;
+      oldUser.name = updatedUser.name;
       oldUser.affiliation = updatedUser.affiliation;
       oldUser.bio = updatedUser.bio;
       oldUser.interests = updatedUser.interests;

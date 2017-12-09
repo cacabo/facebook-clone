@@ -47,8 +47,10 @@ class Nav extends React.Component {
   render() {
     return (
       <nav className="navbar navbar-toggleable-md navbar-light">
-        <button className="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-          <span className="navbar-toggler-icon" />
+        <button className="navbar-toggler navbar-toggler-right collapsed" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span className="icon-bar top-bar" />
+          <span className="icon-bar middle-bar" />
+          <span className="icon-bar bottom-bar" />
         </button>
         <Link to="/" className="navbar-brand">Facebook</Link>
 

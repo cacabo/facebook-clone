@@ -67,9 +67,7 @@ class Home extends React.Component {
       });
   }
 
-  /**
-   * Helper method to render a newly created status
-   */
+  // Helper method to render a newly created status
   newStatusCallback(data) {
     // Get the object
     const status = data.data;
@@ -84,7 +82,7 @@ class Home extends React.Component {
         this.setState({
           statuses: [
             status,
-            ...this.state.statuses
+            ...this.state.statuses,
           ],
         });
       })
@@ -110,6 +108,7 @@ class Home extends React.Component {
           key={ uuid() }
           receiver={ status.receiver }
           userData={ status.userData }
+          receiverData={ status.receiverData }
           commentsCount={ status.commentsCount }
           createdAt={ status.createdAt }
           likesCount={ status.likesCount }
@@ -127,7 +126,7 @@ class Home extends React.Component {
           <div className="col-lg-3 hidden-md-down">
             <FriendRecommendations />
           </div>
-          <div className="col-12 col-md-8 offset-md-2 col-lg-6 offset-lg-0 col-xl-5">
+          <div className="col-12 col-md-8 offset-md-2 col-lg-6 offset-lg-0 col-xl-5 no-pad-wide">
             {
               this.props.success ? (
                 <div className="alert alert-success">
@@ -137,7 +136,10 @@ class Home extends React.Component {
                 ""
               )
             }
-            <StatusForm placeholder="What's on your mind?" callback={ this.newStatusCallback }/>
+            <StatusForm
+              placeholder="What's on your mind?"
+              callback={ this.newStatusCallback }
+            />
             { this.state.pending ? (<Loading />) : (this.renderStatuses()) }
             <div className="space-4" />
           </div>

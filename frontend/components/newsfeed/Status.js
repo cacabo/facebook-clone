@@ -58,6 +58,7 @@ class Status extends React.Component {
     const d = new Date(this.props.createdAt);
     const timestamp = moment(d).fromNow();
 
+    // Return the component to be rendered
     return(
       <div className="card status">
         <div className="user">
@@ -72,7 +73,7 @@ class Status extends React.Component {
               { this.props.receiver && (<i className="fa fa-caret-right" />) }
               { this.props.receiver && (
                 <Link to={ "/users/" + this.props.receiver }>
-                  { this.props.receiver }
+                  { this.props.receiverData.name }
                 </Link>
               ) }
             </p>
@@ -118,6 +119,7 @@ Status.propTypes = {
   likesCount: PropTypes.number,
   createdAt: PropTypes.string,
   receiver: PropTypes.string,
+  receiverData: PropTypes.object,
 };
 
 export default Status;

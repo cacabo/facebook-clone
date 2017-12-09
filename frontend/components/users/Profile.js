@@ -5,6 +5,8 @@ import axios from 'axios';
 import PropTypes from 'prop-types';
 import Loading from '../shared/Loading';
 import uuid from 'uuid-v4';
+import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
 
 /**
  * Render's a user's profile
@@ -20,6 +22,7 @@ import uuid from 'uuid-v4';
  * TODO have different errors (statuses, user not found, post error, etc)
  * TODO count num posts
  * TODO count num friends
+ * TODO handle loading data visualization
  */
 class Profile extends React.Component {
   // Constructor method
@@ -40,6 +43,7 @@ class Profile extends React.Component {
 
     // Bind this to helper methods
     this.renderStatuses = this.renderStatuses.bind(this);
+    this.newStatusCallback = this.newStatusCallback.bind(this);
   }
 
   // Set the state upon load
@@ -47,8 +51,6 @@ class Profile extends React.Component {
     // Get the user information
     axios.get('/api/users/' + this.props.match.params.username)
       .then(data => {
-        console.log(data.data.data);
-
         // Update the state
         this.setState({
           ...data.data.data,
@@ -77,6 +79,38 @@ class Profile extends React.Component {
       });
   }
 
+  // Helper method to render a newly created status
+  newStatusCallback(data) {
+    // Get the object
+    const status = data.data;
+
+    // Get the status information
+    axios.get("/api/users/" + status.user)
+      .then(userData => {
+        // Update the status user data and receiver data
+        const userObj = userData.data.data;
+        status.userData = userObj;
+        status.receiverData = {
+          name: this.state.name,
+          username: this.state.username,
+        };
+
+        // Update state to contain the new status
+        this.setState({
+          statuses: [
+            status,
+            ...this.state.statuses
+          ],
+        });
+      })
+      .catch(err => {
+        /**
+         * TODO
+         */
+        console.log(err);
+      });
+  }
+
   // Helper function to render the statuses
   renderStatuses() {
     return this.state.statuses.map(status => (
@@ -89,6 +123,7 @@ class Profile extends React.Component {
         image={ status.image }
         user={ status.user }
         userData={ status.userData }
+        receiverData={ status.receiverData }
         receiver={ status.receiver }
         key={ uuid() }
       />
@@ -98,7 +133,9 @@ class Profile extends React.Component {
   // Render the component
   render() {
     if (this.state.error) {
-      // TODO
+      /**
+       * TODO handle error
+       */
       console.log(this.state.error);
     }
     return (
@@ -128,21 +165,30 @@ class Profile extends React.Component {
                     { this.state.bio }
                   </p>
                   <strong>
+                    Affiliations
+                  </strong>
+                  <p>
+                    { this.state.affiliation }
+                  </p>
+                  <strong>
                     Interests
                   </strong>
                   <p>
                     { this.state.interests }
                   </p>
-                  <ul className="tags">
-                    <li>NETS 212</li>
-                    <li>Scalable cloud computing</li>
-                    <li>Computer science</li>
-                  </ul>
+                  {
+                    (this.props.username === this.state.username) && (
+                      <Link to="/users/edit" className="btn btn-primary btn-sm">
+                        Edit profile
+                      </Link>
+                    )
+                  }
                 </div>
                 <div className="col-12 col-md-8 col-lg-7">
                   <StatusForm
                     placeholder="Write on this user's wall"
                     receiver={ this.state.username }
+                    callback={ this.newStatusCallback }
                   />
                   { !this.state.statusesPending ? (this.renderStatuses()) : (<Loading />) }
                 </div>
@@ -157,6 +203,20 @@ class Profile extends React.Component {
 
 Profile.propTypes = {
   match: PropTypes.object,
+  username: PropTypes.string,
 };
 
-export default Profile;
+const mapStateToProps = (state) => {
+  return {
+    username: state.userState.username,
+  };
+};
+
+const mapDispatchToProps = () => {
+  return {};
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Profile);

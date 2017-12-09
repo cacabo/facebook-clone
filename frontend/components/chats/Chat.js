@@ -18,14 +18,14 @@ class Chat extends React.Component {
   // Constructor method
   constructor(props) {
     super(props);
-     
+
     // Set the state of the application
     this.state = {
       message: "",
       currentUser: "12",
       messages: [],
     }
-    
+
     // Bind this to helper methods
     this.handleChangeMessage = this.handleChangeMessage.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -60,7 +60,7 @@ class Chat extends React.Component {
     });
   }
 
-  //do socket sending here. Append this to own message list. 
+  //do socket sending here. Append this to own message list.
   handleSubmit(event) {
     const messageToSend = this.state.message; //have to do this.state not this alone
 
@@ -74,7 +74,7 @@ class Chat extends React.Component {
       room: this.props.match.params.id
     };
 
-    sendMessage(JSON.stringify(messageParams), (success) => { 
+    sendMessage(JSON.stringify(messageParams), (success) => {
       if (success) {
         this.setState((prevState, props) => {
           let oldMessage = this.state.messages;
@@ -139,15 +139,15 @@ class Chat extends React.Component {
             name="message"
             value={ this.state.message }
             onChange={ this.handleChangeMessage }
-            className="form-control card-shade"
+            className="form-control"
             type="text"
           />
           <input
             type="submit"
             className={
               this.state.message ?
-              "btn btn-gray card-shade" :
-              "btn btn-gray card-shade disabled"
+              "btn btn-gray" :
+              "btn btn-gray disabled"
             }
             value="Send"
           />

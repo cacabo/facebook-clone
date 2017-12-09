@@ -145,8 +145,7 @@ router.post('/users/:username/update/', (req, res) => {
     // Update the object to contain the information we want
     const obj = {
       username: sessionUsername,
-      firstName: req.body.firstName,
-      lastName: req.body.lastName,
+      name: req.body.name,
       affiliation: req.body.affiliation,
       bio: req.body.bio,
       interests: req.body.interests,
