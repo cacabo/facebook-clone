@@ -36,7 +36,7 @@ function sendMessage(message, cb) {
 function invite(room, username, inviter, cb) {
 	const params = {
 		sender: inviter,
-		roomToReceive: username,
+		roomToReceive: username + 'inviteRoom', //this is the temporary room where we can invite someone
 		roomToJoin: room
 	};
 

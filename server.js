@@ -38,11 +38,8 @@ socket.on('connection', (socket) => {
 	console.log('A client just joined on', socket.id);
 	//socket.id = client's id
 
-	//pull from database all chats pertaining to user and connect to them
-    socket.join('username')
+	//pull from database all chats pertaining to user and connect to them here
 
-    //maybe have info of which room message came from in message json
-    //emit only to that room once query room out of JSON object
 	socket.on('message', (message) => {
 		const messageData = JSON.parse(message);
 		const room = messageData.room;
@@ -51,10 +48,13 @@ socket.on('connection', (socket) => {
 		socket.broadcast.to(room).emit('message', message);
 	});
 
+	//detect invite notifications here
 	//hardcoded for now - username
 	socket.on('invite', (data) => {
 		const rooms = JSON.parse(data);
-		socket.join(rooms.roomToReceive);
+
+		//below is temporary for testing purposes since will have to already be part of a room to invite someone.
+		socket.join(rooms.roomToJoin);
 		socket.broadcast.to(rooms.roomToReceive).emit('invite', data);
 	});
 

@@ -19,6 +19,7 @@ class Chats extends React.Component {
 
     this.state = {
       //store room names here after making a query to the database
+      //temporary storage. Should be an array
       currentInvitation: 'testRoom',
       chats: [
         {

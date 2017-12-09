@@ -6,6 +6,8 @@ import SocketIOClient from 'socket.io-client';
 import { subscribeToMessages } from './socketrouter';
 import { sendMessage } from './socketrouter';
 import { invite } from './socketrouter';
+import { connect } from 'react-redux';
+import { joinRoom } from './socketrouter';
 
 /**
  * Component to render one of a user's group chats.
@@ -21,10 +23,13 @@ class Chat extends React.Component {
     // Set the state of the application
     this.state = {
       message: "",
-      currentUser: "12",
+      currentUser: this.props.username,
       messages: [],
-    }
- 
+    } 
+
+    // Everyone is part of a room for receving invitations
+    joinRoom(this.state.currentUser + 'inviteRoom', function(success) {})
+
     // Bind this to helper methods
     this.handleChangeMessage = this.handleChangeMessage.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -87,8 +92,9 @@ class Chat extends React.Component {
   }
 
   handleInvite(event) {
-    // username - user we are inviting
-    invite(this.props.match.params.id, 'username', this.state.currentUser, (success) => {
+    //will need to check if person you are inviting is a friend first
+    // chat id, user we want to invite, current user, cb
+    invite(this.props.match.params.id, 'victor', this.state.currentUser, (success) => {
         if (success) {console.log("Invite successful");}
     });
     event.preventDefault();
@@ -154,4 +160,18 @@ class Chat extends React.Component {
   }
 }
 
-export default Chat;
+// Gets the current User
+const mapStateToProps = (state) => {
+  return {
+    username: state.userState.username,
+  };
+};
+
+const mapDispatchToProps = (/* dispatch */) => {
+  return {};
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Chat);
