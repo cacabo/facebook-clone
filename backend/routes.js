@@ -326,13 +326,14 @@ router.get('/users/:username/friends/new', (req, res) => {
 /**
  * Add like to statuses
  */
-router.get('/statuses/:statusID/likes', (req, res) => {
+router.get('/users/:username/statuses/:statusID/likes', (req, res) => {
   // Get the status and liker
-  const status = req.params.statusID;
+  const statusID = req.params.statusID;
+  const statusUser = req.params.username;
   const liker = req.session.username;
 
   // Add like and update status
-  db.addLike(liker, status, (data, err) =>{
+  db.addLike(liker, statusUser, statusID, (data, err) =>{
     if (err || !data) {
       res.send({
         success: false,

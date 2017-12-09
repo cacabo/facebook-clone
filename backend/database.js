@@ -1,6 +1,6 @@
 const users = require('./users');
 const statuses = require('./statuses');
-
+const likes = require('./likes');
 /**
  * Create a friendship. friend1 is adding, and friend2 is being added
  * TODO After fixing error with range query, we need to create friendships
@@ -134,8 +134,8 @@ const database = {
   getStatuses: statuses.getStatuses,
   getStatus: statuses.getStatus,
   getUserStatuses: statuses.getUserStatuses,
-  createFriendship,
-  addLike,
+  addLike: likes.addLike,
+  deleteLike: likes.deleteLike,
 };
 
 module.exports = database;

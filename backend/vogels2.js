@@ -63,6 +63,16 @@ var Comment = vogels.define("Comment", {
   }
 });
 
+var Like = vogels.define("Like", {
+  hashKey: "keyword",
+  timestamps: true,
+  schema: {
+    keyword: Joi.string(),
+    status: Joi.string(),
+    liker: Joi.string(),
+  }
+})
+
 var Chat = vogels.define("Chat", {
   hashKey: "keyword",
   timestamps: true,

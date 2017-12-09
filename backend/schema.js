@@ -39,6 +39,19 @@ const Status = vogels.define("Status", {
   tableName: "statuses",
 });
 
+// Define a schema for likes
+const Like = vogels.define("Like", {
+  hashKey: "status",
+  rangeKey: "id",
+  timestamps: true,
+  schema: {
+    status: Joi.string(),
+    id: Joi.string(),
+    liker: Joi.string(),
+  },
+  tableName: "likes",
+});
+
 // Create the above tables
 vogels.createTables((err) => {
   if (err) {
@@ -52,6 +65,7 @@ vogels.createTables((err) => {
 const tables = {
   User,
   Status,
+  Like,
 };
 
 module.exports = tables;
