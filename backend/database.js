@@ -136,6 +136,7 @@ const database = {
   getUserStatuses: statuses.getUserStatuses,
   addLike: likes.addLike,
   deleteLike: likes.deleteLike,
+  checkLike: likes.checkLike,
 };
 
 module.exports = database;
