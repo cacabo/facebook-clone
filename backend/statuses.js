@@ -132,11 +132,67 @@ function getStatus(username, id, callback) {
   }
 }
 
+/**
+ * Get all statuses by a user
+ * TODO perform a range query for the specific statuses we want
+ */
+function getUserStatuses(username, callback) {
+  // Error checking on the username
+  if (!username || username.length === 0) {
+    callback(null, "Username must be well-defined");
+  }
+
+  // Check that the user exists
+  User.get(username, (userErr, userData) => {
+    if (userErr || !userData) {
+      callback(null, "User not found.");
+    }
+
+    // Else, query for the statuses
+    Status
+      .query(username)
+      .loadAll()
+      .exec((err, data) => {
+        if (err || !data) {
+          callback(null, err);
+        } else {
+          // Find the user object
+          const userObj = userData;
+
+          // Delete unneeded info
+          delete userObj.password;
+          delete userObj.affiliation;
+          delete userObj.interests;
+          delete userObj.bio;
+          delete userObj.coverPhoto;
+
+          // Prune out the status data
+          const statuses = data.Items.map(item => {
+            const status = item.attrs;
+            status.userData = userObj;
+            return status;
+          });
+
+          // Sort the statuses
+          statuses.sort((a, b) => {
+            const aCreatedAt = new Date(a.createdAt);
+            const bCreatedAt = new Date(b.createdAt);
+            return bCreatedAt - aCreatedAt;
+          });
+
+          // Return the statuses to the user
+          callback(statuses, err);
+        }
+      });
+  });
+}
+
 // Create an object to store the helper functions
 const statuses = {
   createStatus,
   getStatuses,
   getStatus,
+  getUserStatuses,
 };
 
 // Export the object

@@ -2,24 +2,6 @@ const users = require('./users');
 const statuses = require('./statuses');
 
 /**
- * Get all statuses by a user
- * TODO perform a range query for the specific statuses we want
- */
-function getUserStatuses(username, callback) {
-  // if (!username || username.length === 0) {
-  //   callback(null, "Username must be well-defined");
-  // } else {
-  //   users.getPrefix(username + ":", (err, data) => {
-  //     if (err || !data) {
-  //       callback(null, err);
-  //     } else {
-  //       callback(data, null);
-  //     }
-  //   });
-  // }
-}
-
-/**
  * Create a friendship. friend1 is adding, and friend2 is being added
  * TODO After fixing error with range query, we need to create friendships
  *      and add them to the friendshipsTable
@@ -159,7 +141,7 @@ const database = {
   createStatus: statuses.createStatus,
   getStatuses: statuses.getStatuses,
   getStatus: statuses.getStatus,
-  getUserStatuses,
+  getUserStatuses: statuses.getUserStatuses,
   createFriendship,
   addLike,
 };
