@@ -321,6 +321,33 @@ router.get('/users/:username/friends/new', (req, res) => {
 });
 
 /**
+ * Check if user has liked status (for front end)
+ */
+router.get('/users/:username/statuses/:statusID/checkLike', (req, res) => {
+  // Get the status and liker
+  const statusID = req.params.statusID;
+  const statusUser = req.params.username;
+  const liker = req.session.username;
+
+  // Check if user has liked the status already
+  db.checkLike(liker, statusUser, statusID, (checkData, checkErr) => {
+    if (!checkData || checkErr) {
+      // Not liked yet
+      res.send({
+        success: false,
+        err: checkErr,
+      });
+    } else {
+      // Already liked
+      res.send({
+        success: true,
+        data: checkData,
+      });
+    }
+  });
+});
+
+/**
  * Add like to statuses
  * TODO: checkLike, and then either go to addLike or deleteLike
  */

@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import Comment from './Comment';
 import PropTypes from 'prop-types';
 import moment from 'moment';
+import axios from 'axios';
 
 /**
  * Renders a status posted by a user. This can show up either on the newsfeed
@@ -24,8 +25,11 @@ class Status extends React.Component {
 
     // Set the state
     this.state = {
+      commentsCount: this.props.commentsCount,
+      likesCount: this.props.likesCount,
       toggledComments: false,
       isLiked: false,
+      pending: true,
     };
 
     // Bind this to helper functions
@@ -36,6 +40,34 @@ class Status extends React.Component {
   // Autosize textarea when user types
   componentDidMount() {
     autosize(document.querySelectorAll('textarea'));
+
+    /**
+     * TODO make a request to check if theuser ahs liked the status or not
+     * and set the state accordingly
+     */
+    axios.get('/api/users/' + this.props.user + '/statuses/' + this.props.id + '/checkLike')
+      .then(checkData => {
+        // Set state to isLiked or not isLiked
+
+        // If success is true, user has liked status already
+        if(checkData.data.success === true) {
+          this.setState({
+            isLiked: true,
+            pending: false,
+          });
+        } else {
+          this.setState({
+            isLiked: false,
+            pending: false,
+          });
+        }
+      })
+      /**
+       * TODO Figure out what to do if there is an error with axios get request
+       */
+      .catch(err => {
+        console.log(err);
+      });
   }
 
   // Handle a click on the comments icon
@@ -47,9 +79,46 @@ class Status extends React.Component {
 
   // Handle a click on the likes icon
   likeOnClick() {
-    this.setState({
-      isLiked: !this.state.isLiked,
-    });
+    /**
+     * TODO make a request to like or unlike the status
+     * if successful, update the state
+     * if there is an error console.log it and we can figure out what to do
+     * with that error later
+     * Also update likes count if successful
+     */
+    console.log("PROPS");
+    console.log(this.props);
+    // Only be able to click if state is not pending
+    if (!this.state.pending) {
+      axios.get('/api/users/' + this.props.user + '/statuses/' + this.props.id + '/likes')
+        .then(likeData => {
+          // If updating like was done properly, we switch isLiked state
+          if (likeData.data.success) {
+            this.setState({
+              isLiked: !this.state.isLiked,
+            });
+            // If we liked, then increase the count, else decrease count
+            if(this.state.isLiked) {
+              this.setState({
+                likesCount: this.state.likesCount + 1,
+              });
+            } else {
+              this.setState({
+                likesCount: this.state.likesCount - 1,
+              });
+            }
+          } else {
+            // There was an error adding/deleting like
+            console.log(likeData.data.err);
+          }
+        })
+        /**
+         * TODO Figure out what to do if there is an error with axios get request
+         */
+        .catch(likeErr => {
+          console.log(likeErr);
+        });
+    }
   }
 
   // Render method
@@ -90,11 +159,11 @@ class Status extends React.Component {
         <div className="interact">
           <div className="like" onClick={ this.likeOnClick }>
             <i className={ this.state.isLiked ? "fa fa-heart" : "fa fa-heart-o" } />
-            { this.props.likesCount } likes
+            { this.state.likesCount } likes
           </div>
           <div className="comment" onClick={ this.commentOnClick }>
             <i className={ this.state.toggledComments ? "fa fa-comment" : "fa fa-comment-o" } />
-            { this.props.commentsCount } comments
+            { this.state.commentsCount } comments
           </div>
         </div>
         <div className={ this.state.toggledComments ? "comments" : "comments hidden" }>
@@ -120,6 +189,7 @@ Status.propTypes = {
   createdAt: PropTypes.string,
   receiver: PropTypes.string,
   receiverData: PropTypes.object,
+  id: PropTypes.string,
 };
 
 export default Status;

@@ -125,7 +125,8 @@ class Profile extends React.Component {
         userData={ status.userData }
         receiverData={ status.receiverData }
         receiver={ status.receiver }
-        key={ uuid() }
+        key={ status.id }
+        id={ status.id }
       />
     ));
   }

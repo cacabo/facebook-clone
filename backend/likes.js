@@ -25,7 +25,7 @@ function checkLike(liker, statusUser, statusID, callback) {
           callback(null, "There was an error, or like has not happened: " + err.message);
         } else if (data.Items.length !== 0) {
           // A like exists and we must delete
-          callback(data, null);
+          callback(data.Items[0].attrs, null);
         } else {
           // Here we must add like
           callback(null, "Like does not exist.");
