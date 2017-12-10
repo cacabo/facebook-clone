@@ -11,7 +11,7 @@ import axios from 'axios';
  * TODO make this stateful depending on if the user is logged in or not.
  * Currently, it assumes that the user is not logged in.
  *
- * TODO logout
+ * TODO fix bugs with clicking on stuff
  */
 class Nav extends React.Component {
   // Constructor method
