@@ -23,6 +23,7 @@ import { connect } from 'react-redux';
  * TODO count num posts
  * TODO count num friends
  * TODO handle loading data visualization
+ * TODO handle change between user show pages
  */
 class Profile extends React.Component {
   // Constructor method

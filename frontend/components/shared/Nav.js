@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { logout } from '../../actions/index';
@@ -21,6 +21,7 @@ class Nav extends React.Component {
     // Set the state
     this.state = {
       search: "",
+      redirect: "",
     };
 
     // Bind this to handle logout
@@ -49,17 +50,15 @@ class Nav extends React.Component {
               users: data.data.data,
             });
           } else {
-            /**
-             * TODO handle this
-             */
-            console.log(data.data.error);
+            this.setState({
+              users: [],
+            });
           }
         })
         .catch(err => {
-          /**
-           * TODO handle this
-           */
-          console.log(err);
+          this.setState({
+            users: [],
+          });
         });
     } else {
       this.setState({
@@ -102,13 +101,28 @@ class Nav extends React.Component {
 
   // Render suggestions based on search
   renderSuggestions() {
-    return (<p>Suggestions!</p>);
+    return this.state.users.map(user => (
+      <Link
+        className="suggestion"
+        to={ "/users/" + user.username }
+        key={ user.username }
+      >
+        <div
+          className="img"
+          style={{ backgroundImage: `url(${user.profilePicture})` }}
+        />
+        <p>
+          { user.name }
+        </p>
+      </Link>
+    ));
   }
 
   // Render the component
   render() {
     return (
       <nav className="navbar navbar-toggleable-md navbar-light">
+        { this.state.redirect && (<Redirect to={ this.state.redirect } />)}
         <button className="navbar-toggler navbar-toggler-right collapsed" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span className="icon-bar top-bar" />
           <span className="icon-bar middle-bar" />
