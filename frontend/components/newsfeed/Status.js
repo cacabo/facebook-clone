@@ -47,7 +47,7 @@ class Status extends React.Component {
      */
     axios.get('/api/users/' + this.props.user + '/statuses/' + this.props.id + '/checkLike')
       .then(checkData => {
-        // Set state to is like or not is like
+        // Set state to isLiked or not isLiked
 
         // If success is true, user has liked status already
         if(checkData.data.success === true) {
@@ -62,6 +62,9 @@ class Status extends React.Component {
           });
         }
       })
+      /**
+       * TODO Figure out what to do if there is an error with axios get request
+       */
       .catch(err => {
         console.log(err);
       });
@@ -104,11 +107,14 @@ class Status extends React.Component {
                 likesCount: this.state.likesCount - 1,
               });
             }
-          // There was an error adding/deleting like
           } else {
+            // There was an error adding/deleting like
             console.log(likeData.data.err);
           }
         })
+        /**
+         * TODO Figure out what to do if there is an error with axios get request
+         */
         .catch(likeErr => {
           console.log(likeErr);
         });
