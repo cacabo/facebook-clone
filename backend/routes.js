@@ -315,7 +315,52 @@ router.get('/users/:username/friends/new', (req, res) => {
     } else {
       res.send({
         success: true,
-        data: data,
+      });
+    }
+  });
+});
+
+/**
+ * Add like to statuses
+ * TODO: checkLike, and then either go to addLike or deleteLike
+ */
+router.get('/users/:username/statuses/:statusID/likes', (req, res) => {
+  // Get the status and liker
+  const statusID = req.params.statusID;
+  const statusUser = req.params.username;
+  const liker = req.session.username;
+
+  // Add like and update status
+  db.checkLike(liker, statusUser, statusID, (data, err) =>{
+    // If Like doesn't exist, add like
+    if (err || !data) {
+      db.addLike(liker, statusUser, statusID, (addData, addErr) => {
+        if (addErr || !addData) {
+          res.send({
+            success: false,
+            err: addErr,
+          });
+        } else {
+          res.send({
+            success: true,
+            data: addData,
+          });
+        }
+      });
+    } else {
+      // If Like exists, delete
+      db.deleteLike(liker, statusUser, statusID, (deleteData, deleteErr) => {
+        if (deleteErr || !deleteData) {
+          res.send({
+            success: false,
+            err: deleteErr,
+          });
+        } else {
+          res.send({
+            success: true,
+            data: deleteData,
+          });
+        }
       });
     }
   });
