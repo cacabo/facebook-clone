@@ -85,9 +85,34 @@ class Status extends React.Component {
      */
     console.log("PROPS");
     console.log(this.props);
-    this.setState({
-      isLiked: !this.state.isLiked,
-    });
+    // Only be able to click if state is not pending
+    if (!this.state.pending) {
+      axios.get('/api/users/' + this.props.user + '/statuses/' + this.props.id + '/likes')
+        .then(likeData => {
+          // If updating like was done properly, we switch isLiked state
+          if (likeData.data.success) {
+            this.setState({
+              isLiked: !this.state.isLiked,
+            });
+            // If we liked, then increase the count, else decrease count
+            if(this.state.isLiked) {
+              this.setState({
+                likesCount: this.state.likesCount + 1,
+              });
+            } else {
+              this.setState({
+                likesCount: this.state.likesCount - 1,
+              });
+            }
+          // There was an error adding/deleting like
+          } else {
+            console.log(likeData.data.err);
+          }
+        })
+        .catch(likeErr => {
+          console.log(likeErr);
+        });
+    }
   }
 
   // Render method

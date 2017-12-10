@@ -22,13 +22,11 @@ function checkLike(liker, statusUser, statusID, callback) {
       .exec((err, data) => {
         if(err || !data) {
           // Error handling
-          console.log("first");
           callback(null, "There was an error, or like has not happened: " + err.message);
         } else if (data.Items.length !== 0) {
           // A like exists and we must delete
           callback(data.Items[0].attrs, null);
         } else {
-          console.log("no like");
           // Here we must add like
           callback(null, "Like does not exist.");
         }
