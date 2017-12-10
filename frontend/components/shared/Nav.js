@@ -21,7 +21,6 @@ class Nav extends React.Component {
     // Set the state
     this.state = {
       search: "",
-      redirect: "",
     };
 
     // Bind this to handle logout
@@ -55,7 +54,7 @@ class Nav extends React.Component {
             });
           }
         })
-        .catch(err => {
+        .catch(() => {
           this.setState({
             users: [],
           });
@@ -72,9 +71,14 @@ class Nav extends React.Component {
     // Prevent the default action
     event.preventDefault();
 
-    /**
-     * TODO
-     */
+    // Ensure value is populated
+    if (this.state.search) {
+      // Find the url
+      const url = "/users/search/" + this.state.search;
+
+      // Update the location
+      window.location = url;
+    }
   }
 
   // Handle signout
