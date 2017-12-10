@@ -11,11 +11,33 @@
   .navbar-brand {
     font-weight: bold;
     color: white;
+    width: auto !important;
+    display: inline-block !important;
+    margin-right: 3rem;
 
     &:hover,
     &:active,
     &:focus {
       color: white;
+    }
+  }
+
+  .form-inline {
+    .form-control {
+      min-width: 16rem;
+      background: white;
+      border: 1px solid $dark-blue;
+    }
+
+    .btn {
+      border: 1px solid $dark-blue !important;
+      background: $light-blue;
+
+      &:hover,
+      &:active,
+      &:focus {
+        background: $light-light-blue;
+      }
     }
   }
 

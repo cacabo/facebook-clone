@@ -56,6 +56,14 @@ class Nav extends React.Component {
 
         <div className="collapse navbar-collapse" id="navbarSupportedContent">
           {
+            this.props.isLoggedIn && (
+              <form className="form-inline">
+                <input className="form-control mr-sm-2" type="text" placeholder="Search for users" />
+                <button className="btn btn-primary my-2 my-sm-0" type="submit">Search</button>
+              </form>
+            )
+          }
+          {
             !this.props.isLoggedIn ?
             (
               <ul className="navbar-nav ml-auto">
