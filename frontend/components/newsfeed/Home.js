@@ -105,7 +105,7 @@ class Home extends React.Component {
           content={ status.content }
           image={ status.image }
           user={ status.user }
-          key={ uuid() }
+          key={ status.id }
           receiver={ status.receiver }
           userData={ status.userData }
           receiverData={ status.receiverData }
@@ -113,6 +113,7 @@ class Home extends React.Component {
           createdAt={ status.createdAt }
           likesCount={ status.likesCount }
           type={ status.type }
+          id={ status.id }
         />
       );
     });

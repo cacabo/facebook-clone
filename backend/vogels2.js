@@ -71,7 +71,7 @@ var Like = vogels.define("Like", {
     status: Joi.string(),
     liker: Joi.string(),
   }
-})
+});
 
 var Chat = vogels.define("Chat", {
   hashKey: "keyword",
