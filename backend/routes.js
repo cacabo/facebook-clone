@@ -394,6 +394,31 @@ router.get('/users/:username/statuses/:statusID/likes', (req, res) => {
 });
 
 /**
+ * Add new comment for status
+ */
+router.post('/users/:username/statuses/:statusID/comments/new', (req, res) => {
+  const comment = req.body.comment;
+  const statusUser = req.params.username;
+  const statusID = req.params.statusID;
+  const commenter = req.session.username;
+
+  // Add comment
+  db.addComment(commenter, comment, statusUser, statusID, (addData, addErr) => {
+    if (addErr || !addData) {
+      res.send({
+        success: false,
+        err: addErr,
+      });
+    } else {
+      res.send({
+        success: true,
+        data: addData,
+      });
+    }
+  });
+});
+
+/**
  * Register a new user
  */
 router.post('/users/new', (req, res) => {
