@@ -330,21 +330,36 @@ router.get('/users/:username/statuses/:statusID/likes', (req, res) => {
   // Get the status and liker
   const statusID = req.params.statusID;
   const statusUser = req.params.username;
-  const liker = req.session.username;
-
-  console.log(statusID);
-  console.log(liker);
-
+  // Const liker = req.session.username;
+  const liker = "vchien";
   // Add like and update status
-  db.deleteLike("ccabo", statusUser, statusID, (data, err) =>{
+  db.checkLike(liker, statusUser, statusID, (data, err) =>{
+    // If Like exists, we must delete
     if (err || !data) {
-      res.send({
-        success: false,
-        err: err,
+      db.addLike(liker, statusUser, statusID, (addData, addErr) => {
+        if(addErr || !addData) {
+          res.send({
+            success: false,
+            err: addErr,
+          });
+        } else {
+          res.send({
+            success: true,
+          });
+        }
       });
     } else {
-      res.send({
-        success: true,
+      db.deleteLike(liker, statusUser, statusID, (deleteData, deleteErr) => {
+        if(deleteErr || !deleteData) {
+          res.send({
+            success: false,
+            err: deleteErr,
+          });
+        } else {
+          res.send({
+            success: true,
+          });
+        }
       });
     }
   });

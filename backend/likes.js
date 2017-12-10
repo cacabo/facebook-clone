@@ -4,10 +4,30 @@ const uuid = require('uuid-v4');
 
 /**
  * Check if the user has already liked the status
- * TODO
+ * TODO: confused how to check between like is non existent or there was an error checking database
  */
 function checkLike(liker, statusUser, statusID, callback) {
-
+  // Check if either liker or status is null
+  if (!liker || !statusID) {
+    callback(null, "Either the liker or status is null.");
+  } else {
+    // Query for like. If like exists, return data, if not return null;
+    Like
+      .query(statusID)
+      .where('liker').equals(liker)
+      .exec((err, data) => {
+        if(err || !data) {
+          // Error handling
+          callback(null, "There was an error, or like has not happened: " + err.message);
+        } else if (data.Items.length !== 0) {
+          // A like exists and we must delete
+          callback(data, null);
+        } else {
+          // Here we must add like
+          callback(null, "Like does not exist.");
+        }
+      });
+  }
 }
 
 /**
@@ -112,7 +132,7 @@ function deleteLike(liker, statusUser, statusID, callback) {
                     const oldStatus = statusObject;
 
                     // Decrement status's likeCount
-                    statusObject.likeCount = parseInt(oldStatus.likesCount, 10) - 1;
+                    statusObject.likesCount = parseInt(oldStatus.likesCount, 10) - 1;
                     Status.update(oldStatus, (updateErr, updateData) => {
                       if(updateErr || !updateData) {
                         callback(null, "There was an error updating likes count.");
