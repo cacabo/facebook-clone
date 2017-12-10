@@ -5,7 +5,7 @@ const SHA3 = require('crypto-js/sha3');
 const db = require('./database.js');
 
 /**
- * TODO ensure that a user is logged in
+ * TODO ensure that a user is logged in where it makes sense
  */
 
 /**
@@ -180,7 +180,7 @@ router.post('/users/:username/update/', (req, res) => {
 
 /**
  * Get all statuses by a particular user
- * TODO test that this works / implement
+ * TODO get statuses to this user
  */
 router.get('/users/:username/statuses/', (req, res) => {
   // Find the username in the URL
@@ -212,7 +212,6 @@ router.get('/users/:username/statuses/', (req, res) => {
 
 /**
  * Get a single status
- * TODO
  */
 router.get('/statuses/:id', (req, res) => {
   // Find the id in the URL
@@ -297,46 +296,17 @@ router.post('/users/sessions/new', (req, res) => {
 });
 
 /**
- * Add friends
+ * Add a friend
  */
 router.get('/users/:username/friends/new', (req, res) => {
-  // Friend of page we are on
+  // Friend the current user is friending
   const friend2 = req.params.username;
 
-  // Current friend logged in
-  // TODO USE THIS
+  // Current user (as based on the express session)
   const friend1 = req.session.username;
 
-  // Create the friendship
+  // Create the friendship in the database
   db.createFriendship(friend1, friend2, (data, err) => {
-    if(err || !data) {
-      res.send({
-        success: false,
-        err: err,
-      });
-    } else{
-      res.send({
-        success: true,
-      });
-    }
-  });
-});
-
-/**
- * Add like to statuses
- * TODO: checkLike, and then either go to addLike or deleteLike
- */
-router.get('/users/:username/statuses/:statusID/likes', (req, res) => {
-  // Get the status and liker
-  const statusID = req.params.statusID;
-  const statusUser = req.params.username;
-  const liker = req.session.username;
-
-  console.log(statusID);
-  console.log(liker);
-
-  // Add like and update status
-  db.deleteLike("ccabo", statusUser, statusID, (data, err) =>{
     if (err || !data) {
       res.send({
         success: false,
@@ -345,6 +315,7 @@ router.get('/users/:username/statuses/:statusID/likes', (req, res) => {
     } else {
       res.send({
         success: true,
+        data: data,
       });
     }
   });
@@ -379,6 +350,33 @@ router.post('/users/new', (req, res) => {
         success: true,
         data: data,
         username: req.session.username,
+      });
+    }
+  });
+});
+
+/**
+ * Add like to statuses
+ * TODO: first check if the like exists or not
+ *       if it does exist, then delete the like
+ *       if it does not exists, then add the like
+ */
+router.get('/users/:username/statuses/:statusID/likes', (req, res) => {
+  // Get the status and liker
+  const statusID = req.params.statusID;
+  const statusUser = req.params.username;
+  const liker = req.session.username;
+
+  // Add like and update status
+  db.deleteLike(liker, statusUser, statusID, (data, err) => {
+    if (err || !data) {
+      res.send({
+        success: false,
+        err: err,
+      });
+    } else {
+      res.send({
+        success: true,
       });
     }
   });
