@@ -64,13 +64,9 @@ class StatusForm extends React.Component {
       });
 
       // Create the new status
-      /**
-       * TODO receiver should not always be null
-       * for example, if this is on a user's wall
-       */
       axios.post("/api/statuses/new", {
         content: this.state.status,
-        receiver: null,
+        receiver: this.props.receiver,
       })
         .then(res => {
           if (!res.data.success) {
@@ -110,7 +106,7 @@ class StatusForm extends React.Component {
       <div>
         {
           this.state.error ?
-          <div className="alert alert-danger error card-shade marg-bot-1">
+          <div className="alert alert-danger error marg-bot-1">
             <p className="bold marg-bot-025">
               There was an error:
             </p>
@@ -136,7 +132,7 @@ class StatusForm extends React.Component {
                   type="submit"
                   value="Post"
                   className={
-                    (this.state.status && this.state.status.length > 0) ? "btn btn-gray btn-sm card-shade" : "btn btn-gray btn-sm card-shade disabled"
+                    (this.state.status && this.state.status.length > 0) ? "btn btn-gray btn-sm" : "btn btn-gray btn-sm disabled"
                   } />
               </div>
             </div>
@@ -150,6 +146,7 @@ class StatusForm extends React.Component {
 StatusForm.propTypes = {
   placeholder: PropTypes.string,
   callback: PropTypes.func,
+  receiver: PropTypes.string,
 };
 
 export default StatusForm;

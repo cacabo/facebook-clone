@@ -58,6 +58,7 @@ class Status extends React.Component {
     const d = new Date(this.props.createdAt);
     const timestamp = moment(d).fromNow();
 
+    // Return the component to be rendered
     return(
       <div className="card status">
         <div className="user">
@@ -65,9 +66,18 @@ class Status extends React.Component {
             { backgroundImage: "url(" + this.props.userData.profilePicture + ")" }
           } />
           <div className="header-text">
-            <Link to={ "/users/" + this.props.user } >
-              { this.props.userData.firstName + " " + this.props.userData.lastName }
-            </Link>
+            <p className="name">
+              <Link to={ "/users/" + this.props.user }>
+                { this.props.userData.name }
+              </Link>
+              { this.props.receiver && (<i className="fa fa-caret-right" />) }
+              { this.props.receiver && (
+                <Link to={ "/users/" + this.props.receiver }>
+                  { this.props.receiverData.name }
+                </Link>
+              ) }
+            </p>
+
             <p className="timestamp">
               { timestamp }
             </p>
@@ -107,7 +117,9 @@ Status.propTypes = {
   userData: PropTypes.object,
   commentsCount: PropTypes.number,
   likesCount: PropTypes.number,
-  createdAt: PropTypes.number,
+  createdAt: PropTypes.string,
+  receiver: PropTypes.string,
+  receiverData: PropTypes.object,
 };
 
 export default Status;

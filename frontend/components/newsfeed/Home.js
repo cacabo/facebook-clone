@@ -29,7 +29,6 @@ class Home extends React.Component {
     this.state = {
       pending: true,
       statuses: [],
-      newStatuses: [],
     };
 
     // Bind this to helper methods
@@ -50,10 +49,11 @@ class Home extends React.Component {
         if (res.data.success) {
           this.setState({
             pending: false,
-            statuses: res.data.data.statusArr,
+            statuses: res.data.data,
           });
         } else {
           this.setState({
+            pending: false,
             error: "There was an error pulling information from the database."
           });
         }
@@ -61,37 +61,42 @@ class Home extends React.Component {
       .catch(err => {
         // Update the state to have an error
         this.setState({
+          pending: false,
           error: err,
         });
       });
   }
 
-  /**
-   * Helper method to render a newly created status
-   */
+  // Helper method to render a newly created status
   newStatusCallback(data) {
-    // Get the status key from the response from the status form
-    const statusKey = data.data.key;
+    // Get the object
+    const status = data.data;
 
     // Get the status information
-    axios.get("/api/statuses/" + statusKey)
-      .then(statusData => {
+    axios.get("/api/users/" + status.user)
+      .then(userData => {
+        const userObj = userData.data.data;
+        status.userData = userObj;
+
         // Update state to contain the new status
         this.setState({
           statuses: [
-            statusData.data.data,
-            ...this.state.statuses
+            status,
+            ...this.state.statuses,
           ],
         });
       })
-      .catch(() => {});
+      .catch(err => {
+        /**
+         * TODO
+         */
+        console.log(err);
+      });
   }
 
   /**
    * Helper function to render statuses on the homepage
    * This renders the statuses contained in the state of the component
-   *
-   * TODO add like counts
    */
   renderStatuses() {
     return this.state.statuses.map((status) => {
@@ -101,12 +106,13 @@ class Home extends React.Component {
           image={ status.image }
           user={ status.user }
           key={ uuid() }
+          receiver={ status.receiver }
           userData={ status.userData }
+          receiverData={ status.receiverData }
           commentsCount={ status.commentsCount }
           createdAt={ status.createdAt }
           likesCount={ status.likesCount }
           type={ status.type }
-          updatedAt={ status.updatedAt }
         />
       );
     });
@@ -120,7 +126,7 @@ class Home extends React.Component {
           <div className="col-lg-3 hidden-md-down">
             <FriendRecommendations />
           </div>
-          <div className="col-12 col-md-8 offset-md-2 col-lg-6 offset-lg-0 col-xl-5">
+          <div className="col-12 col-md-8 offset-md-2 col-lg-6 offset-lg-0 col-xl-5 no-pad-wide">
             {
               this.props.success ? (
                 <div className="alert alert-success">
@@ -130,7 +136,10 @@ class Home extends React.Component {
                 ""
               )
             }
-            <StatusForm placeholder="What's on your mind?" callback={ this.newStatusCallback }/>
+            <StatusForm
+              placeholder="What's on your mind?"
+              callback={ this.newStatusCallback }
+            />
             { this.state.pending ? (<Loading />) : (this.renderStatuses()) }
             <div className="space-4" />
           </div>

@@ -2,13 +2,21 @@
  * Styling for navbar
  */
 .navbar {
-  background: white;
+  background: $blue;
+  color: white;
   border-bottom: 1px solid rgba(0, 0, 0, 0.15);
-  box-shadow: 0rem 0.1rem 0.2rem rgba(0, 0, 0, 0.1);
+  box-shadow: 0rem 0.1rem 0.1rem rgba(0, 0, 0, 0.1);
   z-index: 1300;
 
   .navbar-brand {
     font-weight: bold;
+    color: white;
+
+    &:hover,
+    &:active,
+    &:focus {
+      color: white;
+    }
   }
 
   .navbar-toggler {
@@ -16,9 +24,78 @@
     outline: 0 !important;
   }
 
-  .nav-link {
+  .nav-item a.nav-link {
     font-weight: bold;
     cursor: hand;
     cursor: pointer;
+    color: rgba(255, 255, 255, 0.8);
+
+    &:visited {
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    &:hover,
+    &:active,
+    &:focus, {
+      color: white;
+    }
   }
+}
+
+.icon-bar {
+  display: block;
+  width: 33px;
+  height: 3px;
+  border-radius: 1.5px;
+  background: white;
+}
+
+.icon-bar.middle-bar {
+  transform: translateX(-6px);
+}
+
+.navbar-toggler .icon-bar+.icon-bar {
+  margin-top: 6px;
+}
+
+.navbar-toggler {
+  background: transparent !important;
+  margin-top: 6px;
+}
+
+.navbar-toggler:hover {
+  background: transparent !important;
+}
+
+.navbar-toggler .icon-bar {
+  width: 33px;
+  transition: all 0.2s;
+  background: white;
+}
+
+.navbar-toggler .top-bar {
+  transform: rotate(45deg);
+  transform-origin: 10% 10%;
+}
+
+.navbar-toggler .middle-bar {
+  transform: translateX(64px);
+}
+
+.navbar-toggler .bottom-bar {
+  transform: rotate(-45deg);
+  transform-origin: 10% 90%;
+}
+
+.navbar-toggler.collapsed .top-bar {
+  transform: rotate(0);
+}
+
+.navbar-toggler.collapsed .middle-bar {
+  opacity: 1;
+  transform: translateX(-6px);
+}
+
+.navbar-toggler.collapsed .bottom-bar {
+  transform: rotate(0);
 }
