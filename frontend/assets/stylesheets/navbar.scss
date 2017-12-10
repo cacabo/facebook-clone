@@ -29,6 +29,17 @@
       border: 1px solid $dark-blue;
     }
 
+    .suggestions {
+      position: absolute;
+      width: calc(16rem - 2px);
+      background: white;
+      color: black;
+      transform: translate(1px, 2rem);
+      border-radius: 0rem 0rem 0.4rem 0.4rem;
+      box-shadow: 0rem 0.2rem 0.2rem rgba(0, 0, 0, 0.2);
+      border-top: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
     .btn {
       border: 1px solid $dark-blue !important;
       background: $light-blue;
@@ -120,4 +131,19 @@
 
 .navbar-toggler.collapsed .bottom-bar {
   transform: rotate(0);
+}
+
+// Give padding to the form in the collapsed navbar
+@media screen and (max-width: 992px) {
+  .navbar .form-inline {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+}
+
+@media screen and (max-device-width: 992px) {
+  .navbar .form-inline {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
 }

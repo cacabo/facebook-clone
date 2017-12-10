@@ -18,8 +18,64 @@ class Nav extends React.Component {
   constructor(props) {
     super(props);
 
+    // Set the state
+    this.state = {
+      search: "",
+    };
+
     // Bind this to handle logout
     this.handleLogout = this.handleLogout.bind(this);
+    this.handleChangeSearch = this.handleChangeSearch.bind(this);
+    this.handleSubmitSearch = this.handleSubmitSearch.bind(this);
+  }
+
+  // Handle change search
+  handleChangeSearch(event) {
+    // Store the event value
+    const value = event.target.value;
+
+    // Set the search state
+    this.setState({
+      search: value,
+    });
+
+    // Perform logic
+    if (value) {
+      // Search for updates
+      axios.get("/api/users/search/" + value)
+        .then(data => {
+          if (data.data.success) {
+            this.setState({
+              users: data.data.data,
+            });
+          } else {
+            /**
+             * TODO handle this
+             */
+            console.log(data.data.error);
+          }
+        })
+        .catch(err => {
+          /**
+           * TODO handle this
+           */
+          console.log(err);
+        });
+    } else {
+      this.setState({
+        users: [],
+      });
+    }
+  }
+
+  // Handle submit search
+  handleSubmitSearch(event) {
+    // Prevent the default action
+    event.preventDefault();
+
+    /**
+     * TODO
+     */
   }
 
   // Handle signout
@@ -40,7 +96,13 @@ class Nav extends React.Component {
         /**
          * TODO handle error
          */
+        console.log(err);
       });
+  }
+
+  // Render suggestions based on search
+  renderSuggestions() {
+    return (<p>Suggestions!</p>);
   }
 
   // Render the component
@@ -57,8 +119,21 @@ class Nav extends React.Component {
         <div className="collapse navbar-collapse" id="navbarSupportedContent">
           {
             this.props.isLoggedIn && (
-              <form className="form-inline">
-                <input className="form-control mr-sm-2" type="text" placeholder="Search for users" />
+              <form className="form-inline" onSubmit={ this.handleSubmitSearch }>
+                <input
+                  className="form-control mr-sm-2"
+                  type="text"
+                  placeholder="Search for users"
+                  value={ this.state.search }
+                  onChange={ this.handleChangeSearch }
+                />
+                {
+                  (this.state.users && this.state.users.length) ? (
+                    <div className="suggestions">
+                      { this.renderSuggestions() }
+                    </div>
+                  ) : (null)
+                }
                 <button className="btn btn-primary my-2 my-sm-0" type="submit">Search</button>
               </form>
             )
