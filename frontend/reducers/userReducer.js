@@ -1,6 +1,7 @@
 // Default values for the program state
 const defaults = {
   username: "",
+  profilePicture: "",
   isLoggedIn: false,
 };
 
@@ -12,6 +13,7 @@ const userReducer = (state = defaults, action) => {
       const loginState = {
         ...state,
         username: action.username,
+        profilePicture: action.profilePicture,
         isLoggedIn: true,
       };
       return loginState;

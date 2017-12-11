@@ -5,6 +5,8 @@ import Comment from './Comment';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import axios from 'axios';
+import { connect } from 'react-redux';
+import Loading from '../shared/Loading';
 
 /**
  * Renders a status posted by a user. This can show up either on the newsfeed
@@ -30,6 +32,8 @@ class Status extends React.Component {
       toggledComments: false,
       isLiked: false,
       pending: true,
+      commentsPending: true,
+      comments: [],
     };
 
     // Bind this to helper functions
@@ -42,7 +46,7 @@ class Status extends React.Component {
     autosize(document.querySelectorAll('textarea'));
 
     /**
-     * TODO make a request to check if theuser ahs liked the status or not
+     * TODO make a request to check if the user has liked the status or not
      * and set the state accordingly
      */
     axios.get('/api/users/' + this.props.user + '/statuses/' + this.props.id + '/checkLike')
@@ -72,6 +76,9 @@ class Status extends React.Component {
 
   // Handle a click on the comments icon
   commentOnClick() {
+    /**
+     * TODO make a request to pull comments from the database
+     */
     this.setState({
       toggledComments: !this.state.toggledComments,
     });
@@ -86,8 +93,6 @@ class Status extends React.Component {
      * with that error later
      * Also update likes count if successful
      */
-    console.log("PROPS");
-    console.log(this.props);
     // Only be able to click if state is not pending
     if (!this.state.pending) {
       axios.get('/api/users/' + this.props.user + '/statuses/' + this.props.id + '/likes')
@@ -119,6 +124,16 @@ class Status extends React.Component {
           console.log(likeErr);
         });
     }
+  }
+
+  // Helper function to render comments
+  renderComments() {
+    return this.state.comments.map(comment => (
+      <Comment
+        content={ comment.content }
+        userData={ comment.userData }
+      />
+    ));
   }
 
   // Render method
@@ -168,10 +183,17 @@ class Status extends React.Component {
         </div>
         <div className={ this.state.toggledComments ? "comments" : "comments hidden" }>
           <form className="comments-form">
+            <div className="img" style={{ backgroundImage: `url(${this.props.profilePicture})` }} />
             <textarea className="form-control animate" placeholder="Leave a comment..." name="comment" type="text" rows="1" />
             <input className="btn btn-gray btn-sm marg-left-05" type="submit" name="submit" value="Reply" />
           </form>
-          <Comment text="Nice post" />
+          {
+            (this.state.commentsPending) ? (
+              <Loading />
+            ) : (
+              this.renderComments()
+            )
+          }
         </div>
       </div>
     );
@@ -179,6 +201,7 @@ class Status extends React.Component {
 }
 
 Status.propTypes = {
+  profilePicture: PropTypes.string,
   userImg: PropTypes.string,
   image: PropTypes.string,
   content: PropTypes.string,
@@ -192,4 +215,17 @@ Status.propTypes = {
   id: PropTypes.string,
 };
 
-export default Status;
+const mapStateToProps = (state) => {
+  return {
+    profilePicture: state.userState.profilePicture,
+  };
+};
+
+const mapDispatchToProps = () => {
+  return {};
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Status);
