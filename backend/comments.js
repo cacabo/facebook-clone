@@ -8,9 +8,16 @@ const async = require('async');
  */
 function addComment(commenter, comment, statusUser, statusID, callback) {
   // Check that none of required fields are null
-  if (!commenter || !comment || !statusUser || !statusID) {
-    callback(null, "Either commenter, comment, statusUser, or statusID is invalid.");
+  if (!commenter) {
+    callback(null, "Commenter is invalid.");
+  } else if (!comment) {
+    callback(null, "Comment is invalid.");
+  } else if (!statusUser) {
+    callback(null, "StatusUser is invalid.");
+  } else if (!statusID) {
+    callback(null, "StatusID is invalid.");
   } else {
+    // Query statuses to find the specfic status that is being commented on
     Status
       .query(statusUser)
       .where('id').equals(statusID)
@@ -36,12 +43,12 @@ function addComment(commenter, comment, statusUser, statusID, callback) {
             comment: comment,
           };
 
-          // Put Comment object in table
+          // Put comment object in table
           Comment.create(commentObject, (errComment, dataComment) =>  {
-            if(errComment || !dataComment) {
+            if (errComment || !dataComment) {
               callback(null, "There was an error adding comment to the table: " + errComment.message);
             } else {
-              // Old Status Object
+              // Old status object
               const oldStatus = statusObject;
 
               // Increase commentsCount by 1
@@ -49,10 +56,10 @@ function addComment(commenter, comment, statusUser, statusID, callback) {
 
               // Update comments count of status in table
               Status.update(oldStatus, (updateErr, updateData) => {
-                if(updateErr || !updateData) {
+                if (updateErr || !updateData) {
                   callback(null, "There was an error updating comments count.");
-                } else{
-                  callback({success: true}, null);
+                } else {
+                  callback({success: true, data: updateData}, null);
                 }
               });
             }
@@ -110,7 +117,7 @@ function getComments(statusID, callback) {
               // If there is an error with the async operation
               callback(asyncErr, null);
             } else {
-              // Sort the comments
+              // Sort the comments from earliest to latest
               comments.sort((a, b) => {
                 const aCreatedAt = new Date(a.createdAt);
                 const bCreatedAt = new Date(b.createdAt);
