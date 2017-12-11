@@ -61,6 +61,7 @@ const Comment = vogels.define("Comment", {
     statusID: Joi.string(),
     id: Joi.string(),
     commenter: Joi.string(),
+    comment: Joi.string(),
   },
   tableName: "comments",
 });

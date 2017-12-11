@@ -30,6 +30,7 @@ function addComment(commenter, comment, statusUser, statusID, callback) {
           statusID: statusID,
           id: uuid(),
           commenter: commenter,
+          comment: comment,
         };
 
         // Put Comment object in table
