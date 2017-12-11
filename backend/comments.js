@@ -1,6 +1,7 @@
 // Import the comments table
-const { Comment, Status } = require('./schema.js');
+const { Comment, Status, User } = require('./schema.js');
 const uuid = require('uuid-v4');
+const async = require('async');
 
 /**
  * Adds a Comment object to the commentsTable and updates the commentCount in the status
@@ -17,10 +18,13 @@ function addComment(commenter, comment, statusUser, statusID, callback) {
         } else {
           callback(null, "Status does not exist.");
         }
+      } else if (data.Items.length === 0) {
+        callback(null, "The status does not exist.");
       } else {
         // Status object that is being liked
         const statusObject = data.Items[0].attrs;
 
+        console.log(commenter);
         // Create comment object
         const commentObject = {
           statusID: statusID,
@@ -66,8 +70,49 @@ function getComments(statusID, callback) {
       if(err || !data) {
         callback(null, "There was an error finding comments: " + err);
       } else {
+        // Get all comments
         const comments = data.Items.map(item => ( item.attrs ));
-        console.log(comments);
+
+        // Get user for each comment
+        async.each(comments, (comment, keysCallback) => {
+          User.get(comment.commenter, (userErr, userData) => {
+            // Error finding user
+            if (userErr || !userData) {
+              callback(userErr, null);
+            } else {
+              // Find the user object
+              const userObj = userData.attrs;
+
+              // Delete unneeded info
+              delete userObj.password;
+              delete userObj.affiliation;
+              delete userObj.interests;
+              delete userObj.bio;
+              delete userObj.coverPhoto;
+              delete userObj.userData;
+              delete userObj.createdAt;
+
+              // Update the comment object
+              comment.userData = userObj;
+              keysCallback();
+            }
+          });
+        }, (asyncErr) => {
+          if (asyncErr) {
+            // If there is an error with the async operation
+            callback(asyncErr, null);
+          } else {
+            // Sort the comments
+            comments.sort((a, b) => {
+              const aCreatedAt = new Date(a.createdAt);
+              const bCreatedAt = new Date(b.createdAt);
+              return bCreatedAt - aCreatedAt;
+            });
+
+            // Return the comments to the user
+            callback(err, comments);
+          }
+        });
       }
     });
 }

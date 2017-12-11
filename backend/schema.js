@@ -55,7 +55,7 @@ const Like = vogels.define("Like", {
 // Define a schema for comments
 const Comment = vogels.define("Comment", {
   hashKey: "statusID",
-  rangeKey: "commenter",
+  rangeKey: "id",
   timestamps: true,
   schema: {
     statusID: Joi.string(),
