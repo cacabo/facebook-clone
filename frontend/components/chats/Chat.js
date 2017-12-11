@@ -2,6 +2,7 @@ import React from 'react';
 import autosize from 'autosize';
 import Chats from './Chats';
 import uuid from 'uuid-v4';
+import axios from 'axios';
 import SocketIOClient from 'socket.io-client';
 import { subscribeToMessages } from './socketrouter';
 import { sendMessage } from './socketrouter';
@@ -28,8 +29,9 @@ class Chat extends React.Component {
       users: [],
     } 
 
-    console.log("Current User " + this.state.currentUser);
-    // Everyone is part of a room for receving invitations
+    console.log("Current User " + this.props.username);
+
+    // Everyone is part of a specialized room for receving invitations
     joinRoom(this.state.currentUser + 'inviteRoom', function(success) {})
 
     // Bind this to helper methods
@@ -64,6 +66,7 @@ class Chat extends React.Component {
 
   // Does socket sending here. Append this to own message list. 
   handleSubmit(event) {
+    event.preventDefault();
     const messageToSend = this.state.message; //have to do this.state not this alone
 
     console.log("Current Room from send: " + this.props.match.params.id);
@@ -95,11 +98,25 @@ class Chat extends React.Component {
   }
 
   handleInvite(event) {
-    // TODO will need to check if person you are inviting is a friend first
-    // Parameters: chat id, user we want to invite, current user, cb
-    invite(this.props.match.params.id, 'victor', this.state.currentUser, () => {
-        console.log("Invite successful");
-    });
+    // Temporary recevier of invitations
+    const personToInvite = 'victor';
+
+    axios.post('/api/users/' + this.state.currentUser + '/chats/' + this.props.match.params.id + '/invite/' + personToInvite)
+      .then((inviteData) => {
+        if (inviteData.data.success) {
+          // TODO will need to check if person you are inviting is a friend first
+          // Parameters: chat id, user we want to invite, current user, cb
+          invite(this.props.match.params.id, personToInvite, this.state.currentUser, () => {
+              console.log("Invite successful");
+          });
+        } else {
+          // There was an error creating a new invite
+          console.log(inviteData.data.err);
+        }
+      })
+      .catch(inviteErr => {
+          console.log(inviteErr);
+      });
   }
 
   /**

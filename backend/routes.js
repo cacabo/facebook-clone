@@ -524,6 +524,78 @@ router.get('/users/:username/statuses/:statusID/likes', (req, res) => {
   });
 });
 
+
+/**
+ * Create a new invite
+ */
+router.post('/users/:inviter/chats/:roomID/invite/:receiver', (req, res) => {
+  // Get the status and liker
+  const sender = req.params.inviter;
+  const receiver = req.params.receiver;
+  const room = req.params.roomID;
+          
+  // Create the user in the database
+  db.createInvite(sender, receiver, room, (data, err) => {
+    if (err) {
+      res.send({
+        success: false,
+        error: err,
+      });
+    } else {
+      // Propogate the success to the component
+      res.send({
+        success: true,
+        data: data,
+        username: req.session.username,
+      });
+    }
+  });
+});
+
+/**
+ * Gets all invites for a particular user
+ */
+router.get('/users/:username/invites', (req, res) => {
+  const username = req.params.username;
+
+  // Get all invites of a user using username
+  db.getInvites(username, (data, err) => {
+    if (err || !data) {
+      res.send({
+        success: false,
+        err: err,
+      });
+    } else {
+      res.send({
+        success: true,
+        data: data
+      });
+    }
+  });
+});
+
+/**
+ * Deletes an invite for a particular user/room after they accept it
+ */
+router.post('/users/:receiver/chats/:roomID/deleteInvite', (req, res) => {
+  const receiver = req.params.receiver;
+  const roomID = req.params.roomID;
+
+  // Deletes an invite using the reveier of invite and room invited to
+  db.deleteInvite(receiver, roomID, (success, err) => {
+    if (err || !success) {
+      res.send({
+        success: false,
+        err: err,
+      });
+    } else {
+      res.send({
+        success: true,
+      });
+    }
+  });
+});
+
 /**
  * Handle a 404
  */

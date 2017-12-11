@@ -1,0 +1,122 @@
+// Import the user table
+const { Message, User } = require('./schema.js');
+const uuid = require('uuid-v4');
+const async = require('async');
+
+
+/**
+ * Create a message
+ */
+function createMessage(username, body, room, callback) {
+	if (!sender) {
+		callback(null, "Username must be populated");
+	} else if (!receiver) {
+		callback(null, "Body must be populated");
+	} else if (!room) {
+		callback(null, "Room must be populated");
+	} else {
+    // Create message object
+		const messageObject = {
+			id: uuid(),
+			username: username,
+			body: body,
+			room: room,
+		};
+
+		//Put the message in to the database
+		Message.create(messageObject, (err, data) => {
+			if (err || !data) {
+        callback(null, "Failed to put message in database.");
+			} else {
+				callback(data, null);
+			}
+		});
+	}
+}
+
+/**
+ * Get all messages for a room
+ */
+function getMessages(room, callback) {
+	// Error checking on the room name
+  if (!room || room.length === 0) {
+    callback(null, "Room must be well-defined");
+  }
+
+  // Check that the room exists
+  Chat.get(room, (roomErr, roomData) => {
+    if (roomErr || !roomData) {
+      callback(null, "Room not found.");
+    }
+
+    // Store the room object
+    const roomObj = roomData.attrs;
+
+    // Else, query for the messages
+    Message
+      .query(room)
+      .loadAll()
+      .exec((err, data) => {
+        if (err || !data) {
+          callback(null, err);
+        } else {
+          // Prune out the message data
+          const messages = data.Items.map(item => {
+            const message = item.attrs;
+            message.roomData = roomObj;
+            return message;
+          });
+
+          // Get the recipient name
+          async.each(messages, (message, keysCallback) => {
+            if (message.receiver) {
+              Message.get(message.receiver, (receiverErr, receiverData) => {
+                if (receiverErr || !receiverData) {
+                  callback(receiverErr, null);
+                } else {
+                  // Find the user object
+                  const receiverObj = userData.attrs;
+
+                  // Delete unneeded info
+                  delete receiverObj.password;
+                  delete receiverObj.affiliation;
+                  delete receiverObj.interests;
+                  delete receiverObj.bio;
+                  delete receiverObj.coverPhoto;
+
+                  // Update the message object
+                  message.receiverData = receiverObj;
+                  keysCallback(); 
+                }
+              });
+            } else {
+              keysCallback();
+            }
+          }, (asyncErr) => {
+            if (asyncErr) {
+              callback(asyncErr, null);
+            }
+
+            // Sort the messages
+            messages.sort((a, b) => {
+              const aCreatedAt = new Date(a.createdAt);
+              const bCreatedAt = new Date(b.createdAt);
+              return bCreatedAt - aCreatedAt;
+            });
+
+            // Return the messages to the user
+            callback(messages, err);
+          });
+        }
+      });
+  });
+}
+
+// Create an object to store the helper functions
+const messages = {
+  createMessage,
+  getMessages,
+};
+
+// Export the object
+module.exports = messages;

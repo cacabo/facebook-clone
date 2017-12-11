@@ -55,7 +55,7 @@ function joinRoom(room, users, cb) {
 	} else {
 		socket.emit('joinRoom', room);
 	}
-	cb(true);
+	// cb(true);
 }
 
 // Leaves a room

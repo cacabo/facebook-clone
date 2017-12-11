@@ -1,8 +1,10 @@
 import React from 'react';
 import ChatPreview from './ChatPreview';
 import uuid from 'uuid-v4';
+import axios from 'axios';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import { subscribeToInvitations } from './socketrouter';
 import { joinRoom } from './socketrouter';
 
@@ -39,6 +41,7 @@ class Chats extends React.Component {
       ],
     };
     this.handleAcceptInvite = this.handleAcceptInvite.bind(this);
+    this.getInvites = this.getInvites.bind(this);
   }
 
   componentDidMount() {
@@ -60,7 +63,53 @@ class Chats extends React.Component {
       console.log("joined room " + this.state.currentInvitation);
       joinRoom(this.state.currentInvitation, [], function(success) {})
     } 
-    event.preventDefault();
+
+    // Deletes the invite from the table once user accepts it
+    axios.post('/api/users/' + this.props.username + '/chats/' + 1 + '/deleteInvite')
+      .then(checkData => {
+        // If success is true, user has deleted invite already
+        if(checkData.data.success === true) {
+          console.log("successefully deleted invite");
+
+          this.setState({
+            /**
+            * TODO set state with list of invites
+            */
+          });
+        } else {
+            console.log("failure");
+            /**
+            * TODO handle fail
+            */
+        }
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  }
+
+  // Gets a list of invites pertaining to the current user
+  /*
+  * TODO display this list in a table somewhere
+  */
+  getInvites(event) {
+    axios.get('/api/users/' + this.props.username + '/invites')
+      .then(checkData => {
+        // If success is true, user has invited already
+        if(checkData.data.success === true) {
+          console.log(checkData.data.data);
+          this.setState({
+            /**
+            * TODO set state with list of invites
+            */
+          });
+        } else {
+            console.log("Failed to get invites");
+        }
+      })
+      .catch(err => {
+        console.log(err);
+      });
   }
 
   // Helper method to render chats based on state
@@ -76,7 +125,7 @@ class Chats extends React.Component {
     });
   }
 
-  // Render the chats co mponent
+  /// Render the chats co mponent
   render() {
     return (
       <div className="chat-container">
@@ -105,4 +154,17 @@ Chats.propTypes = {
   children: PropTypes.array,
 };
 
-export default Chats;
+const mapStateToProps = (state) => {
+  return {
+    username: state.userState.username,
+  };
+};
+
+const mapDispatchToProps = (/* dispatch */) => {
+  return {};
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Chats);

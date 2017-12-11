@@ -3,6 +3,11 @@ const statuses = require('./statuses');
 const likes = require('./likes');
 const comments = require('./comments');
 
+const invites = require('./invites');
+const messages = require('./messages');
+const chats = require('./chats');
+const userChatRelationship = require('./userChatRelationship');
+
 /**
  * Create a friendship. friend1 is adding, and friend2 is being added
  * TODO After fixing error with range query, we need to create friendships
@@ -142,6 +147,9 @@ const database = {
   checkLike: likes.checkLike,
   getComments: comments.getComments,
   addComment: comments.addComment,
+  createInvite: invites.createInvite,
+  getInvites: invites.getInvites,
+  deleteInvite: invites.deleteInvite,
 };
 
 module.exports = database;
