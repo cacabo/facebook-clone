@@ -6,14 +6,24 @@ import PropTypes from 'prop-types';
  *
  * TODO add user information
  */
-const Comment = ({ text }) => (
+const Comment = ({ content, userData }) => (
   <div className="comment">
-    { text }
+    <div
+      className="img"
+      style={{ backgroundImage: `url(${userData.profilePicture})`}}
+    />
+    <p className="name">
+      { userData.name }
+    </p>
+    <p className="content">
+      { content }
+    </p>
   </div>
 );
 
 Comment.propTypes = {
-  text: PropTypes.string,
+  content: PropTypes.string,
+  userData: PropTypes.object,
 };
 
 export default Comment;

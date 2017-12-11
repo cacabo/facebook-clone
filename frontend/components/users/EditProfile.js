@@ -5,6 +5,8 @@ import { Redirect } from 'react-router';
 import autosize from 'autosize';
 import PropTypes from 'prop-types';
 import Loading from '../shared/Loading';
+import { connect } from 'react-redux';
+import { update } from '../../actions/index';
 import axios from 'axios';
 
 /**
@@ -157,6 +159,9 @@ class EditProfile extends React.Component {
       // Update the user information in the database
       axios.post("/api/users/" + this.state.username + "/update/", this.state)
         .then(() => {
+          // Dispatch the update event to Redux
+          this.props.onUpdate(this.state.profilePicture);
+
           // Redirect the user away from the page
           this.setState({
             redirect: true,
@@ -299,6 +304,20 @@ class EditProfile extends React.Component {
 
 EditProfile.propTypes = {
   match: PropTypes.object,
+  onUpdate: PropTypes.func,
 };
 
-export default EditProfile;
+const mapStateToProps = (/* state */) => {
+  return {};
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    onUpdate: (profilePicture) => dispatch(update(profilePicture)),
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(EditProfile);

@@ -1,4 +1,6 @@
-// Styling for statuses
+/**
+ * Styling for statuses
+ */
 .card.status {
   padding: 0rem !important;
 
@@ -81,13 +83,25 @@
   }
 
   .comments {
+    background: $light-snow;
+    border-radius: 0rem 0rem 0.4rem 0.4rem !important;
+
     .comments-form {
-      background: $light-snow;
       display: flex;
-      padding: 0.5rem 1rem;
+      padding: 0.75rem 1rem;
       border-top: 1px solid $lighter-gray;
-      border-bottom: 1px solid $lighter-gray;
       align-items: flex-start;
+
+      .img {
+        width: 1.6rem;
+        height: 1.6rem;
+        border-radius: 50%;
+        margin-right: 0.5rem;
+        background: $light-gray;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+      }
 
       .form-control {
         flex: 1;
@@ -113,6 +127,17 @@
     .comment {
       padding: 0.5rem 1rem;
       font-size: 0.9rem;
+
+      .img {
+        width: 1.5rem;
+        height: 1.5rem;
+        background: $light-gray;
+        border-radius: 50%;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        margin-right: 0.5rem;
+      }
     }
 
     &.hidden {
