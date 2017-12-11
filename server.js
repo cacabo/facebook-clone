@@ -36,10 +36,9 @@ app.listen(PORT, error => {
 // The event will be called when a client is connected. Right when the app opens
 socket.on('connection', (socket) => {
 	console.log('A client just joined on', socket.id);
-	//socket.id = client's id
+	//TODO pull from database all chats pertaining to user and connect to them here
 
-	//pull from database all chats pertaining to user and connect to them here
-
+	// Listens for new messages
 	socket.on('message', (message) => {
 		const messageData = JSON.parse(message);
 		const room = messageData.room;
@@ -48,8 +47,7 @@ socket.on('connection', (socket) => {
 		socket.broadcast.to(room).emit('message', message);
 	});
 
-	//detect invite notifications here
-	//hardcoded for now - username
+	// Detects invite notifications
 	socket.on('invite', (data) => {
 		const rooms = JSON.parse(data);
 
@@ -58,24 +56,24 @@ socket.on('connection', (socket) => {
 		socket.broadcast.to(rooms.roomToReceive).emit('invite', data);
 	});
 
+	// Joins a room
 	socket.on('joinRoom', (room) => {
 		console.log("joined room " + room);
 		socket.join(room);
 	});
 
+	// Leaves a room
 	socket.on('leaveRoom', (room) => {
 		socket.broadcast.to(room).emit('message', "left room");
 		socket.leave(room);
 	});
 
 	// For creating a new room when thid person joins
-
 	socket.on('autoJoin', (data) => {
 		const rooms = JSON.parse(data);
 
 		socket.join(room);
 		console.log("auto joined room " + room);
 	});
-
 });
 

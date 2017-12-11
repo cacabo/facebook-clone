@@ -38,7 +38,10 @@ class Chat extends React.Component {
     this.handleInvite = this.handleInvite.bind(this);
   }
 
-  componentWillMount() {
+  // Autosize the text area to fit the text that's pasted into it
+  componentDidMount() {
+    autosize(document.querySelectorAll('textarea')); 
+
     // Listens for new messages received
     subscribeToMessages((message) => this.setState((prevState, props) => {
         console.log("received message: " + message)
@@ -49,12 +52,7 @@ class Chat extends React.Component {
           oldMessage.push(messageInfo);
           return {messages: oldMessage}
         }
-    }));
-  }
-
-  // Autosize the text area to fit the text that's pasted into it
-  componentDidMount() {
-    autosize(document.querySelectorAll('textarea'));    
+    }));   
   }
 
   // Helper method to handle a change to state
@@ -64,7 +62,7 @@ class Chat extends React.Component {
     });
   }
 
-  //do socket sending here. Append this to own message list. 
+  // Does socket sending here. Append this to own message list. 
   handleSubmit(event) {
     const messageToSend = this.state.message; //have to do this.state not this alone
 
@@ -89,15 +87,15 @@ class Chat extends React.Component {
           }
         });
       } else {
-        //message unsent
+        // TODO handle undent message error
       }
     });
     event.preventDefault();
   }
 
   handleInvite(event) {
-    //will need to check if person you are inviting is a friend first
-    // chat id, user we want to invite, current user, cb
+    // TODO will need to check if person you are inviting is a friend first
+    // parameters: chat id, user we want to invite, current user, cb
     invite(this.props.match.params.id, 'victor', this.state.currentUser, (success) => {
         if (success) {console.log("Invite successful");}
     });
@@ -168,7 +166,6 @@ class Chat extends React.Component {
   }
 }
 
-// Gets the current User
 const mapStateToProps = (state) => {
   return {
     username: state.userState.username,

@@ -46,7 +46,7 @@ function invite(room, username, inviter, cb) {
 }
 
 // Joins a room
-function joinRoom(room, users cb) {
+function joinRoom(room, users, cb) {
 	if (users.length == 2) {
 		//TODO: create new room and invite users to join. Must also join yourself
 		// Special invites where they automatically join
