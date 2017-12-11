@@ -8,7 +8,7 @@ import Thin from './shared/Thin';
 const NotFound = () => (
   <Thin>
     <div className="card">
-      <h2>Content not found</h2>
+      <h3 className="bold">Content not found</h3>
       <p>
         It seems like what you are looking for was either moved or does not exist.
       </p>

@@ -44,6 +44,29 @@ router.get('/logout', (req, res) => {
 });
 
 /**
+ * Search for users
+ */
+router.get('/users/search/:prefix/', (req, res) => {
+  // Get the prefix from the request
+  const prefix = req.params.prefix;
+
+  // Get the users from the database
+  db.searchUsers(prefix, (data, err) => {
+    if (err || !data) {
+      res.send({
+        success: false,
+        error: err,
+      });
+    } else {
+      res.send({
+        success: true,
+        data: data,
+      });
+    }
+  });
+});
+
+/**
  * Get all statuses
  * NOTE this likely is not userful though can be used to start off before we
  * have more targetted database methods
@@ -388,6 +411,53 @@ router.get('/users/:username/statuses/:statusID/likes', (req, res) => {
             data: deleteData,
           });
         }
+      });
+    }
+  });
+});
+
+/**
+ * Add new comment for status
+ */
+router.post('/users/:username/statuses/:statusID/comments/new', (req, res) => {
+  const comment = req.body.comment;
+  const statusUser = req.params.username;
+  const statusID = req.params.statusID;
+  const commenter = req.session.username;
+
+  // Add comment
+  db.addComment(commenter, comment, statusUser, statusID, (addData, addErr) => {
+    if (addErr || !addData) {
+      res.send({
+        success: false,
+        err: addErr,
+      });
+    } else {
+      res.send({
+        success: true,
+        data: addData,
+      });
+    }
+  });
+});
+
+/**
+ * Get all comments for status
+ */
+router.get('/users/:username/statuses/:statusID/comments', (req, res) => {
+  const statusID = req.params.statusID;
+
+  // Get all comments of a status using ID
+  db.getComments(statusID, (data, err) => {
+    if (err || !data) {
+      res.send({
+        success: false,
+        err: err,
+      });
+    } else {
+      res.send({
+        success: true,
+        data: data
       });
     }
   });

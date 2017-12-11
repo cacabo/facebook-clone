@@ -60,6 +60,7 @@ function getStatuses(callback) {
             delete userObj.interests;
             delete userObj.bio;
             delete userObj.coverPhoto;
+            delete userObj.createdAt;
 
             // Update the status object
             status.userData = userObj;
