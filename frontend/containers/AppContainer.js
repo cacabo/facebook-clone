@@ -124,6 +124,7 @@ class AppContainer extends React.Component {
         <Router>
           <div>
             <Nav />
+            <div className="nav-spacer" />
             <Switch>
               { homeRoute }
               { registerRoute }

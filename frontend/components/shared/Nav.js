@@ -125,7 +125,7 @@ class Nav extends React.Component {
   // Render the component
   render() {
     return (
-      <nav className="navbar navbar-toggleable-md navbar-light">
+      <nav className="navbar navbar-toggleable-md navbar-light fixed-top">
         { this.state.redirect && (<Redirect to={ this.state.redirect } />)}
         <button className="navbar-toggler navbar-toggler-right collapsed" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span className="icon-bar top-bar" />
