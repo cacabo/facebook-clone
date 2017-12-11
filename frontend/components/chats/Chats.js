@@ -95,7 +95,8 @@ class Chats extends React.Component {
               this.state.message ?
               "btn btn-gray card-shade" :
               "btn btn-gray card-shade disabled"
-            } onClick={ this.handleAcceptInvite }> 
+            } 
+            onClick={ this.handleAcceptInvite }> 
             Accept 
             </button>
         <div> invited to join { this.state.currentInvitation } </div>
