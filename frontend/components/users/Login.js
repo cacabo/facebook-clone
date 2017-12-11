@@ -90,12 +90,10 @@ class Login extends React.Component {
             // Find the username and profile picture from the response
             const username = res.data.data.username;
             const profilePicture = res.data.data.profilePicture;
-
-            console.log("RES DATA");
-            console.log(res.data);
+            const name = res.data.data.name;
 
             // Dispatch the login event to Redux
-            this.props.onLogin(username, profilePicture);
+            this.props.onLogin(username, profilePicture, name);
           }
         })
         .catch(err => {
@@ -188,7 +186,7 @@ const mapStateToProps = (/* state */) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    onLogin: (username, profilePicture) => dispatch(login(username, profilePicture)),
+    onLogin: (username, profilePicture, name) => dispatch(login(username, profilePicture, name)),
   };
 };
 

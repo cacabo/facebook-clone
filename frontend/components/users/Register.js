@@ -168,8 +168,11 @@ class Register extends React.Component {
           // Find the username in the response
           const username = postRes.data.username;
 
+          // Find the name
+          const name = (this.state.firstName + " " + this.state.lastName).toLowerCase();
+
           // Dispatch the login event to Redux
-          this.props.onRegister(username, null);
+          this.props.onRegister(username, null, name);
         } else {
           this.setState({
             error: postRes.data.error,
@@ -301,7 +304,7 @@ const mapStateToProps = (/* state */) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    onRegister: (username, profilePicture) => dispatch(login(username, profilePicture)),
+    onRegister: (username, profilePicture, name) => dispatch(login(username, profilePicture, name)),
   };
 };
 

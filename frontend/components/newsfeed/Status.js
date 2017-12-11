@@ -18,7 +18,8 @@ import Loading from '../shared/Loading';
  * TODO stateful likes
  * TODO pull user information from DB
  * TODO actually render comments
- * TODO put in timestamp at bottom right
+ * TODO render comment
+ * TODO render comment after writing it without refreshing
  */
 class Status extends React.Component {
   // Constructor method
@@ -34,11 +35,14 @@ class Status extends React.Component {
       pending: true,
       commentsPending: true,
       comments: [],
+      comment: "",
     };
 
     // Bind this to helper functions
     this.commentOnClick = this.commentOnClick.bind(this);
     this.likeOnClick = this.likeOnClick.bind(this);
+    this.handleSubmitComment = this.handleSubmitComment.bind(this);
+    this.handleChangeComment = this.handleChangeComment.bind(this);
   }
 
   // Autosize textarea when user types
@@ -51,8 +55,6 @@ class Status extends React.Component {
      */
     axios.get('/api/users/' + this.props.user + '/statuses/' + this.props.id + '/checkLike')
       .then(checkData => {
-        // Set state to isLiked or not isLiked
-
         // If success is true, user has liked status already
         if(checkData.data.success === true) {
           this.setState({
@@ -66,22 +68,43 @@ class Status extends React.Component {
           });
         }
       })
-      /**
-       * TODO Figure out what to do if there is an error with axios get request
-       */
       .catch(err => {
+        /**
+         * TODO Figure out what to do if there is an error with axios get request
+         */
         console.log(err);
       });
   }
 
   // Handle a click on the comments icon
   commentOnClick() {
-    /**
-     * TODO make a request to pull comments from the database
-     */
+    // Toggle the comments being displayed
     this.setState({
       toggledComments: !this.state.toggledComments,
     });
+
+    // If the comments haven't been loaded yet
+    if (this.state.commentsPending) {
+      // Make a request for the comments
+      axios.get(`/api/users/${this.props.user}/statuses/${this.props.id}/comments`)
+        .then(res => {
+          // Update the state
+          this.setState({
+            commentsPending: false,
+            comments: res.data.data,
+          });
+        })
+        .catch(err => {
+          /**
+           * TODO handle the error
+           */
+          console.log(err);
+          this.setState({
+            commentsPending: false,
+            comments: [],
+          });
+        });
+    }
   }
 
   // Handle a click on the likes icon
@@ -126,12 +149,74 @@ class Status extends React.Component {
     }
   }
 
+  // Handle a user editing the comment textarea
+  handleChangeComment(event) {
+    // Update the state to have the new comment value
+    this.setState({
+      comment: event.target.value,
+    });
+  }
+
+  // Handle when a user writes a new comment
+  handleSubmitComment(event) {
+    // Prevent default form action
+    event.preventDefault();
+
+    // Ensure the comment is at least 1 character long
+    if (this.state.comment) {
+      // Create the body of the request
+      const body = {
+        comment: this.state.comment,
+      };
+
+      // Make an axios request to create a comment for the status
+      axios.post(`/api/users/${this.props.user}/statuses/${this.props.id}/comments/new`, body)
+        .then(res => {
+          // Find the data of the created comment
+          const comment = res.data.data.data;
+
+          // Aggregate the user information
+          const userData = {
+            username: this.props.username,
+            name: this.props.name,
+            profilePicture: this.props.profilePicture,
+          };
+
+          // Add user data to the comment
+          comment.userData = userData;
+
+          // Update the state
+          this.setState({
+            comments: [
+              ...this.state.comments,
+              comment,
+            ],
+            comment: "",
+            commentsCount: this.state.commentsCount + 1,
+          });
+        })
+        .catch(err => {
+          /**
+           * TODO handle error
+           */
+          console.log(err);
+        });
+    } else {
+      /**
+       * TODO
+       */
+    }
+  }
+
   // Helper function to render comments
   renderComments() {
     return this.state.comments.map(comment => (
       <Comment
-        content={ comment.content }
         userData={ comment.userData }
+        text={ comment.comment }
+        key={ comment.id }
+        id={ comment.id }
+        createdAt={ comment.createdAt }
       />
     ));
   }
@@ -182,9 +267,17 @@ class Status extends React.Component {
           </div>
         </div>
         <div className={ this.state.toggledComments ? "comments" : "comments hidden" }>
-          <form className="comments-form">
+          <form className="comments-form" onSubmit={this.handleSubmitComment}>
             <div className="img" style={{ backgroundImage: `url(${this.props.profilePicture})` }} />
-            <textarea className="form-control animate" placeholder="Leave a comment..." name="comment" type="text" rows="1" />
+            <textarea
+              className="form-control animate"
+              placeholder="Leave a comment..."
+              name="comment"
+              type="text"
+              rows="1"
+              value={ this.state.comment }
+              onChange={ this.handleChangeComment }
+            />
             <input className="btn btn-gray btn-sm marg-left-05" type="submit" name="submit" value="Reply" />
           </form>
           {
@@ -203,6 +296,8 @@ class Status extends React.Component {
 Status.propTypes = {
   profilePicture: PropTypes.string,
   userImg: PropTypes.string,
+  username: PropTypes.string,
+  name: PropTypes.string,
   image: PropTypes.string,
   content: PropTypes.string,
   user: PropTypes.string,
@@ -218,6 +313,8 @@ Status.propTypes = {
 const mapStateToProps = (state) => {
   return {
     profilePicture: state.userState.profilePicture,
+    username: state.userState.username,
+    name: state.userState.name,
   };
 };
 
