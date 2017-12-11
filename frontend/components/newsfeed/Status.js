@@ -216,6 +216,7 @@ class Status extends React.Component {
         text={ comment.comment }
         key={ comment.id }
         id={ comment.id }
+        createdAt={ comment.createdAt }
       />
     ));
   }

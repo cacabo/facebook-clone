@@ -156,6 +156,14 @@
           margin-right: 0.5rem;
         }
       }
+
+      .timestamp {
+        margin-bottom: 0;
+        font-style: italic;
+        color: $light-gray;
+        text-align: right;
+        margin-left: 0.5rem;
+      }
     }
 
     &.hidden {
