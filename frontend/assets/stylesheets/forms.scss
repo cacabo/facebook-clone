@@ -18,6 +18,10 @@
       border-bottom: 2px solid $dark-gray;
     }
   }
+
+  textarea {
+    resize: none;
+  }
 }
 
 .status-form {

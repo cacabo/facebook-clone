@@ -4,6 +4,8 @@
 @import 'forms';
 @import 'status';
 @import 'profile';
+@import 'navbar';
+@import 'chat';
 
 // General app styling
 .app-wrapper {
@@ -20,10 +22,6 @@ textarea {
   background: white;
 }
 
-.card-shade {
-  box-shadow: 0rem 0.1rem 0.3rem rgba(0, 0, 0, 0.05) !important;
-}
-
 .alert-card {
   border-radius: 0.4rem;
 }
@@ -31,7 +29,6 @@ textarea {
 .card {
   padding: 1rem !important;
   border-radius: 0.4rem;
-  box-shadow: 0rem 0.1rem 0.3rem rgba(0, 0, 0, 0.05);
   border: 1px solid rgba(0, 0, 0, 0.15);
   margin-bottom: 1rem;
 
@@ -50,28 +47,6 @@ textarea {
 
 .pad-top-0 {
   padding-top: 0 !important;
-}
-
-.navbar {
-  background: white;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.15);
-  box-shadow: 0rem 0.1rem 0.2rem rgba(0, 0, 0, 0.1);
-  z-index: 1300;
-
-  .navbar-brand {
-    font-weight: bold;
-  }
-
-  .navbar-toggler {
-    border: 0px solid transparent;
-    outline: 0 !important;
-  }
-
-  .nav-link {
-    font-weight: bold;
-    cursor: hand;
-    cursor: pointer;
-  }
 }
 
 .btn {
@@ -115,7 +90,7 @@ textarea {
   }
 }
 
-// Remve underlines
+// Remve underlines from links
 a {
   text-decoration: none !important;
 
@@ -124,6 +99,18 @@ a {
   &:active,
   &:hover {
     text-decoration: none !important;
+  }
+}
+
+// Styling for the spinning loading component
+.loading {
+  width: 100%;
+  display: block;
+  padding: 1rem 0rem;
+  text-align: center;
+
+  .fa {
+    color: $light-gray;
   }
 }
 
@@ -193,102 +180,9 @@ a {
   border-top: 1px solid rgba(0, 0, 0, 0.15);
 }
 
-.chat-container {
-  width: 100%;
-  display: flex;
-  height: calc(100vh - 56.27px);
-  overflow: hidden !important;
-
-  .chats {
-    height: 100vh;
-    position: relative;
-    top: 0;
-    width: 20rem;
-    background: white;
-    border-right: 1px solid rgba(0, 0, 0, 0.15);
-    box-shadow: 0rem 0.1rem 0.3rem rgba(0, 0, 0, 0.05);
-    overflow-y: scroll;
-    overflow-x: hidden;
-
-    .chat-preview {
-      width: 100%;
-      display: block;
-      color: black !important;
-      border-bottom: 1px solid rgba(0, 0, 0, 0.15);
-      padding: 0.75rem 1rem;
-      cursor: hand;
-      cursor: pointer;
-
-      &:hover {
-        background: rgba(0, 0, 0, 0.025);
-      }
-
-      &:focus,
-      &:active {
-        background: rgba(0, 0, 0, 0.05);
-      }
-    }
-  }
-
-  .chat {
-    flex: 1;
-    padding: 1rem;
-
-    .message-wrapper {
-      width: 100%;
-      display: block;
-
-      .message {
-        background: white;
-        padding: 0.25rem 0.75rem;
-        display: inline-block;
-        border-radius: 0.6rem;
-        margin-bottom: 0.4rem;
-        max-width: 80%;
-        border: 1px solid rgba(0, 0, 0, 0.15);
-        box-shadow: 0rem 0.1rem 0.2rem rgba(0, 0, 0, 0.05);
-      }
-
-      &.current-user {
-        text-align: right;
-
-        .message {
-          background: $light-snow;
-          text-align: left !important;
-        }
-      }
-    }
-  }
-}
-
-@media screen and (min-device-width: 928px) and (min-width: 928px) {
-  .chat-container {
-    .chat {
-      padding-right: 4rem;
-    }
-  }
-}
-
-@media screen and (min-device-width: 1024px) and (min-width: 1024px) {
-  .chat-container {
-    .chat {
-      padding-right: 10rem;
-    }
-  }
-}
-
-@media screen and (min-device-width: 1118px) and (min-width: 1118px) {
-  .chat-container {
-    .chat {
-      padding-right: 16rem;
-    }
-  }
-}
-
-@media screen and (min-device-width: 1248px) and (min-width: 1248px) {
-  .chat-container {
-    .chat {
-      padding-right: 24rem;
-    }
+// Remove padding on large screens
+@media screen and (min-width: 992px) and (min-device-width: 992px) {
+  .no-pad-wide {
+    padding: 0rem !important;
   }
 }

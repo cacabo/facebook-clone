@@ -1,37 +1,39 @@
 import React from 'react';
 import Thin from '../shared/Thin';
 import { Link } from 'react-router-dom';
+import { Redirect } from 'react-router';
 import autosize from 'autosize';
 import PropTypes from 'prop-types';
+import Loading from '../shared/Loading';
+import axios from 'axios';
 
 /**
- * Component to render a form to edit a user's profile
+ * Component to render a form to edit a user's profile\
+ *
+ * TODO better error checking for images
+ * TODO change password
  */
 class EditProfile extends React.Component {
   // Constructor method
   constructor(props) {
     super(props);
 
-    /**
-     * TODO pull actual data from dynamodb
-     */
-
     // Set the state
     this.state = {
+      pending: true,
       error: "",
       username: "",
-      firstName: "",
-      lastName: "",
+      name: "",
       affiliation: "",
       bio: "",
       interests: "",
       profilePicture: "",
       coverPhoto: "",
+      redirect: false,
     };
 
     // Bind this to functions
-    this.handleChangeFirstName = this.handleChangeFirstName.bind(this);
-    this.handleChangeLastName = this.handleChangeLastName.bind(this);
+    this.handleChangeName = this.handleChangeName.bind(this);
     this.handleChangeAffiliation = this.handleChangeAffiliation.bind(this);
     this.handleChangeBio = this.handleChangeBio.bind(this);
     this.handleChangeInterests = this.handleChangeInterests.bind(this);
@@ -40,22 +42,45 @@ class EditProfile extends React.Component {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  // Autosize textareas when the component mounts
+  // Once the component mounts
   componentDidMount() {
-    autosize(document.querySelectorAll('textarea'));
+    // Get the current session
+    axios.get("/api/session")
+      .then(data => {
+        if (data.data.success) {
+          axios.get("/api/users/" + data.data.username)
+            .then(userData => {
+              // Update the state
+              this.setState({
+                ...userData.data.data,
+                pending: false,
+              });
+
+              // Autosize textareas when the component mounts
+              autosize(document.querySelectorAll('textarea'));
+            })
+            .catch(() => {
+              /**
+               * TODO
+               */
+            });
+        } else {
+          /**
+           * TODO
+           */
+        }
+      })
+      .catch(() => {
+        /**
+         * TODO
+         */
+      });
   }
 
-  // Handle a change to the first name state
-  handleChangeFirstName(event) {
+  // Handle a change to the name state
+  handleChangeName(event) {
     this.setState({
-      firstName: event.target.value,
-    });
-  }
-
-  // Handle a change to the last name state
-  handleChangeLastName(event) {
-    this.setState({
-      lastName: event.target.value,
+      name: event.target.value,
     });
   }
 
@@ -99,133 +124,174 @@ class EditProfile extends React.Component {
     // Prevent the default submission
     event.preventDefault();
 
-    /**
-     * TODO error checking and make the request
-     */
+    // Regular expression for validating URL's
+    const urlRegex = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
+
+    // Error checking
+    if (!this.state.username) {
+      this.setState({
+        error: "Username must be populated.",
+      });
+    } else if (!this.state.name) {
+      this.setState({
+        error: "First and last name must be populated",
+      });
+    } else if (this.state.affiliation && this.state.affiliation.length > 140) {
+      this.setState({
+        error: "Affiliation length capped at 140 characters",
+      });
+    } else if (this.state.bio && this.state.bio.length > 280) {
+      this.setState({
+        error: "Bio length capped at 280 characters.",
+      });
+    } else if (this.state.profilePicture && !urlRegex.test(this.state.profilePicture)) {
+      this.setState({
+        error: "Profile picture must be a valid URL.",
+      });
+    } else if (this.state.coverPhoto && !urlRegex.test(this.state.coverPhoto)) {
+      this.setState({
+        error: "Cover photo must be a valid URL.",
+      });
+    } else {
+      // Input data is properly formatted
+      // Update the user information in the database
+      axios.post("/api/users/" + this.state.username + "/update/", this.state)
+        .then(() => {
+          // Redirect the user away from the page
+          this.setState({
+            redirect: true,
+          });
+        })
+        .catch(() => {
+          this.setState({
+            error: "Error updating user in database. Check the form and try again.",
+          });
+        });
+    }
   }
 
   // Render the component
   render() {
     return(
       <Thin>
-        <div className="card">
-          <h3 className="marg-bot-1 bold">
-            Edit profile information
-          </h3>
-          <form className="line-form">
-            <label>
-              Username
-            </label>
-            <input
-              type="text"
-              name="username"
-              className="form-control marg-bot-1"
-              value={ this.state.username }
-              readOnly
-            />
-            <div className="row">
-              <div className="col-6">
-                <label>
-                  First name
-                </label>
-                <input
-                  type="text"
-                  name="firstName"
-                  className="form-control marg-bot-1"
-                  value={ this.state.firstName }
-                  onChange={ this.handleChangeFirstName }
-                />
-              </div>
-              <div className="col-6">
-                <label>
-                  Last name
-                </label>
-                <input
-                  type="text"
-                  name="lastName"
-                  className="form-control marg-bot-1"
-                  value={ this.state.lastName }
-                  onChange={ this.handleChangeLastName }
-                />
-              </div>
-            </div>
-
-            <label>
-              Affiliation
-            </label>
-            <input
-              type="text"
-              name="affiliation"
-              className="form-control marg-bot-1"
-              value={ this.state.affiliation }
-              onChange={ this.handleChangeAffiliation }
-            />
-
-            <label>
-              Bio
-            </label>
-            <textarea
-              type="text"
-              name="bio"
-              className="form-control marg-bot-1"
-              rows="1"
-              value={ this.state.bio }
-              onChange={ this.handleChangeBio }
-            />
-
-            <label>
-              Interests
-            </label>
-            <textarea
-              type="text"
-              name="interests"
-              className="form-control marg-bot-1"
-              rows="1"
-              value={ this.state.interests }
-              onChange={ this.handleChangeInterests }
-            />
-
-            <label>
-              Profile picture
-            </label>
-            <input
-              type="url"
-              name="profilePicture"
-              className="form-control marg-bot-1"
-              value={ this.state.profilePicture }
-              onChange={ this.handleChangeProfilePicture }
-            />
-
-            <label>
-              Cover photo
-            </label>
-            <input
-              type="url"
-              name="coverPhoto"
-              className="form-control marg-bot-1"
-              value={ this.state.coverPhoto }
-              onChange={ this.handleChangeCoverPhoto }
-            />
-
-            <input
-              type="submit"
-              className={
-                this.state.username &&
-                this.state.firstName &&
-                this.state.lastName &&
-                this.state.affiliation &&
-                this.state.bio &&
-                this.state.interests ?
-                "btn btn-primary full-width" :
-                "btn btn-primary full-width disabled"
+        {
+          this.state.pending ? (<Loading />) : (
+            <div className="card">
+              {
+                this.state.redirect && (<Redirect to={ "/users/" + this.state.username } />)
               }
-              value="Update information"
-            />
-          </form>
-          <p className="marg-top-1 marg-bot-0">
-            Nevermind? <Link to={ "/users/" + this.props.match.params.id } className="inline">Back to your profile.</Link>
-          </p>
-        </div>
+              <h3 className="marg-bot-1 bold">
+                Edit profile information
+              </h3>
+              {
+                this.state.error ?
+                <div className="alert alert-danger error">
+                  <p className="bold marg-bot-025">
+                    There was an error:
+                  </p>
+                  <p className="marg-bot-0">
+                    { this.state.error }
+                  </p>
+                </div>
+                : ""
+              }
+              <form className="line-form" onSubmit={ this.handleSubmit }>
+                <label>
+                  Username
+                </label>
+                <input
+                  type="text"
+                  name="username"
+                  className="form-control marg-bot-1"
+                  value={ this.state.username }
+                  readOnly
+                />
+
+                <label>
+                  Name
+                </label>
+                <input
+                  type="text"
+                  name="name"
+                  className="form-control marg-bot-1"
+                  value={ this.state.name }
+                  onChange={ this.handleChangeName }
+                />
+
+                <label>
+                  Affiliation
+                </label>
+                <input
+                  type="text"
+                  name="affiliation"
+                  className="form-control marg-bot-1"
+                  value={ this.state.affiliation }
+                  onChange={ this.handleChangeAffiliation }
+                />
+
+                <label>
+                  Bio
+                </label>
+                <textarea
+                  type="text"
+                  name="bio"
+                  className="form-control marg-bot-1"
+                  rows="1"
+                  value={ this.state.bio }
+                  onChange={ this.handleChangeBio }
+                />
+
+                <label>
+                  Interests
+                </label>
+                <textarea
+                  type="text"
+                  name="interests"
+                  className="form-control marg-bot-1"
+                  rows="1"
+                  value={ this.state.interests }
+                  onChange={ this.handleChangeInterests }
+                />
+
+                <label>
+                  Profile picture
+                </label>
+                <input
+                  type="text"
+                  name="profilePicture"
+                  className="form-control marg-bot-1"
+                  value={ this.state.profilePicture }
+                  onChange={ this.handleChangeProfilePicture }
+                />
+
+                <label>
+                  Cover photo
+                </label>
+                <input
+                  type="text"
+                  name="coverPhoto"
+                  className="form-control marg-bot-1"
+                  value={ this.state.coverPhoto }
+                  onChange={ this.handleChangeCoverPhoto }
+                />
+
+                <input
+                  type="submit"
+                  className={
+                    this.state.username &&
+                    this.state.name ?
+                    "btn btn-primary full-width cursor" :
+                    "btn btn-primary full-width disabled"
+                  }
+                  value="Update information"
+                />
+              </form>
+              <p className="marg-top-1 marg-bot-0">
+                Nevermind? <Link to={ "/users/" + this.state.username } className="inline">Back to your profile.</Link>
+              </p>
+            </div>
+          )
+        }
       </Thin>
     );
   }

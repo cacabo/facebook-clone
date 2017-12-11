@@ -3,8 +3,10 @@ import StatusForm from '../newsfeed/StatusForm';
 import Status from '../newsfeed/Status';
 import axios from 'axios';
 import PropTypes from 'prop-types';
-import Thin from '../shared/Thin';
-import { Link } from 'react-router';
+import Loading from '../shared/Loading';
+import uuid from 'uuid-v4';
+import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
 
 /**
  * Render's a user's profile
@@ -12,6 +14,16 @@ import { Link } from 'react-router';
  * Cover photo and profile picture at the top
  * Information about the user (bio, interests, friend count, etc.) to left
  * List of posts and ability to write on their wall to the right / middle
+ *
+ * TODO handle errors
+ * TODO pull user information
+ * TODO render user statuses
+ * TODO handle posts on user's wall
+ * TODO have different errors (statuses, user not found, post error, etc)
+ * TODO count num posts
+ * TODO count num friends
+ * TODO handle loading data visualization
+ * TODO handle change between user show pages
  */
 class Profile extends React.Component {
   // Constructor method
@@ -19,59 +31,132 @@ class Profile extends React.Component {
     super(props);
     this.state = {
       error: "",
-      firstName: "",
-      lastName: "",
+      name: "",
+      username: "",
       profilePicture: "",
       coverPhoto: "",
       bio: "",
       interests: "",
+      statuses: [],
+      profilePending: true,
+      statusesPending: true,
     };
+
+    // Bind this to helper methods
+    this.renderStatuses = this.renderStatuses.bind(this);
+    this.newStatusCallback = this.newStatusCallback.bind(this);
   }
 
   // Set the state upon load
   componentDidMount() {
+    // Get the user information
     axios.get('/api/users/' + this.props.match.params.username)
       .then(data => {
+        // Update the state
         this.setState({
           ...data.data.data,
+          profilePending: false,
         });
+
+        // Get the users statuses
+        axios.get('/api/users/' + this.props.match.params.username + '/statuses')
+          .then(statuses => {
+            this.setState({
+              statuses: statuses.data.data,
+              statusesPending: false,
+            });
+          })
+          .catch(err => {
+            this.setState({
+              error: err,
+            });
+          });
       })
       .catch(() => {
         this.setState({
-          error: "User with the specified username not found"
+          error: "User with the specified username not found",
+          profilePending: false,
         });
       });
+  }
+
+  // Helper method to render a newly created status
+  newStatusCallback(data) {
+    // Get the object
+    const status = data.data;
+
+    // Get the status information
+    axios.get("/api/users/" + status.user)
+      .then(userData => {
+        // Update the status user data and receiver data
+        const userObj = userData.data.data;
+        status.userData = userObj;
+        status.receiverData = {
+          name: this.state.name,
+          username: this.state.username,
+        };
+
+        // Update state to contain the new status
+        this.setState({
+          statuses: [
+            status,
+            ...this.state.statuses
+          ],
+        });
+      })
+      .catch(err => {
+        /**
+         * TODO
+         */
+        console.log(err);
+      });
+  }
+
+  // Helper function to render the statuses
+  renderStatuses() {
+    return this.state.statuses.map(status => (
+      <Status
+        content={ status.content }
+        createdAt={ status.createdAt }
+        likesCount={ status.likesCount }
+        commentsCount={ status.commentsCount }
+        type={ status.type }
+        image={ status.image }
+        user={ status.user }
+        userData={ status.userData }
+        receiverData={ status.receiverData }
+        receiver={ status.receiver }
+        key={ status.id }
+        id={ status.id }
+      />
+    ));
   }
 
   // Render the component
   render() {
     if (this.state.error) {
-      console.log("There is an error");
-      return (
-        <Thin>
-          <div className="card">
-            <h2>Content not found</h2>
-            <p>
-              { this.state.error }
-            </p>
-            <Link to="/" className="btn btn-primary">
-              Back to home
-            </Link>
-          </div>
-        </Thin>
-      );
+      /**
+       * TODO handle error
+       */
+      console.log(this.state.error);
     }
     return (
       <div className="profile">
-        <div className="cover-photo" />
+        <div
+          className="cover-photo"
+          style={{ backgroundImage: `url(${this.state.coverPhoto})` }}
+        />
         <div className="menu">
-          <h3>Cameron Cabo</h3>
+          <h3>{ this.state.name }</h3>
         </div>
 
         <div className="container-fluid">
           <div className="row">
-            <div className="col-12 col-lg-10 offset-lg-1">
-              <div className="profile-picture" />
+          <div className="col-12 col-lg-10 offset-lg-1">
+              <div
+                className="profile-picture"
+                style={{ backgroundImage: `url(${this.state.profilePicture})` }}
+              />
 
               <div className="row">
                 <div className="col-12 col-md-4 about">
@@ -79,40 +164,35 @@ class Profile extends React.Component {
                     Learn more
                   </strong>
                   <p>
-                    This is my biography
+                    { this.state.bio }
+                  </p>
+                  <strong>
+                    Affiliations
+                  </strong>
+                  <p>
+                    { this.state.affiliation }
                   </p>
                   <strong>
                     Interests
                   </strong>
-                  <ul className="tags">
-                    <li>NETS 212</li>
-                    <li>Scalable cloud computing</li>
-                    <li>Computer science</li>
-                  </ul>
                   <p>
-                    <strong>Friends:</strong> 212
+                    { this.state.interests }
                   </p>
-                  <p>
-                    <strong>Posts:</strong> 41
-                  </p>
+                  {
+                    (this.props.username === this.state.username) && (
+                      <Link to="/users/edit" className="btn btn-primary btn-sm">
+                        Edit profile
+                      </Link>
+                    )
+                  }
                 </div>
                 <div className="col-12 col-md-8 col-lg-7">
-                  <StatusForm placeholder="Write on this user's wall" />
-
-                  <Status
-                    name="Terry Jo"
-                    status="I'm a fool loool"
-                    userImg="https://scontent-lga3-1.xx.fbcdn.net/v/t31.0-8/15585239_1133593586737791_6146771975815537560_o.jpg?oh=1f5bfe8e714b99b823263e2db7fa3329&oe=5A88DA92"
-                    id="1"
+                  <StatusForm
+                    placeholder="Write on this user's wall"
+                    receiver={ this.state.username }
+                    callback={ this.newStatusCallback }
                   />
-
-                  <Status
-                    name="Terry Jo"
-                    status="Look at this dog"
-                    userImg="https://scontent-lga3-1.xx.fbcdn.net/v/t31.0-8/15585239_1133593586737791_6146771975815537560_o.jpg?oh=1f5bfe8e714b99b823263e2db7fa3329&oe=5A88DA92"
-                    id="1"
-                    image="http://www.insidedogsworld.com/wp-content/uploads/2016/03/Dog-Pictures.jpg"
-                  />
+                  { !this.state.statusesPending ? (this.renderStatuses()) : (<Loading />) }
                 </div>
               </div>
             </div>
@@ -125,6 +205,20 @@ class Profile extends React.Component {
 
 Profile.propTypes = {
   match: PropTypes.object,
+  username: PropTypes.string,
 };
 
-export default Profile;
+const mapStateToProps = (state) => {
+  return {
+    username: state.userState.username,
+  };
+};
+
+const mapDispatchToProps = () => {
+  return {};
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Profile);

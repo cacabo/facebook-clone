@@ -1,9 +1,9 @@
 "ccabo:1234" {
-  "inx": "1234",
   "image": "https://img.buzzfeed.com/buzzfeed-static/static/2014-08/12/16/enhanced/webdr08/grid-cell-25841-1407875566-4.jpg",
   "content": "Hello this is my status",
   "user": "ccabo",
   "receiver": null,
   "createdAt": "1245432",
+  "likesCount": "12",
   "type": "STATUS",
 }
