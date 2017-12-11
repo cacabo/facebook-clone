@@ -17,10 +17,12 @@ app.use(session({
   cookie: { secure: false }
 }));
 
+// Middleware to use
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Serve the api
 app.use('/api', api);
 
 app.get('*', (request, response) => {
@@ -77,4 +79,3 @@ socket.on('connection', (socket) => {
 		console.log("auto joined room " + room);
 	});
 });
-

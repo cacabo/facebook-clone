@@ -1,12 +1,15 @@
 import React from 'react';
 import autosize from 'autosize';
 import PropTypes from 'prop-types';
+import axios from 'axios';
 
 /**
  * Render the status form to appear at the top of the newsfeed and at the top
  * of a user's profile page.
  *
  * Post button only shows after the user clicks on the form.
+ *
+ * TODO render newly created status
  */
 class StatusForm extends React.Component {
   // Constructor method
@@ -49,27 +52,51 @@ class StatusForm extends React.Component {
     // Prevent the default submit action
     event.preventDefault();
 
-    // Keep track of if an error has occured or not
-    let isValid = true;
-
     // Ensure that the status is valid
     if (!this.state.status || this.state.status.length < 2) {
       this.setState({
         error: "Status must be at least 2 characters long."
       });
-      isValid = false;
     } else {
+      // Remove any existing error
       this.setState({
         error: "",
       });
-    }
-    /**
-     * TODO
-     */
-    if (isValid) {
-      /**
-       * Make the request
-       */
+
+      // Create the new status
+      axios.post("/api/statuses/new", {
+        content: this.state.status,
+        receiver: this.props.receiver,
+      })
+        .then(res => {
+          if (!res.data.success) {
+            this.setState({
+              error: res.data.error,
+            });
+          } else {
+            // Reset the state
+            this.setState({
+              error: "",
+              status: "",
+              active: false,
+            });
+
+            // Propogate the data up to the home components
+            this.props.callback(res.data);
+          }
+        })
+        .catch(err => {
+          // Catch an error on the post request
+          if (err) {
+            this.setState({
+              error: err,
+            });
+          } else {
+            this.setState({
+              error: "Failed to create status."
+            });
+          }
+        });
     }
   }
 
@@ -79,7 +106,7 @@ class StatusForm extends React.Component {
       <div>
         {
           this.state.error ?
-          <div className="alert alert-danger error card-shade marg-bot-1">
+          <div className="alert alert-danger error marg-bot-1">
             <p className="bold marg-bot-025">
               There was an error:
             </p>
@@ -105,7 +132,7 @@ class StatusForm extends React.Component {
                   type="submit"
                   value="Post"
                   className={
-                    (this.state.status && this.state.status.length > 0) ? "btn btn-gray btn-sm card-shade" : "btn btn-gray btn-sm card-shade disabled"
+                    (this.state.status && this.state.status.length > 0) ? "btn btn-gray btn-sm" : "btn btn-gray btn-sm disabled"
                   } />
               </div>
             </div>
@@ -118,6 +145,8 @@ class StatusForm extends React.Component {
 
 StatusForm.propTypes = {
   placeholder: PropTypes.string,
+  callback: PropTypes.func,
+  receiver: PropTypes.string,
 };
 
 export default StatusForm;

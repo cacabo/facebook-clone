@@ -5,6 +5,8 @@ import FriendRecommendations from './FriendRecommendations';
 import OnlineNow from './OnlineNow';
 import uuid from 'uuid-v4';
 import PropTypes from 'prop-types';
+import axios from 'axios';
+import Loading from '../shared/Loading';
 
 /**
  * Component to render a user's newsfeed.
@@ -12,49 +14,106 @@ import PropTypes from 'prop-types';
  * On smaller screens, exclusively the newsfeed shows up. On larger screens,
  * however, a user sees 1. recommended friends (to the left), 2. their newsfeed,
  * 3. a list of friends currently online.
+ *
+ * TODO handle success / push notifications when the user successfully logs in,
+ * creates a post, etc.
+ *
+ * TODO render errors when loading content
  */
 class Home extends React.Component {
   // Constructor method
   constructor(props) {
     super(props);
 
-    /**
-     * TODO REPLACE DUMMY DATA
-     */
+    // Set the state
     this.state = {
-      statuses: [
-        {
-          name: "Terry Jo",
-          status: "I'm a fool loool",
-          userImg: "https://scontent-lga3-1.xx.fbcdn.net/v/t31.0-8/15585239_1133593586737791_6146771975815537560_o.jpg?oh=1f5bfe8e714b99b823263e2db7fa3329&oe=5A88DA92",
-          username: "terry",
-        },
-        {
-          name: "Terry Jo",
-          status: "Look at this dog",
-          userImg: "https://scontent-lga3-1.xx.fbcdn.net/v/t31.0-8/15585239_1133593586737791_6146771975815537560_o.jpg?oh=1f5bfe8e714b99b823263e2db7fa3329&oe=5A88DA92",
-          username: "terry",
-          image: "https://static.boredpanda.com/blog/wp-content/uploads/2016/01/bear-dogs-310__605.jpg",
-        },
-      ],
+      pending: true,
+      statuses: [],
     };
+
+    // Bind this to helper methods
+    this.renderStatuses = this.renderStatuses.bind(this);
+    this.newStatusCallback = this.newStatusCallback.bind(this);
+  }
+
+  /**
+   * Pull the statuses from the database
+   * TODO pull only statuses from friends
+   * TODO denote errors to the user
+   */
+  componentDidMount() {
+    // Make the AJAX request
+    axios.get('/api/statuses')
+      .then(res => {
+        // Check if the response was successful
+        if (res.data.success) {
+          this.setState({
+            pending: false,
+            statuses: res.data.data,
+          });
+        } else {
+          this.setState({
+            pending: false,
+            error: "There was an error pulling information from the database."
+          });
+        }
+      })
+      .catch(err => {
+        // Update the state to have an error
+        this.setState({
+          pending: false,
+          error: err,
+        });
+      });
+  }
+
+  // Helper method to render a newly created status
+  newStatusCallback(data) {
+    // Get the object
+    const status = data.data;
+
+    // Get the status information
+    axios.get("/api/users/" + status.user)
+      .then(userData => {
+        const userObj = userData.data.data;
+        status.userData = userObj;
+
+        // Update state to contain the new status
+        this.setState({
+          statuses: [
+            status,
+            ...this.state.statuses,
+          ],
+        });
+      })
+      .catch(err => {
+        /**
+         * TODO
+         */
+        console.log(err);
+      });
   }
 
   /**
    * Helper function to render statuses on the homepage
    * This renders the statuses contained in the state of the component
-   * NOTE map is a funcitonal iterator method
    */
   renderStatuses() {
     return this.state.statuses.map((status) => {
       return (
         <Status
-          name={ status.name }
-          status={ status.status }
-          userImg={ status.userImg }
+          content={ status.content }
           image={ status.image }
-          username={ status.username }
-          key={ uuid() }
+          user={ status.user }
+          key={ status.id }
+          receiver={ status.receiver }
+          userData={ status.userData }
+          receiverData={ status.receiverData }
+          commentsCount={ status.commentsCount }
+          createdAt={ status.createdAt }
+          likesCount={ status.likesCount }
+          type={ status.type }
+          id={ status.id }
         />
       );
     });
@@ -68,7 +127,7 @@ class Home extends React.Component {
           <div className="col-lg-3 hidden-md-down">
             <FriendRecommendations />
           </div>
-          <div className="col-12 col-md-8 offset-md-2 col-lg-6 offset-lg-0 col-xl-5">
+          <div className="col-12 col-md-8 offset-md-2 col-lg-6 offset-lg-0 col-xl-5 no-pad-wide">
             {
               this.props.success ? (
                 <div className="alert alert-success">
@@ -78,8 +137,11 @@ class Home extends React.Component {
                 ""
               )
             }
-            <StatusForm placeholder="What's on your mind?" />
-            { this.renderStatuses() }
+            <StatusForm
+              placeholder="What's on your mind?"
+              callback={ this.newStatusCallback }
+            />
+            { this.state.pending ? (<Loading />) : (this.renderStatuses()) }
             <div className="space-4" />
           </div>
           <div className="col-md-3 col-xl-4 hidden-md-down">

@@ -132,7 +132,7 @@ class Register extends React.Component {
     if (isValid) {
       // Ensure the username is properly formatted: no whitespace and only
       // letters, numbers, periods, or underscores
-      const usernameRegex = /^[a-zA-Z0-9.\-_]+$/;
+      const usernameRegex = /^[a-z0-9.\-_]+$/;
       const validUsername = usernameRegex.test(this.state.username);
 
       // Throw an error if the username is invalid
@@ -164,8 +164,6 @@ class Register extends React.Component {
       // Send a post request to create the user
       axios.post("/api/users/new", data)
       .then((postRes) => {
-        console.log("Porstres", postRes);
-
         if (postRes.data.success) {
           // Find the username in the response
           const username = postRes.data.username;

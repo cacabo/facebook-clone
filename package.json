@@ -28,7 +28,9 @@
     "expect": "^1.20.2",
     "express": "^4.15.2",
     "express-session": "^1.15.6",
+    "joi": "^13.0.2",
     "mocha": "^3.2.0",
+    "moment": "^2.19.3",
     "node-sass": "^4.5.2",
     "prop-types": "^15.5.8",
     "react": "^15.5.4",
@@ -45,6 +47,7 @@
     "socket.io": "^2.0.4",
     "style-loader": "^0.16.1",
     "uuid-v4": "^0.1.0",
+    "vogels": "^2.2.0",
     "webpack": "^2.3.3"
   },
   "devDependencies": {

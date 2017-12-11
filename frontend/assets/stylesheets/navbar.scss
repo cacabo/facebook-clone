@@ -1,0 +1,199 @@
+/**
+ * Styling for navbar
+ */
+.navbar {
+  background: $blue;
+  color: white;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+  box-shadow: 0rem 0.1rem 0.1rem rgba(0, 0, 0, 0.1);
+  z-index: 1300;
+
+  .navbar-brand {
+    font-weight: bold;
+    color: white;
+    width: auto !important;
+    display: inline-block !important;
+    margin-right: 3rem;
+
+    &:hover,
+    &:active,
+    &:focus {
+      color: white;
+    }
+  }
+
+  .form-inline {
+    .form-control {
+      min-width: 16rem;
+      background: white;
+      border: 1px solid $dark-blue;
+    }
+
+    .suggestions {
+      position: absolute;
+      width: calc(16rem - 2px);
+      height: auto;
+      background: white;
+      color: black;
+      top: 2.5rem;
+      transform: translateX(1px);
+      border-radius: 0rem 0rem 0.4rem 0.4rem;
+      box-shadow: 0rem 0.2rem 0.2rem rgba(0, 0, 0, 0.2);
+
+      .suggestion {
+        padding: 0.5rem 1rem;
+        display: block;
+        width: 100%;
+        border-top: 1px solid rgba(0, 0, 0, 0.1);
+        display: flex;
+
+        &:last-child {
+          border-radius: 0rem 0rem 0.4rem 0.4rem;
+        }
+
+        &:hover {
+          background: $light-snow;
+        }
+
+        &:focus,
+        &:active {
+          background: $snow;
+        }
+
+        .img {
+          width: 1.5rem;
+          height: 1.5rem;
+          border-radius: 50%;
+          background: $light-gray;
+          background-position: center;
+          background-size: cover;
+          background-repeat: no-repeat;
+          display: inline-block;
+          margin-right: 0.5rem;
+        }
+
+        p {
+          padding: 0rem;
+          margin-bottom: 0rem;
+          font-weight: bold;
+          text-transform: capitalize;
+          flex: 1;
+        }
+      }
+    }
+
+    .btn {
+      border: 1px solid $dark-blue !important;
+      background: $light-blue;
+
+      &:hover,
+      &:active,
+      &:focus {
+        background: $light-light-blue;
+      }
+    }
+  }
+
+  .navbar-toggler {
+    border: 0px solid transparent;
+    outline: 0 !important;
+  }
+
+  .nav-item a.nav-link {
+    font-weight: bold;
+    cursor: hand;
+    cursor: pointer;
+    color: rgba(255, 255, 255, 0.8);
+
+    &:visited {
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    &:hover,
+    &:active,
+    &:focus, {
+      color: white;
+    }
+  }
+}
+
+.icon-bar {
+  display: block;
+  width: 33px;
+  height: 3px;
+  border-radius: 1.5px;
+  background: white;
+}
+
+.icon-bar.middle-bar {
+  transform: translateX(-6px);
+}
+
+.navbar-toggler .icon-bar+.icon-bar {
+  margin-top: 6px;
+}
+
+.navbar-toggler {
+  background: transparent !important;
+  margin-top: 6px;
+}
+
+.navbar-toggler:hover {
+  background: transparent !important;
+}
+
+.navbar-toggler .icon-bar {
+  width: 33px;
+  transition: all 0.2s;
+  background: white;
+}
+
+.navbar-toggler .top-bar {
+  transform: rotate(45deg);
+  transform-origin: 10% 10%;
+}
+
+.navbar-toggler .middle-bar {
+  transform: translateX(64px);
+}
+
+.navbar-toggler .bottom-bar {
+  transform: rotate(-45deg);
+  transform-origin: 10% 90%;
+}
+
+.navbar-toggler.collapsed .top-bar {
+  transform: rotate(0);
+}
+
+.navbar-toggler.collapsed .middle-bar {
+  opacity: 1;
+  transform: translateX(-6px);
+}
+
+.navbar-toggler.collapsed .bottom-bar {
+  transform: rotate(0);
+}
+
+// Give padding to the form in the collapsed navbar
+@media screen and (max-width: 992px) {
+  .navbar .form-inline {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+
+    .suggestions {
+      top: 5.5rem !important;
+    }
+  }
+}
+
+@media screen and (max-device-width: 992px) {
+  .navbar .form-inline {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+
+    .suggestions {
+      top: 5.5rem !important;
+    }
+  }
+}

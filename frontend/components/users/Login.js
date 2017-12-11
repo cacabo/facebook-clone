@@ -19,7 +19,7 @@ class Login extends React.Component {
       error: "",
     };
 
-    // Bind this
+    // Bind this to helper methods
     this.handleChangeUsername = this.handleChangeUsername.bind(this);
     this.handleChangePassword = this.handleChangePassword.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -109,7 +109,7 @@ class Login extends React.Component {
         <div>
           {
             this.props.notice && (
-              <div className="alert alert-warning alert-card card-shade">
+              <div className="alert alert-warning alert-card">
                 { this.props.notice }
               </div>
             )

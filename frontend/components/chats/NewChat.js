@@ -52,8 +52,8 @@ class NewChat extends React.Component {
             type="submit"
             className={
               this.state.members ?
-              "btn btn-gray card-shade" :
-              "btn btn-gray card-shade disabled"
+              "btn btn-gray" :
+              "btn btn-gray disabled"
             }
             value="Create chat"
           />
