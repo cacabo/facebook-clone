@@ -1,6 +1,5 @@
 import React from 'react';
 import UserPreview from './UserPreview';
-import uuid from 'uuid-v4';
 
 /**
  * Component to list a user's recommended friends. This is rendered on the
