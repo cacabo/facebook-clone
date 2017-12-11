@@ -37,7 +37,8 @@ function invite(room, username, inviter, cb) {
 	const params = {
 		sender: inviter,
 		roomToReceive: username + 'inviteRoom', //this is the temporary room where we can invite someone
-		roomToJoin: room
+		roomToJoin: room,
+		users: [],
 	};
 
 	socket.emit('invite', JSON.stringify(params));
@@ -45,8 +46,13 @@ function invite(room, username, inviter, cb) {
 }
 
 // Joins a room
-function joinRoom(room, cb) {
-	socket.emit('joinRoom', room);
+function joinRoom(room, users cb) {
+	if (users.length == 2) {
+		//TODO: create new room and invite users to join. Must also join yourself
+		// Special invites where they automatically join
+	} else {
+		socket.emit('joinRoom', room);
+	}
 	cb(true);
 }
 
