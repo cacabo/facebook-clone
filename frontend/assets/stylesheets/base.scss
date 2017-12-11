@@ -8,6 +8,10 @@
 @import 'chat';
 
 // General app styling
+body {
+  background: $snow;
+}
+
 .nav-spacer {
   background: $snow;
   height: 55px;

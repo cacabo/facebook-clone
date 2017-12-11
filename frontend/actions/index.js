@@ -11,8 +11,17 @@ export function login(username, profilePicture) {
   };
 }
 
+// Dispatch a logout action
 export function logout() {
   return {
     type: "LOGOUT",
+  };
+}
+
+// Dispatch an update action
+export function update(profilePicture) {
+  return {
+    type: "UPDATE",
+    profilePicture,
   };
 }

@@ -10,15 +10,19 @@ const userReducer = (state = defaults, action) => {
   // Switch statement on the type of actions
   switch (action.type) {
     case "LOGIN":
-      const loginState = {
+      return {
         ...state,
         username: action.username,
         profilePicture: action.profilePicture,
         isLoggedIn: true,
       };
-      return loginState;
     case "LOGOUT":
       return defaults;
+    case "UPDATE":
+      return {
+        ...state,
+        profilePicture: action.profilePicture,
+      };
     default:
       return state;
   }
