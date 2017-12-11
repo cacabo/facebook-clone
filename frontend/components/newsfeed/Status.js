@@ -34,11 +34,14 @@ class Status extends React.Component {
       pending: true,
       commentsPending: true,
       comments: [],
+      comment: "",
     };
 
     // Bind this to helper functions
     this.commentOnClick = this.commentOnClick.bind(this);
     this.likeOnClick = this.likeOnClick.bind(this);
+    this.handleSubmitComment = this.handleSubmitComment.bind(this);
+    this.handleChangeComment = this.handleChangeComment.bind(this);
   }
 
   // Autosize textarea when user types
@@ -126,6 +129,47 @@ class Status extends React.Component {
     }
   }
 
+  // Handle a user editing the comment textarea
+  handleChangeComment(event) {
+    // Update the state to have the new comment value
+    this.setState({
+      comment: event.target.value,
+    });
+  }
+
+  // Handle when a user writes a new comment
+  handleSubmitComment(event) {
+    // Prevent default form action
+    event.preventDefault();
+
+    // Ensure the comment is at least 1 character long
+    if (this.state.comment) {
+      // Create the body of the request
+      const body = {
+        comment: this.state.comment,
+      };
+
+      // Make an axios request to create a comment for the status
+      axios.post( "/api/users/:username/statuses/:statusID/comments/new", body)
+        .then(res => {
+          /**
+           * TODO
+           */
+          console.log(res);
+        })
+        .catch(err => {
+          /**
+           * TODO handle error
+           */
+          console.log(err);
+        });
+    } else {
+      /**
+       * TODO
+       */
+    }
+  }
+
   // Helper function to render comments
   renderComments() {
     return this.state.comments.map(comment => (
@@ -182,9 +226,17 @@ class Status extends React.Component {
           </div>
         </div>
         <div className={ this.state.toggledComments ? "comments" : "comments hidden" }>
-          <form className="comments-form">
+          <form className="comments-form" onSubmit={this.handleSubmitComment}>
             <div className="img" style={{ backgroundImage: `url(${this.props.profilePicture})` }} />
-            <textarea className="form-control animate" placeholder="Leave a comment..." name="comment" type="text" rows="1" />
+            <textarea
+              className="form-control animate"
+              placeholder="Leave a comment..."
+              name="comment"
+              type="text"
+              rows="1"
+              value={this.state.comment}
+              onChange={this.state.handleChangeComment}
+            />
             <input className="btn btn-gray btn-sm marg-left-05" type="submit" name="submit" value="Reply" />
           </form>
           {

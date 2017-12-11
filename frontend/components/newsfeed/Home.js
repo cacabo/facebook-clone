@@ -3,7 +3,6 @@ import StatusForm from './StatusForm';
 import Status from './Status';
 import FriendRecommendations from './FriendRecommendations';
 import OnlineNow from './OnlineNow';
-import uuid from 'uuid-v4';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import Loading from '../shared/Loading';
