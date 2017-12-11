@@ -52,6 +52,20 @@ const Like = vogels.define("Like", {
   tableName: "likes",
 });
 
+// Define a schema for comments
+const Comment = vogels.define("Comment", {
+  hashKey: "statusID",
+  rangeKey: "id",
+  timestamps: true,
+  schema: {
+    statusID: Joi.string(),
+    id: Joi.string(),
+    commenter: Joi.string(),
+    comment: Joi.string(),
+  },
+  tableName: "comments",
+});
+
 // Create the above tables
 vogels.createTables((err) => {
   if (err) {
@@ -66,6 +80,7 @@ const tables = {
   User,
   Status,
   Like,
+  Comment,
 };
 
 module.exports = tables;
