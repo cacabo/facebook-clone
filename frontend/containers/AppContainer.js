@@ -19,6 +19,7 @@ import NewChat from '../components/chats/NewChat';
 import NotFound from '../components/NotFound';
 import Nav from '../components/shared/Nav';
 import LoggedInAuth from '../components/users/LoggedInAuth';
+import Search from '../components/users/Search';
 
 /**
  * Component to render the app
@@ -74,6 +75,11 @@ class AppContainer extends React.Component {
       )} />
     );
 
+    // Handle search for user route
+    const searchRoute = (
+      <Route exact path="/users/search/:prefix" component={Search} />
+    );
+
     // Handle edit profile route
     const editProfileRoute = (
       <Route exact path="/users/edit" render={() => (
@@ -122,6 +128,7 @@ class AppContainer extends React.Component {
               { homeRoute }
               { registerRoute }
               { loginRoute }
+              { searchRoute }
               { editProfileRoute }
               { userProfileRoute }
               { newChatRoute }

@@ -5,11 +5,11 @@ import PropTypes from 'prop-types';
 /**
  * Renders a single recommended friend for a user
  */
-const UserPreview = ({ id, name, img, isOnline }) => (
+const UserPreview = ({ username, name, profilePicture, isOnline }) => (
   <div className="user user-sm userPreview">
-    <div className="userImg" style={{backgroundImage: "url(" + img + ")"}} />
+    <div className="userImg" style={{backgroundImage: "url(" + profilePicture + ")"}} />
     <p>
-      <Link to={ "/users/" + id }>
+      <Link to={ "/users/" + username }>
         { name }
       </Link>
     </p>
@@ -18,9 +18,9 @@ const UserPreview = ({ id, name, img, isOnline }) => (
 );
 
 UserPreview.propTypes = {
-  id: PropTypes.number,
+  username: PropTypes.string,
   name: PropTypes.string,
-  img: PropTypes.string,
+  profilePicture: PropTypes.string,
   isOnline: PropTypes.bool,
 };
 

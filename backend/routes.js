@@ -44,6 +44,29 @@ router.get('/logout', (req, res) => {
 });
 
 /**
+ * Search for users
+ */
+router.get('/users/search/:prefix/', (req, res) => {
+  // Get the prefix from the request
+  const prefix = req.params.prefix;
+
+  // Get the users from the database
+  db.searchUsers(prefix, (data, err) => {
+    if (err || !data) {
+      res.send({
+        success: false,
+        error: err,
+      });
+    } else {
+      res.send({
+        success: true,
+        data: data,
+      });
+    }
+  });
+});
+
+/**
  * Get all statuses
  * NOTE this likely is not userful though can be used to start off before we
  * have more targetted database methods

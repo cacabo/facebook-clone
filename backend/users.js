@@ -36,7 +36,7 @@ function createUser(user, callback) {
   } else {
     // Ensure the username is properly formatted: no whitespace and only
     // letters, numbers, periods, or underscores
-    const usernameRegex = /^[a-zA-Z0-9.\-_]+$/;
+    const usernameRegex = /^[a-z0-9.\-_]+$/;
     const validUsername = usernameRegex.test(user.username);
 
     // Throw an error if the username is invalid
@@ -63,7 +63,7 @@ function createUser(user, callback) {
           delete user.confirmPassword;
 
           // Update the name
-          user.name = user.firstName + " " + user.lastName;
+          user.name = (user.firstName + " " + user.lastName).toLowerCase();
           delete user.firstName;
           delete user.lastName;
 
@@ -100,7 +100,7 @@ function updateUser(updatedUser, callback) {
       const oldUser = oldUserData.attrs;
 
       // Update the user's fields
-      oldUser.name = updatedUser.name;
+      oldUser.name = updatedUser.name.toLowerCase();
       oldUser.affiliation = updatedUser.affiliation;
       oldUser.bio = updatedUser.bio;
       oldUser.interests = updatedUser.interests;
@@ -120,11 +120,35 @@ function updateUser(updatedUser, callback) {
   });
 }
 
+/**
+ * Search for users by a prefix
+ */
+function searchUsers(prefix, callback) {
+  // Error checking on the prefix
+  if (!prefix) {
+    callback(null, "Prefix must be defined");
+  }
+
+  // Query for the users we want by name
+  User
+    .scan()
+    .where('name').beginsWith(prefix.toLowerCase())
+    .attributes(['name', 'username', 'profilePicture'])
+    .exec((err, data) => {
+      if (err) {
+        callback(null, err.message);
+      } else {
+        callback(data.Items, null);
+      }
+    });
+}
+
 // Create an object to store the helper functions
 const users = {
   getUser,
   createUser,
   updateUser,
+  searchUsers,
 };
 
 // Export the object

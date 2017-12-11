@@ -130,6 +130,7 @@ const database = {
   getUser: users.getUser,
   createUser: users.createUser,
   updateUser: users.updateUser,
+  searchUsers: users.searchUsers,
   createStatus: statuses.createStatus,
   getStatuses: statuses.getStatuses,
   getStatus: statuses.getStatus,
