@@ -38,13 +38,11 @@ app.listen(PORT, error => {
 // The event will be called when a client is connected. Right when the app opens
 socket.on('connection', (socket) => {
 	console.log('A client just joined on', socket.id);
-	//socket.id = client's id
+	/**
+	 * TODO pull from database all chats pertaining to user and connect to them here
+	 */
 
-	//pull from database all chats pertaining to user and connect to them
-    socket.join('username')
-
-    //maybe have info of which room message came from in message json
-    //emit only to that room once query room out of JSON object
+	// Listens for new messages
 	socket.on('message', (message) => {
 		const messageData = JSON.parse(message);
 		const room = messageData.room;
@@ -53,21 +51,31 @@ socket.on('connection', (socket) => {
 		socket.broadcast.to(room).emit('message', message);
 	});
 
-	//hardcoded for now - username
+	// Detects invite notifications
 	socket.on('invite', (data) => {
 		const rooms = JSON.parse(data);
-		socket.join(rooms.roomToReceive);
+
+		// Below is temporary for testing purposes since will have to already be part of a room to invite someone.
+		socket.join(rooms.roomToJoin);
 		socket.broadcast.to(rooms.roomToReceive).emit('invite', data);
 	});
 
+	// Joins a room
 	socket.on('joinRoom', (room) => {
-		socket.join(room);
 		console.log("joined room " + room);
+		socket.join(room);
 	});
 
+	// Leaves a room
 	socket.on('leaveRoom', (room) => {
+		socket.broadcast.to(room).emit('message', "left room");
 		socket.leave(room);
+	});
 
-		//emit the fact that this user has left the room
+	// For creating a new room when third person joins
+	socket.on('autoJoin', (data) => {
+		const rooms = JSON.parse(data);
+		socket.join(room);
+		console.log("auto joined room " + room);
 	});
 });

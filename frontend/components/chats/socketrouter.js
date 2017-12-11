@@ -2,22 +2,24 @@
 import openSocket from 'socket.io-client';
 const  socket = openSocket('http://localhost:8000');
 
+
+// Listens to messages
 function subscribeToMessages(cb) {
 	socket.on('message', (message) => {
 		console.log("received message data");
-		cb(message); //passes to client
+		cb(message);
 	});
 }
 
-function subscribeToinvitations(cb) {
+// Listens for invitations
+function subscribeToInvitations(cb) {
 	socket.on('invite', (data) => {
-		const info = JSON.parse(data);
-
 		//popup indicator in cb
-		cb(true); //passes to client
+		cb(data);
 	});
 }
 
+// Sends a message
 function sendMessage(message, cb) {
 	const messageData = JSON.parse(message);
 	const room = messageData.room;
@@ -30,23 +32,33 @@ function sendMessage(message, cb) {
 	cb(true);
 }
 
-//room - the username of the friend you want to invite
+// Invites a user to a room
 function invite(room, username, inviter, cb) {
 	const params = {
 		sender: inviter,
-		roomToReceive: username,
-		roomToJoin: room
+		roomToReceive: username + 'inviteRoom',
+		roomToJoin: room,
+		users: [],
 	};
 
 	socket.emit('invite', JSON.stringify(params));
 	cb(true);
 }
 
-function joinRoom(room, cb) {
-	socket.emit('joinRoom', room);
+// Joins a room
+function joinRoom(room, users, cb) {
+	if (users.length == 2) {
+		/**
+		 * TODO create new room and invite users to join. Must also join yourself
+		 * Special invites where they automatically join
+		 */
+	} else {
+		socket.emit('joinRoom', room);
+	}
 	cb(true);
 }
 
+// Leaves a room
 function leaveRoom(room, cb) {
 	socket.emit('leaveRoom', room);
 	cb(true);
@@ -55,7 +67,7 @@ function leaveRoom(room, cb) {
 
 export { 
 	subscribeToMessages,
-	subscribeToinvitations,
+	subscribeToInvitations,
 	sendMessage,
 	invite,
 	joinRoom,

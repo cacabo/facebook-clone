@@ -4,9 +4,10 @@ import Chats from './Chats';
 import uuid from 'uuid-v4';
 import SocketIOClient from 'socket.io-client';
 import { subscribeToMessages } from './socketrouter';
-import { subscribeToinvitations } from './socketrouter';
 import { sendMessage } from './socketrouter';
 import { invite } from './socketrouter';
+import { connect } from 'react-redux';
+import { joinRoom } from './socketrouter';
 
 /**
  * Component to render one of a user's group chats.
@@ -22,9 +23,14 @@ class Chat extends React.Component {
     // Set the state of the application
     this.state = {
       message: "",
-      currentUser: "12",
+      currentUser: this.props.username,
       messages: [],
-    }
+      users: [],
+    } 
+
+    console.log("Current User " + this.state.currentUser);
+    // Everyone is part of a room for receving invitations
+    joinRoom(this.state.currentUser + 'inviteRoom', function(success) {})
 
     // Bind this to helper methods
     this.handleChangeMessage = this.handleChangeMessage.bind(this);
@@ -34,9 +40,9 @@ class Chat extends React.Component {
 
   // Autosize the text area to fit the text that's pasted into it
   componentDidMount() {
-    autosize(document.querySelectorAll('textarea'));
+    autosize(document.querySelectorAll('textarea')); 
 
-    //listens for new messages received
+    // Listens for new messages received
     subscribeToMessages((message) => this.setState((prevState, props) => {
         console.log("received message: " + message)
         const messageInfo = JSON.parse(message);
@@ -46,11 +52,7 @@ class Chat extends React.Component {
           oldMessage.push(messageInfo);
           return {messages: oldMessage}
         }
-    }));
-
-    subscribeToinvitations((success) => {
-      console.log("received invitation!!!");
-    });
+    }));   
   }
 
   // Helper method to handle a change to state
@@ -60,7 +62,7 @@ class Chat extends React.Component {
     });
   }
 
-  //do socket sending here. Append this to own message list.
+  // Does socket sending here. Append this to own message list. 
   handleSubmit(event) {
     const messageToSend = this.state.message; //have to do this.state not this alone
 
@@ -85,16 +87,18 @@ class Chat extends React.Component {
           }
         });
       } else {
-        //message unsent
+        /**
+         * TODO handle unsent message error
+         */
       }
     });
-    event.preventDefault();
   }
 
   handleInvite(event) {
-    //username - user we are inviting
-    invite(this.props.match.params.id, 'username', this.state.currentUser, (success) => {
-        if (success) {console.log("Invite successful");}
+    // TODO will need to check if person you are inviting is a friend first
+    // Parameters: chat id, user we want to invite, current user, cb
+    invite(this.props.match.params.id, 'victor', this.state.currentUser, () => {
+        console.log("Invite successful");
     });
   }
 
@@ -152,10 +156,26 @@ class Chat extends React.Component {
             value="Send"
           />
         </form>
-        <button onClick={ this.handleInvite }>Invite</button>
+        <button className="btn btn-gray"
+            onClick={ this.handleInvite } >
+            Invite
+        </button>
       </Chats>
     );
   }
 }
 
-export default Chat;
+const mapStateToProps = (state) => {
+  return {
+    username: state.userState.username,
+  };
+};
+
+const mapDispatchToProps = (/* dispatch */) => {
+  return {};
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Chat);

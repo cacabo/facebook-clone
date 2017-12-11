@@ -3,6 +3,8 @@ import ChatPreview from './ChatPreview';
 import uuid from 'uuid-v4';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import { subscribeToInvitations } from './socketrouter';
+import { joinRoom } from './socketrouter';
 
 /**
  * Component to render all of a user's groupchats
@@ -16,7 +18,11 @@ class Chats extends React.Component {
     super(props);
 
     this.state = {
-      //store room names here after making a query to the database
+      /**
+       * TODO store room names here after making a query to the database
+       */
+
+      currentInvitation: '',
       chats: [
         {
           name: "Dope group chat",
@@ -32,6 +38,29 @@ class Chats extends React.Component {
         }
       ],
     };
+    this.handleAcceptInvite = this.handleAcceptInvite.bind(this);
+  }
+
+  componentDidMount() {
+    // Listening for new invitations to join chats
+    // data returns the invitation information including room, sender, and users in the room
+    subscribeToInvitations((data) => {
+      const invitationData = JSON.parse(data);
+      console.log("invited to join " + invitationData.roomToJoin);
+      this.setState({
+        currentInvitation: invitationData.roomToJoin
+      })
+      console.log("received invitation!!!");
+    });
+  }
+
+  // Accepts an invitation when invitation received
+  handleAcceptInvite(event) {
+    if (this.state.currentInvitation) {
+      console.log("joined room " + this.state.currentInvitation);
+      joinRoom(this.state.currentInvitation, [], function(success) {})
+    } 
+    event.preventDefault();
   }
 
   // Helper method to render chats based on state
@@ -47,7 +76,7 @@ class Chats extends React.Component {
     });
   }
 
-  // Render the chats component
+  // Render the chats co mponent
   render() {
     return (
       <div className="chat-container">
@@ -62,6 +91,11 @@ class Chats extends React.Component {
         <div className="chat">
          { this.props.children }
         </div>
+        <button className="btn btn-gray"
+            onClick={ this.handleAcceptInvite }> 
+            Accept 
+        </button>
+        <div> invited to join { this.state.currentInvitation } </div>
       </div>
     );
   }
