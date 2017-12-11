@@ -91,11 +91,7 @@ class Chats extends React.Component {
         <div className="chat">
          { this.props.children }
         </div>
-        <button className={
-              this.state.message ?
-              "btn btn-gray card-shade" :
-              "btn btn-gray card-shade disabled"
-            } 
+        <button className="btn btn-gray card-shade"
             onClick={ this.handleAcceptInvite }> 
             Accept 
             </button>
