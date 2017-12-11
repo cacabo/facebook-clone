@@ -61,7 +61,7 @@ function addComment(commenter, comment, statusUser, statusID, callback) {
  * Gets all comments of a user
  */
 function getComments(statusID, callback) {
-  // get comments
+  // Get comments
   Comment
     .query(statusID)
     .loadAll()
@@ -70,10 +70,10 @@ function getComments(statusID, callback) {
       if(err || !data) {
         callback(null, "There was an error finding comments: " + err);
       } else {
-        // Get all comments
+        // Get all comments, and clean data
         const comments = data.Items.map(item => ( item.attrs ));
 
-        // Get user for each comment
+        // For each comment, find user who wrote it
         async.each(comments, (comment, keysCallback) => {
           User.get(comment.commenter, (userErr, userData) => {
             // Error finding user
@@ -106,7 +106,7 @@ function getComments(statusID, callback) {
             comments.sort((a, b) => {
               const aCreatedAt = new Date(a.createdAt);
               const bCreatedAt = new Date(b.createdAt);
-              return bCreatedAt - aCreatedAt;
+              return aCreatedAt - bCreatedAt;
             });
 
             // Return the comments to the user

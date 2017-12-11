@@ -400,8 +400,8 @@ router.post('/users/:username/statuses/:statusID/comments/new', (req, res) => {
   const comment = req.body.comment;
   const statusUser = req.params.username;
   const statusID = req.params.statusID;
-  // const commenter = req.session.username;
-  const commenter = "vchien";
+  const commenter = req.session.username;
+
   // Add comment
   db.addComment(commenter, comment, statusUser, statusID, (addData, addErr) => {
     if (addErr || !addData) {
@@ -423,6 +423,8 @@ router.post('/users/:username/statuses/:statusID/comments/new', (req, res) => {
  */
 router.get('/users/:username/statuses/:statusID/comments', (req, res) => {
   const statusID = req.params.statusID;
+
+  // Get all comments of a status using ID
   db.getComments(statusID, (data, err) => {
     if (err || !data) {
       res.send({
