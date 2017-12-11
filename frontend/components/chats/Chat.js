@@ -87,19 +87,19 @@ class Chat extends React.Component {
           }
         });
       } else {
-        // TODO handle undent message error
+        /**
+         * TODO handle unsent message error
+         */
       }
     });
-    event.preventDefault();
   }
 
   handleInvite(event) {
     // TODO will need to check if person you are inviting is a friend first
-    // parameters: chat id, user we want to invite, current user, cb
-    invite(this.props.match.params.id, 'victor', this.state.currentUser, (success) => {
-        if (success) {console.log("Invite successful");}
+    // Parameters: chat id, user we want to invite, current user, cb
+    invite(this.props.match.params.id, 'victor', this.state.currentUser, () => {
+        console.log("Invite successful");
     });
-    event.preventDefault();
   }
 
   /**
@@ -156,11 +156,13 @@ class Chat extends React.Component {
             value="Send"
           />
         </form>
-        <button onClick={ this.handleInvite } 
-            className={
+        <button className={
               "btn btn-gray card-shade",
               "btn btn-gray card-shade disabled"
-            }>Invite</button>
+            }
+            onClick={ this.handleInvite } >
+            Invite
+            </button>
       </Chats>
     );
   }

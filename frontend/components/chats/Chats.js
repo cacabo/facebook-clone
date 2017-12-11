@@ -18,8 +18,10 @@ class Chats extends React.Component {
     super(props);
 
     this.state = {
-      // TODO store room names here after making a query to the database
-      // This is temporary storage. Should be an array
+      /**
+       * TODO store room names here after making a query to the database
+       */
+
       currentInvitation: '',
       chats: [
         {
@@ -40,6 +42,8 @@ class Chats extends React.Component {
   }
 
   componentDidMount() {
+    // Listening for new invitations to join chats
+    // data returns the invitation information including room, sender, and users in the room
     subscribeToInvitations((data) => {
       const invitationData = JSON.parse(data);
       console.log("invited to join " + invitationData.roomToJoin);
@@ -50,10 +54,11 @@ class Chats extends React.Component {
     });
   }
 
+  // Accepts an invitation when invitation received
   handleAcceptInvite(event) {
-    if (this.state.currentInvitation != "") {
+    if (this.state.currentInvitation) {
       console.log("joined room " + this.state.currentInvitation);
-      joinRoom(this.state.currentInvitation, function(success) {})
+      joinRoom(this.state.currentInvitation, [], function(success) {})
     } 
     event.preventDefault();
   }
@@ -86,12 +91,13 @@ class Chats extends React.Component {
         <div className="chat">
          { this.props.children }
         </div>
-        <button onClick={ this.handleAcceptInvite } 
-            className={
+        <button className={
               this.state.message ?
               "btn btn-gray card-shade" :
               "btn btn-gray card-shade disabled"
-            }> Accept </button>
+            } onClick={ this.handleAcceptInvite }> 
+            Accept 
+            </button>
         <div> invited to join { this.state.currentInvitation } </div>
       </div>
     );
