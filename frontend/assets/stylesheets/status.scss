@@ -1,4 +1,6 @@
-// Styling for statuses
+/**
+ * Styling for statuses
+ */
 .card.status {
   padding: 0rem !important;
 
@@ -125,6 +127,17 @@
     .comment {
       padding: 0.5rem 1rem;
       font-size: 0.9rem;
+
+      .img {
+        width: 1.5rem;
+        height: 1.5rem;
+        background: $light-gray;
+        border-radius: 50%;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        margin-right: 0.5rem;
+      }
     }
 
     &.hidden {

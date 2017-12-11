@@ -14,7 +14,6 @@ import axios from 'axios';
  *
  * TODO better error checking for images
  * TODO change password
- * TODO update profile picture stored in redux
  */
 class EditProfile extends React.Component {
   // Constructor method
