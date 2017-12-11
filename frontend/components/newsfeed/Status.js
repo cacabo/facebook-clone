@@ -18,7 +18,8 @@ import Loading from '../shared/Loading';
  * TODO stateful likes
  * TODO pull user information from DB
  * TODO actually render comments
- * TODO put in timestamp at bottom right
+ * TODO render comment
+ * TODO render comment after writing it without refreshing
  */
 class Status extends React.Component {
   // Constructor method
@@ -54,8 +55,6 @@ class Status extends React.Component {
      */
     axios.get('/api/users/' + this.props.user + '/statuses/' + this.props.id + '/checkLike')
       .then(checkData => {
-        // Set state to isLiked or not isLiked
-
         // If success is true, user has liked status already
         if(checkData.data.success === true) {
           this.setState({
@@ -69,22 +68,43 @@ class Status extends React.Component {
           });
         }
       })
-      /**
-       * TODO Figure out what to do if there is an error with axios get request
-       */
       .catch(err => {
+        /**
+         * TODO Figure out what to do if there is an error with axios get request
+         */
         console.log(err);
       });
   }
 
   // Handle a click on the comments icon
   commentOnClick() {
-    /**
-     * TODO make a request to pull comments from the database
-     */
+    // Toggle the comments being displayed
     this.setState({
       toggledComments: !this.state.toggledComments,
     });
+
+    // If the comments haven't been loaded yet
+    if (this.state.commentsPending) {
+      // Make a request for the comments
+      axios.get(`/api/users/${this.props.user}/statuses/${this.props.id}/comments`)
+        .then(res => {
+          // Update the state
+          this.setState({
+            commentsPending: false,
+            comments: res.data.data,
+          });
+        })
+        .catch(err => {
+          /**
+           * TODO handle the error
+           */
+          console.log(err);
+          this.setState({
+            commentsPending: false,
+            comments: [],
+          });
+        });
+    }
   }
 
   // Handle a click on the likes icon
@@ -150,12 +170,30 @@ class Status extends React.Component {
       };
 
       // Make an axios request to create a comment for the status
-      axios.post( "/api/users/:username/statuses/:statusID/comments/new", body)
+      axios.post(`/api/users/${this.props.user}/statuses/${this.props.id}/comments/new`, body)
         .then(res => {
-          /**
-           * TODO
-           */
-          console.log(res);
+          // Find the data of the created comment
+          const comment = res.data.data.data;
+
+          // Aggregate the user information
+          const userData = {
+            username: this.props.username,
+            name: this.props.name,
+            profilePicture: this.props.profilePicture,
+          };
+
+          // Add user data to the comment
+          comment.userData = userData;
+
+          // Update the state
+          this.setState({
+            comments: [
+              ...this.state.comments,
+              comment,
+            ],
+            comment: "",
+            commentsCount: this.state.commentsCount + 1,
+          });
         })
         .catch(err => {
           /**
@@ -174,8 +212,10 @@ class Status extends React.Component {
   renderComments() {
     return this.state.comments.map(comment => (
       <Comment
-        content={ comment.content }
         userData={ comment.userData }
+        text={ comment.comment }
+        key={ comment.id }
+        id={ comment.id }
       />
     ));
   }
@@ -234,8 +274,8 @@ class Status extends React.Component {
               name="comment"
               type="text"
               rows="1"
-              value={this.state.comment}
-              onChange={this.state.handleChangeComment}
+              value={ this.state.comment }
+              onChange={ this.handleChangeComment }
             />
             <input className="btn btn-gray btn-sm marg-left-05" type="submit" name="submit" value="Reply" />
           </form>
@@ -255,6 +295,8 @@ class Status extends React.Component {
 Status.propTypes = {
   profilePicture: PropTypes.string,
   userImg: PropTypes.string,
+  username: PropTypes.string,
+  name: PropTypes.string,
   image: PropTypes.string,
   content: PropTypes.string,
   user: PropTypes.string,
@@ -270,6 +312,8 @@ Status.propTypes = {
 const mapStateToProps = (state) => {
   return {
     profilePicture: state.userState.profilePicture,
+    username: state.userState.username,
+    name: state.userState.name,
   };
 };
 

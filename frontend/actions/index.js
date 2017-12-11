@@ -3,11 +3,12 @@
 // import * as types from './types';
 
 // Dispatch a login action
-export function login(username, profilePicture) {
+export function login(username, profilePicture, name) {
   return {
     type: "LOGIN",
     username,
     profilePicture,
+    name,
   };
 }
 

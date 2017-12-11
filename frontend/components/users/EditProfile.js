@@ -160,7 +160,7 @@ class EditProfile extends React.Component {
       axios.post("/api/users/" + this.state.username + "/update/", this.state)
         .then(() => {
           // Dispatch the update event to Redux
-          this.props.onUpdate(this.state.profilePicture);
+          this.props.onUpdate(this.state.profilePicture, this.state.name);
 
           // Redirect the user away from the page
           this.setState({
@@ -313,7 +313,7 @@ const mapStateToProps = (/* state */) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    onUpdate: (profilePicture) => dispatch(update(profilePicture)),
+    onUpdate: (profilePicture, name) => dispatch(update(profilePicture, name)),
   };
 };
 
