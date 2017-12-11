@@ -91,10 +91,10 @@ class Chats extends React.Component {
         <div className="chat">
          { this.props.children }
         </div>
-        <button className="btn btn-gray card-shade"
+        <button className="btn btn-gray"
             onClick={ this.handleAcceptInvite }> 
             Accept 
-            </button>
+        </button>
         <div> invited to join { this.state.currentInvitation } </div>
       </div>
     );

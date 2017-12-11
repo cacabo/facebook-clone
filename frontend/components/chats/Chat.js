@@ -156,10 +156,10 @@ class Chat extends React.Component {
             value="Send"
           />
         </form>
-        <button className="btn btn-gray card-shade"
+        <button className="btn btn-gray"
             onClick={ this.handleInvite } >
             Invite
-            </button>
+        </button>
       </Chats>
     );
   }
