@@ -4,8 +4,6 @@ const uuid = require('uuid-v4');
 
 /**
  * Create a friendship. friend1 is adding, and friend2 is being added
- * TODO After fixing error with range query, we need to create friendships
- *      and add them to the friendshipsTable
  */
 function addFriendship(friend1, friend2, callback) {
   // Check if any of friends are null
@@ -34,17 +32,14 @@ function addFriendship(friend1, friend2, callback) {
           callback(null, "Friendship already exists.");
         } else {
           // Add Friendships to tables
-
           // Friendship for user that is adding
           const friendship1Object = {
-            "id": uuid(),
             "user1": friend1,
             "user2": friend2,
           };
 
           // Friendship for user that is being added
           const friendship2Object = {
-            "id": uuid(),
             "user1": friend2,
             "user2": friend1,
           };
@@ -59,7 +54,7 @@ function addFriendship(friend1, friend2, callback) {
                 if (err2 || !data2) {
                   callback(null, "Failed to create second friendship: " + err2);
                 } else {
-                  callback({ success: true }, null);
+                  callback({ success: true, data: data1 }, null);
                 }
               });
             }

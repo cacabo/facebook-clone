@@ -338,6 +338,7 @@ router.get('/users/:username/friends/new', (req, res) => {
     } else {
       res.send({
         success: true,
+        data: data.data
       });
     }
   });

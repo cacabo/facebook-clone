@@ -70,13 +70,13 @@ function addComment(commenter, comment, statusUser, statusID, callback) {
 }
 
 /**
- * Gets all comments of a user
+ * Gets all comments belonging to a status
  */
 function getComments(statusID, callback) {
-  if(!statusID) {
+  if (!statusID) {
     callback(null, "StatusID is null.");
   } else {
-    // Get comments
+    // Get comments associated with the status ID
     Comment
       .query(statusID)
       .loadAll()
@@ -86,19 +86,23 @@ function getComments(statusID, callback) {
           callback(null, "There was an error finding comments: " + err);
         } else {
           // Get all comments, and clean data
-          const comments = data.Items.map(item => ( item.attrs ));
+          const comments = data.Items.map(item => (item.attrs));
 
           // For each comment, find user who wrote it
           async.each(comments, (comment, keysCallback) => {
-            User.get(comment.commenter, (userErr, userData) => {
+            // Find the user who wrote the comment
+            const user = comment.commenter;
+
+            // Find the user's information in the database
+            User.get(user, (userErr, userData) => {
               // Error finding user
               if (userErr || !userData) {
-                callback(userErr, null);
+                callback(null, userErr);
               } else {
                 // Find the user object
                 const userObj = userData.attrs;
 
-                // Delete unneeded info
+                // Delete unneeded info from the object
                 delete userObj.password;
                 delete userObj.affiliation;
                 delete userObj.interests;
@@ -115,7 +119,7 @@ function getComments(statusID, callback) {
           }, (asyncErr) => {
             if (asyncErr) {
               // If there is an error with the async operation
-              callback(asyncErr, null);
+              callback(null, asyncErr);
             } else {
               // Sort the comments from earliest to latest
               comments.sort((a, b) => {
@@ -125,13 +129,14 @@ function getComments(statusID, callback) {
               });
 
               // Return the comments to the user
-              callback(err, comments);
+              callback(comments, err);
             }
           });
         }
       });
   }
 }
+
 // Create an object to store the helper functions
 const comments = {
   addComment,

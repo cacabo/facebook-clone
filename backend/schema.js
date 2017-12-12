@@ -72,7 +72,6 @@ var Friendship = vogels.define("Friendship", {
   rangeKey: "user2",
   timestamps: true,
   schema: {
-    id: Joi.string(),
     user1: Joi.string(),
     user2: Joi.string(),
   },
