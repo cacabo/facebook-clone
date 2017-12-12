@@ -2,6 +2,7 @@ const users = require('./users');
 const statuses = require('./statuses');
 const likes = require('./likes');
 const comments = require('./comments');
+const friendships = require('./friendships');
 
 /**
  * Create a friendship. friend1 is adding, and friend2 is being added

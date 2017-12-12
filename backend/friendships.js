@@ -70,9 +70,9 @@ function addFriendship(friend1, friend2, callback) {
 }
 
 // Create an object to store the helper functions
-const friends = {
+const friendships = {
   addFriendship,
 };
 
 // Export the object
-module.exports = friends;
+module.exports = friendships;

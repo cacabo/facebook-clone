@@ -329,7 +329,7 @@ router.get('/users/:username/friends/new', (req, res) => {
   const friend1 = req.session.username;
 
   // Create the friendship in the database
-  db.createFriendship(friend1, friend2, (data, err) => {
+  db.addFriendship(friend1, friend2, (data, err) => {
     if (err || !data) {
       res.send({
         success: false,
