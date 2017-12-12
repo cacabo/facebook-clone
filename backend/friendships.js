@@ -65,9 +65,8 @@ function addFriendship(friend1, friend2, callback) {
 }
 
 /**
- * Get all friendships
+ * Get a list of a user's friends sorted alphabetically
  */
-
 function getFriendships(user, callback) {
   if (!user) {
     callback(null, "User is null.");
@@ -77,7 +76,7 @@ function getFriendships(user, callback) {
       .loadAll()
       .exec((err, data) => {
         // Error finding friendships
-        if(err || !data) {
+        if (err || !data) {
           callback(null, "There was an error finding friendships: " + err);
         } else {
           // Get all friendships, and clean data
@@ -130,6 +129,9 @@ function getFriendships(user, callback) {
   }
 }
 
+/**
+ * Get a specific friend, returns friend object
+ */
 function getFriend(user, friend, callback) {
   // Check if any of friends are null
   if (!user || !friend) {
@@ -139,7 +141,7 @@ function getFriend(user, friend, callback) {
     User.get(friend, (err, data) => {
       if(err) {
         callback(null, "There was an error looking for friend:" + err);
-      } else if(!data) {
+      } else if (!data) {
         callback(null, "The friend you searched for does not exist as a user.");
       } else {
         // Check if the friendship already exists
@@ -150,7 +152,7 @@ function getFriend(user, friend, callback) {
             if (err) {
               // Check for errors in getting prefix set
               callback(null, "Error looking for friendship:" + err2);
-            } else if(data2.Items.length !== 0) {
+            } else if (data2.Items.length !== 0) {
               // Friendship exists, and return the friend object
               const friendObj = data.attrs;
 

@@ -345,7 +345,7 @@ router.get('/users/:username/friends/new', (req, res) => {
 });
 
 /**
- * Get friends
+ * Get a list of user's friends
  */
 router.get('/users/:username/friends', (req, res) => {
   // Friend the current user is friending
