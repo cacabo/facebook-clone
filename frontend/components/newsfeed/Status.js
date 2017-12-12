@@ -36,6 +36,7 @@ class Status extends React.Component {
       commentsPending: true,
       comments: [],
       comment: "",
+      commentError: "",
     };
 
     // Bind this to helper functions
@@ -107,15 +108,16 @@ class Status extends React.Component {
     }
   }
 
-  // Handle a click on the likes icon
+  /**
+   * Handle a click on the likes icon
+   *
+   * Make a request to like or unlike the status
+   * if successful, update the state
+   * if there is an error console.log it and we can figure out what to do
+   * with that error later
+   * Also update likes count if successful
+   */
   likeOnClick() {
-    /**
-     * TODO make a request to like or unlike the status
-     * if successful, update the state
-     * if there is an error console.log it and we can figure out what to do
-     * with that error later
-     * Also update likes count if successful
-     */
     // Only be able to click if state is not pending
     if (!this.state.pending) {
       axios.get('/api/users/' + this.props.user + '/statuses/' + this.props.id + '/likes')
@@ -137,7 +139,7 @@ class Status extends React.Component {
             }
           } else {
             // There was an error adding/deleting like
-            console.log(likeData.data.err);
+            console.log(likeData.data.error);
           }
         })
         /**
@@ -162,8 +164,13 @@ class Status extends React.Component {
     // Prevent default form action
     event.preventDefault();
 
-    // Ensure the comment is at least 1 character long
-    if (this.state.comment) {
+    // Ensure the comment is at least 1 character long and less than 200 chars
+    if (this.state.comment && this.state.comment.length < 200) {
+      // Remove any existing error
+      this.setState({
+        commentError: "",
+      });
+
       // Create the body of the request
       const body = {
         comment: this.state.comment,
@@ -172,39 +179,53 @@ class Status extends React.Component {
       // Make an axios request to create a comment for the status
       axios.post(`/api/users/${this.props.user}/statuses/${this.props.id}/comments/new`, body)
         .then(res => {
-          // Find the data of the created comment
-          const comment = res.data.data.data;
+          if (res.data.success) {
+            // Find the data of the created comment
+            const comment = res.data.data.data;
 
-          // Aggregate the user information
-          const userData = {
-            username: this.props.username,
-            name: this.props.name,
-            profilePicture: this.props.profilePicture,
-          };
+            // Aggregate the user information
+            const userData = {
+              username: this.props.username,
+              name: this.props.name,
+              profilePicture: this.props.profilePicture,
+            };
 
-          // Add user data to the comment
-          comment.userData = userData;
+            // Add user data to the comment
+            comment.userData = userData;
 
-          // Update the state
-          this.setState({
-            comments: [
-              ...this.state.comments,
-              comment,
-            ],
-            comment: "",
-            commentsCount: this.state.commentsCount + 1,
-          });
+            // Update the state
+            this.setState({
+              comments: [
+                ...this.state.comments,
+                comment,
+              ],
+              comment: "",
+              commentsCount: this.state.commentsCount + 1,
+            });
+          } else {
+            // There was an issue with the post request
+            this.setState({
+              commentError: res.data.error,
+            });
+          }
         })
         .catch(err => {
-          /**
-           * TODO handle error
-           */
-          console.log(err);
+          // If we failed to push the comment to the database
+          this.setState({
+            commentError: err,
+          });
         });
     } else {
-      /**
-       * TODO
-       */
+      // Denote an error
+      if (!this.state.comment) {
+        this.setState({
+          commentError: "Comment must be populated",
+        });
+      } else {
+        this.setState({
+          commentError: "Comment must be under 200 characters",
+        });
+      }
     }
   }
 
@@ -267,19 +288,30 @@ class Status extends React.Component {
           </div>
         </div>
         <div className={ this.state.toggledComments ? "comments" : "comments hidden" }>
-          <form className="comments-form" onSubmit={this.handleSubmitComment}>
-            <div className="img" style={{ backgroundImage: `url(${this.props.profilePicture})` }} />
-            <textarea
-              className="form-control animate"
-              placeholder="Leave a comment..."
-              name="comment"
-              type="text"
-              rows="1"
-              value={ this.state.comment }
-              onChange={ this.handleChangeComment }
-            />
-            <input className="btn btn-gray btn-sm marg-left-05" type="submit" name="submit" value="Reply" />
-          </form>
+          <div className="comments-form-wrapper">
+            {
+              this.state.commentError && (
+                <div className="alert alert-danger error">
+                  <p className="marg-bot-0">
+                    { this.state.commentError }
+                  </p>
+                </div>
+              )
+            }
+            <form className="comments-form" onSubmit={this.handleSubmitComment}>
+              <div className="img" style={{ backgroundImage: `url(${this.props.profilePicture})` }} />
+              <textarea
+                className="form-control animate"
+                placeholder="Leave a comment..."
+                name="comment"
+                type="text"
+                rows="1"
+                value={ this.state.comment }
+                onChange={ this.handleChangeComment }
+              />
+              <input className="btn btn-gray btn-sm marg-left-05" type="submit" name="submit" value="Reply" />
+            </form>
+          </div>
           {
             (this.state.commentsPending) ? (
               <Loading />

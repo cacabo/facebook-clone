@@ -82,9 +82,9 @@ class Login extends React.Component {
       })
         .then(res => {
           // If there is an error in the response
-          if (res.data.err) {
+          if (res.data.error) {
             this.setState({
-              error: res.data.err,
+              error: res.data.error,
             });
           } else {
             // Find the username and profile picture from the response
