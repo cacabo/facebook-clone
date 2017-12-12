@@ -333,7 +333,7 @@ router.get('/users/:username/friends/new', (req, res) => {
     if (err || !data) {
       res.send({
         success: false,
-        err: err,
+        error: err,
       });
     } else {
       res.send({
