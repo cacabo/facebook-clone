@@ -29,7 +29,7 @@ function addFriendship(friend1, friend2, callback) {
         if (err) {
           // Check for errors in getting prefix set
           callback(null, "Error looking for friendship:" + err);
-        } else if(data.Items.length === 0) {
+        } else if(data.Items.length !== 0) {
           // Friendship exists
           callback(null, "Friendship already exists.");
         } else {
