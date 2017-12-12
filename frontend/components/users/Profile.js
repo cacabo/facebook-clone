@@ -4,7 +4,6 @@ import Status from '../newsfeed/Status';
 import axios from 'axios';
 import PropTypes from 'prop-types';
 import Loading from '../shared/Loading';
-import uuid from 'uuid-v4';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import NotFound from '../NotFound';
@@ -31,7 +30,7 @@ class Profile extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      error: "",
+      statusesError: "",
       userError: "",
       name: "",
       username: "",
@@ -64,14 +63,22 @@ class Profile extends React.Component {
           // Get the users statuses
           axios.get('/api/users/' + this.props.match.params.username + '/statuses')
             .then(statuses => {
-              this.setState({
-                statuses: statuses.data.data,
-                statusesPending: false,
-              });
+              if (statuses.data.success) {
+                this.setState({
+                  statuses: statuses.data.data,
+                  statusesPending: false,
+                });
+              } else {
+                this.setState({
+                  statusesErr: statuses.data.error,
+                  statusesPending: false,
+                });
+              }
             })
             .catch(err => {
               this.setState({
-                error: err,
+                statusesPending: false,
+                statusesError: err,
               });
             });
         } else {
@@ -143,6 +150,7 @@ class Profile extends React.Component {
 
   // Render the component
   render() {
+    // Ensure that the user is found
     if (this.state.userError) {
       return (
         <NotFound
@@ -151,6 +159,12 @@ class Profile extends React.Component {
         />
       );
     }
+
+    // Find the user's first name
+    let firstName = this.state.name.split(" ")[0];
+    firstName = firstName.charAt(0).toUpperCase() + firstName.slice(1);
+
+    // Otherwise, the user is found or is in the process of begin found
     return (
       <div className="profile">
         <div
@@ -172,7 +186,7 @@ class Profile extends React.Component {
               <div className="row">
                 <div className="col-12 col-md-4 about">
                   <strong>
-                    Learn more
+                    Learn more about { firstName }
                   </strong>
                   <p>
                     { this.state.bio }
@@ -199,10 +213,22 @@ class Profile extends React.Component {
                 </div>
                 <div className="col-12 col-md-8 col-lg-7">
                   <StatusForm
-                    placeholder="Write on this user's wall"
+                    placeholder={ `Write on ${ firstName }\'s wall...` }
                     receiver={ this.state.username }
                     callback={ this.newStatusCallback }
                   />
+                  {
+                    this.state.statusesError && (
+                      <div className="alert alert-danger error">
+                        <p className="bold marg-bot-025">
+                          There was an error:
+                        </p>
+                        <p className="marg-bot-0">
+                          { this.state.statusesError }
+                        </p>
+                      </div>
+                    )
+                  }
                   { !this.state.statusesPending ? (this.renderStatuses()) : (<Loading />) }
                 </div>
               </div>
