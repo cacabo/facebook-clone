@@ -118,35 +118,68 @@ class Status extends React.Component {
    * Also update likes count if successful
    */
   likeOnClick() {
+    // Assume that the request will succeed and update the state accordingly
+    if (this.state.isLiked) {
+      this.setState({
+        isLiked: false,
+        likesCount: this.state.likesCount - 1,
+      });
+    } else {
+      this.setState({
+        isLiked: true,
+        likesCount: this.state.likesCount + 1,
+      });
+    }
+
     // Only be able to click if state is not pending
     if (!this.state.pending) {
       axios.get('/api/users/' + this.props.user + '/statuses/' + this.props.id + '/likes')
         .then(likeData => {
           // If updating like was done properly, we switch isLiked state
           if (likeData.data.success) {
-            this.setState({
-              isLiked: !this.state.isLiked,
-            });
-            // If we liked, then increase the count, else decrease count
-            if(this.state.isLiked) {
+            // this.setState({
+            //   isLiked: !this.state.isLiked,
+            // });
+            // // If we liked, then increase the count, else decrease count
+            // if (this.state.isLiked) {
+            //   this.setState({
+            //     likesCount: this.state.likesCount + 1,
+            //   });
+            // } else {
+            //   this.setState({
+            //     likesCount: this.state.likesCount - 1,
+            //   });
+            // }
+          } else {
+            // There was an error adding/deleting like
+            // Revert to the past state
+            if (this.state.isLiked) {
               this.setState({
-                likesCount: this.state.likesCount + 1,
+                isLiked: false,
+                likesCount: this.state.likesCount - 1,
               });
             } else {
               this.setState({
-                likesCount: this.state.likesCount - 1,
+                isLiked: false,
+                likesCount: this.state.likesCount + 1,
               });
             }
-          } else {
-            // There was an error adding/deleting like
-            console.log(likeData.data.error);
           }
         })
-        /**
-         * TODO Figure out what to do if there is an error with axios get request
-         */
-        .catch(likeErr => {
-          console.log(likeErr);
+        .catch(() => {
+          // There was an error adding/deleting like
+          // Revert to the past state
+          if (this.state.isLiked) {
+            this.setState({
+              isLiked: false,
+              likesCount: this.state.likesCount - 1,
+            });
+          } else {
+            this.setState({
+              isLiked: false,
+              likesCount: this.state.likesCount + 1,
+            });
+          }
         });
     }
   }

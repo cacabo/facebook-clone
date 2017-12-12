@@ -7,6 +7,7 @@ import Loading from '../shared/Loading';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import NotFound from '../NotFound';
+import Login from '../users/Login';
 
 /**
  * Render's a user's profile
@@ -150,6 +151,13 @@ class Profile extends React.Component {
 
   // Render the component
   render() {
+    // Render login if the user is not logged in
+    if (!this.props.username) {
+      return (
+        <Login notice="User must be logged in to view profile." />
+      );
+    }
+
     // Ensure that the user is found
     if (this.state.userError) {
       return (
