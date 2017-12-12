@@ -144,6 +144,8 @@ const database = {
   getComments: comments.getComments,
   addComment: comments.addComment,
   addFriendship: friendships.addFriendship,
+  getFriendships: friendships.getFriendships,
+  getFriend: friendships.getFriend,
 };
 
 module.exports = database;

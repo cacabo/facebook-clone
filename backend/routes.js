@@ -345,6 +345,53 @@ router.get('/users/:username/friends/new', (req, res) => {
 });
 
 /**
+ * Get a list of user's friends
+ */
+router.get('/users/:username/friends', (req, res) => {
+  // Friend the current user is friending
+  const user = req.params.username;
+
+  // Create the friendship in the database
+  db.getFriendships(user, (data, err) => {
+    if (err || !data) {
+      res.send({
+        success: false,
+        error: err,
+      });
+    } else {
+      res.send({
+        success: true,
+        data: data
+      });
+    }
+  });
+});
+
+/**
+ * Get specific friend
+ */
+router.get('/users/:username/friends/:friendUsername', (req, res) => {
+  // Friend the current user is friending
+  const user = req.params.username;
+  const friend = req.params.friendUsername;
+
+  // Create the friendship in the database
+  db.getFriend(user, friend, (data, err) => {
+    if (err || !data) {
+      res.send({
+        success: false,
+        error: err,
+      });
+    } else {
+      res.send({
+        success: true,
+        data: data
+      });
+    }
+  });
+});
+
+/**
  * Check if user has liked status (for front end)
  */
 router.get('/users/:username/statuses/:statusID/checkLike', (req, res) => {
