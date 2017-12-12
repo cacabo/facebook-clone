@@ -329,7 +329,7 @@ router.get('/users/:username/friends/new', (req, res) => {
   const friend1 = req.session.username;
 
   // Create the friendship in the database
-  db.createFriendship(friend1, friend2, (data, err) => {
+  db.addFriendship(friend1, friend2, (data, err) => {
     if (err || !data) {
       res.send({
         success: false,
@@ -338,6 +338,54 @@ router.get('/users/:username/friends/new', (req, res) => {
     } else {
       res.send({
         success: true,
+        data: data.data
+      });
+    }
+  });
+});
+
+/**
+ * Get a list of user's friends
+ */
+router.get('/users/:username/friends', (req, res) => {
+  // Friend the current user is friending
+  const user = req.params.username;
+
+  // Create the friendship in the database
+  db.getFriendships(user, (data, err) => {
+    if (err || !data) {
+      res.send({
+        success: false,
+        error: err,
+      });
+    } else {
+      res.send({
+        success: true,
+        data: data
+      });
+    }
+  });
+});
+
+/**
+ * Get specific friend
+ */
+router.get('/users/:username/friends/:friendUsername', (req, res) => {
+  // Friend the current user is friending
+  const user = req.params.username;
+  const friend = req.params.friendUsername;
+
+  // Create the friendship in the database
+  db.getFriend(user, friend, (data, err) => {
+    if (err || !data) {
+      res.send({
+        success: false,
+        error: err,
+      });
+    } else {
+      res.send({
+        success: true,
+        data: data
       });
     }
   });

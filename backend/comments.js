@@ -1,5 +1,5 @@
 // Import the comments table
-const { Comment, Status, User } = require('./schema.js');
+const { Status, Comment, User } = require('./schema.js');
 const uuid = require('uuid-v4');
 const async = require('async');
 
@@ -32,7 +32,6 @@ function addComment(commenter, comment, statusUser, statusID, callback) {
             callback(null, "Status does not exist.");
           }
         } else if (data.Items.length === 0) {
-          // If no status was found
           callback(null, "The status does not exist.");
         } else {
           // Status object that is being liked
@@ -62,7 +61,7 @@ function addComment(commenter, comment, statusUser, statusID, callback) {
                 if (updateErr || !updateData) {
                   callback(null, "There was an error updating comments count.");
                 } else {
-                  callback({success: true, data: dataComment}, null);
+                  callback({success: true, data: updateData}, null);
                 }
               });
             }
@@ -73,7 +72,7 @@ function addComment(commenter, comment, statusUser, statusID, callback) {
 }
 
 /**
- * Gets all comments of a user
+ * Gets all comments belonging to a status
  */
 function getComments(statusID, callback) {
   if (!statusID) {
@@ -139,6 +138,7 @@ function getComments(statusID, callback) {
       });
   }
 }
+
 // Create an object to store the helper functions
 const comments = {
   addComment,
