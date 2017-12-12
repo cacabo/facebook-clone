@@ -29,6 +29,7 @@ class Profile extends React.Component {
       statusesError: "",
       userError: "",
       friendsError: "",
+      friendError: "",
       name: "",
       username: "",
       profilePicture: "",
@@ -68,7 +69,33 @@ class Profile extends React.Component {
             profilePending: false,
           });
 
-          // Get the users statuses
+          // If the current user and profile's user are different
+          if (this.state.username !== this.props.username) {
+            // Get the status of the user's friendship
+            axios.get(`/api/users/${this.state.username}/friends/${this.props.username}`)
+              .then(res => {
+                if (res.data.success) {
+                  // If the two users are friends
+                  this.setState({
+                    isFriend: true,
+                    isFriendPending: false,
+                  });
+                } else {
+                  this.setState({
+                    isFriend: false,
+                    isFriendPending: false,
+                  });
+                }
+              })
+              .catch(err => {
+                this.setState({
+                  isFriendPending: false,
+                  friendsError: err,
+                });
+              });
+          }
+
+          // Get the user's statuses
           axios.get('/api/users/' + this.props.match.params.username + '/statuses')
             .then(statuses => {
               if (statuses.data.success) {
@@ -181,11 +208,38 @@ class Profile extends React.Component {
 
   // Helper method to handle adding a friend
   handleAddFriend() {
-    this.setState({
-      addFriendPending: true,
-    });
+    if (this.props.username !== this.state.username && !this.state.isFriend) {
+      this.setState({
+        addFriendPending: true,
+      });
 
-    // TODO
+      // Make a request to add the friend
+      axios.get(`/api/users/${this.state.username}/friends/new`)
+        .then(res => {
+          if (res.data.success) {
+            // If creating the friendship was successful
+            this.setState({
+              addFriendPending: false,
+              isFriend: true,
+              friendError: "",
+            });
+          } else {
+            // If the friendship was not successful
+            this.setState({
+              addFriendPending: false,
+              isFriend: false,
+              friendError: res.data.error,
+            });
+          }
+        })
+        .catch(err => {
+          this.setState({
+            addFriendPending: false,
+            isFriend: false,
+            friendError: err,
+          });
+        });
+    }
   }
 
   // Helper function to render the friends
@@ -256,7 +310,7 @@ class Profile extends React.Component {
         if (this.state.addFriendPending) {
           // If we are in the process of adding the friend
           return(
-            <div className="btn btn-primary btn-sm marg-bot-1 disabled" onClick={ this.handleAddFriend }>
+            <div className="btn btn-primary btn-sm marg-bot-1 disabled">
               Add friend <i className="fa fa-circle-o-notch fa-spin fa-fw" />
             </div>
           );
@@ -264,7 +318,9 @@ class Profile extends React.Component {
 
         // If the current user is not friends with the profile's user
         return(
-          <div className="btn btn-primary btn-sm marg-bot-1">
+          <div
+            className="btn btn-primary btn-sm marg-bot-1 cursor"
+            onClick={ this.handleAddFriend }>
             Add friend
           </div>
         );
@@ -272,7 +328,7 @@ class Profile extends React.Component {
       return (
         // If the current user is friends with the profile's user
         <div className="btn btn-primary btn-sm marg-bot-1">
-          <i className="fa fa-fw fa-check" aria-hidden="true" /> &nbsp; Friends
+          Friends <i className="fa fa-check" aria-hidden="true" />
         </div>
       );
     }
@@ -347,6 +403,18 @@ class Profile extends React.Component {
                   <p>
                     { this.state.interests }
                   </p>
+                  {
+                    this.state.friendError && (
+                      <div className="alert alert-danger error">
+                        <p className="marg-bot-05 bold">
+                          There was an error:
+                        </p>
+                        <p className="marg-bot-0">
+                          { this.state.friendError }
+                        </p>
+                      </div>
+                    )
+                  }
                   { this.renderButton() }
                 </div>
                 <div className="col-12 col-md-8 col-lg-7">
