@@ -12,6 +12,8 @@ function addComment(commenter, comment, statusUser, statusID, callback) {
     callback(null, "Commenter is invalid.");
   } else if (!comment) {
     callback(null, "Comment is invalid.");
+  } else if (comment.length > 200) {
+    callback(null, "Comment must be under 200 characters long.");
   } else if (!statusUser) {
     callback(null, "StatusUser is invalid.");
   } else if (!statusID) {

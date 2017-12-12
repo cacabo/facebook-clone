@@ -28,6 +28,7 @@ class Home extends React.Component {
     this.state = {
       pending: true,
       statuses: [],
+      error: "",
     };
 
     // Bind this to helper methods
@@ -49,6 +50,7 @@ class Home extends React.Component {
           this.setState({
             pending: false,
             statuses: res.data.data,
+            error: "",
           });
         } else {
           this.setState({
@@ -140,7 +142,24 @@ class Home extends React.Component {
               placeholder="What's on your mind?"
               callback={ this.newStatusCallback }
             />
-            { this.state.pending ? (<Loading />) : (this.renderStatuses()) }
+            { this.state.error && (
+              <div className="alert alert-danger error">
+                <p className="strong marg-bot-05">
+                  There was an error
+                </p>
+                <p className="marg-bot-1">
+                  { this.state.error }
+                </p>
+              </div>
+            ) }
+            { (this.state.pending && !this.state.error) ? (<Loading />) : (this.renderStatuses()) }
+            { !this.state.pending && (
+              <div className="card">
+                <p className="marg-bot-0">
+                  There are no more statuses to show. Add more friends or wait and refresh your page for more content.
+                </p>
+              </div>
+            ) }
             <div className="space-4" />
           </div>
           <div className="col-md-3 col-xl-4 hidden-md-down">

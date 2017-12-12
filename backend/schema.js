@@ -39,6 +39,18 @@ const Status = vogels.define("Status", {
   tableName: "statuses",
 });
 
+// Define a schema for status receivers
+// This allows for easy lookup of receivers of statuses
+const StatusReceiver = vogels.define("StatusReceiver", {
+  hashKey: "receiver",
+  rangeKey: "id",
+  timestamps: false,
+  schema: {
+    receiver: Joi.string(),
+    id: Joi.string(),
+  },
+});
+
 // Define a schema for likes
 const Like = vogels.define("Like", {
   hashKey: "statusID",
@@ -93,6 +105,7 @@ const tables = {
   Status,
   Like,
   Comment,
+  StatusReceiver,
   Friendship,
 };
 

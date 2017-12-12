@@ -145,7 +145,7 @@ router.post('/statuses/new', (req, res) => {
     if (err || !data) {
       res.send({
         success: false,
-        error: "Error adding user to database.",
+        error: err,
       });
     } else {
       res.send({
@@ -295,14 +295,14 @@ router.post('/users/sessions/new', (req, res) => {
     if (err || !data) {
       res.send({
         success: false,
-        err: "User not found, consider signing up.",
+        error: "User not found, consider signing up.",
       });
     } else if (data) {
       // Else the user exists: check the password
       if (hash !== data.password) {
         res.send({
           success: false,
-          err: "Username and password do not match."
+          error: "Username and password do not match."
         });
       } else {
         // Update the user session
@@ -406,7 +406,7 @@ router.get('/users/:username/statuses/:statusID/checkLike', (req, res) => {
       // Not liked yet
       res.send({
         success: false,
-        err: checkErr,
+        error: checkErr,
       });
     } else {
       // Already liked
@@ -436,7 +436,7 @@ router.get('/users/:username/statuses/:statusID/likes', (req, res) => {
         if (addErr || !addData) {
           res.send({
             success: false,
-            err: addErr,
+            error: addErr,
           });
         } else {
           res.send({
@@ -451,7 +451,7 @@ router.get('/users/:username/statuses/:statusID/likes', (req, res) => {
         if (deleteErr || !deleteData) {
           res.send({
             success: false,
-            err: deleteErr,
+            error: deleteErr,
           });
         } else {
           res.send({
@@ -478,7 +478,7 @@ router.post('/users/:username/statuses/:statusID/comments/new', (req, res) => {
     if (addErr || !addData) {
       res.send({
         success: false,
-        err: addErr,
+        error: addErr,
       });
     } else {
       res.send({
@@ -500,7 +500,7 @@ router.get('/users/:username/statuses/:statusID/comments', (req, res) => {
     if (err || !data) {
       res.send({
         success: false,
-        err: err,
+        error: err,
       });
     } else {
       res.send({
@@ -562,7 +562,7 @@ router.get('/users/:username/statuses/:statusID/likes', (req, res) => {
     if (err || !data) {
       res.send({
         success: false,
-        err: err,
+        error: err,
       });
     } else {
       res.send({
