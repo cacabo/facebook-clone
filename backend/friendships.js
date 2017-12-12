@@ -118,7 +118,7 @@ function getFriendships(user, callback) {
             } else {
               // Sort the friendships in alphabetical order of name
               friendships.sort((a, b) => (
-                a.name.localeCompare(b.name)
+                (a && a.name) ? (a.name.localeCompare(b.name)) : (-1)
               ));
 
               // Return the comments to the user
@@ -130,10 +130,51 @@ function getFriendships(user, callback) {
   }
 }
 
+function getFriend(user, friend, callback) {
+  // Check if any of friends are null
+  if (!user || !friend) {
+    callback(null, "One of the friends are null.");
+  } else {
+    // Check if friend2 doesn't exist
+    User.get(friend, (err, data) => {
+      if(err) {
+        callback(null, "There was an error looking for friend:" + err);
+      } else if(!data) {
+        callback(null, "The friend you searched for does not exist as a user.");
+      } else {
+        // Check if the friendship already exists
+        Friendship
+          .query(user)
+          .where('user2').equals(friend)
+          .exec((err2, data2) => {
+            if (err) {
+              // Check for errors in getting prefix set
+              callback(null, "Error looking for friendship:" + err2);
+            } else if(data2.Items.length !== 0) {
+              // Friendship exists, and return the friend object
+              const friendObj = data.attrs;
+
+              // Delete unnecessary data
+              delete friendObj.password;
+              delete friendObj.createdAt;
+
+              // Return the friendObj
+              callback(friendObj, null);
+            } else {
+              // Friend does not exist
+              callback(null, "Friend was not found.");
+            }
+          });
+      }
+    });
+  }
+}
+
 // Create an object to store the helper functions
 const friendships = {
   addFriendship,
   getFriendships,
+  getFriend,
 };
 
 // Export the object
