@@ -142,6 +142,7 @@ const database = {
   checkLike: likes.checkLike,
   getComments: comments.getComments,
   addComment: comments.addComment,
+  addFriendship: friendships.addFriendship,
 };
 
 module.exports = database;
