@@ -119,9 +119,31 @@ class Profile extends React.Component {
 
     // If friends have yet to load
     if (this.state.friendsPending) {
-      /**
-       * TODO make request to load friends
-       */
+      // Make a request to get a user's friends
+      axios.get(`/api/users/${this.state.username}/friends`)
+        .then(res => {
+          // Process the returned data
+          if (res.data.success) {
+            // If it successfullty retrieved the list of friends
+            this.setState({
+              friendsPending: false,
+              friends: res.data.data,
+            });
+          } else {
+            // If there was an error with the request
+            this.setState({
+              friendsPending: false,
+              friendsError: res.data.error,
+            });
+          }
+        })
+        .catch(err => {
+          // If we catch an error
+          this.setState({
+            friendsPending: false,
+            friendsError: err,
+          });
+        });
     }
   }
 
@@ -168,6 +190,25 @@ class Profile extends React.Component {
 
   // Helper function to render the friends
   renderFriends() {
+    if (this.state.friends.length === 0) {
+      if (this.props.username === this.state.username) {
+        // If the current user is the profile's user
+        return (
+          <p className="marg-bot-0">
+            You don't have any friends yet! Add some.
+          </p>
+        );
+      }
+
+      // If the users are different
+      return (
+        <p className="marg-bot-0">
+          <span className="capitalize">{ this.state.name }</span> doesn't have any friends yet!
+        </p>
+      );
+    }
+
+    // If there is a list of freinds, render them
     return this.state.friends.map(user => (
       <UserPreview
         name={ user.name }
