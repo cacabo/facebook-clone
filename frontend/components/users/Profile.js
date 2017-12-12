@@ -263,12 +263,12 @@ class Profile extends React.Component {
     }
 
     // If there is a list of freinds, render them
-    return this.state.friends.map(user => (
+    return this.state.friends.map(friend => (
       <UserPreview
-        name={ user.name }
-        username={ user.username }
-        profilePicture={ user.profilePicture }
-        key={ user.username }
+        name={ friend.userData.name }
+        username={ friend.userData.username }
+        profilePicture={ friend.userData.profilePicture }
+        key={ friend.userData.username }
       />
     ));
   }
