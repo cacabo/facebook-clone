@@ -40,13 +40,14 @@ const Status = vogels.define("Status", {
 });
 
 // Define a schema for status receivers
+// This allows for easy lookup of receivers of statuses
 const StatusReceiver = vogels.define("StatusReceiver", {
   hashKey: "receiver",
   rangeKey: "id",
   timestamps: false,
   schema: {
     receiver: Joi.string(),
-    rangeKey: Joi.string(),
+    id: Joi.string(),
   },
 });
 

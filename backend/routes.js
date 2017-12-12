@@ -145,7 +145,7 @@ router.post('/statuses/new', (req, res) => {
     if (err || !data) {
       res.send({
         success: false,
-        error: "Error adding user to database.",
+        error: err,
       });
     } else {
       res.send({
