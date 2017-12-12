@@ -7,6 +7,7 @@ import Loading from '../shared/Loading';
 import uuid from 'uuid-v4';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
+import NotFound from '../NotFound';
 
 /**
  * Render's a user's profile
@@ -31,6 +32,7 @@ class Profile extends React.Component {
     super(props);
     this.state = {
       error: "",
+      userError: "",
       name: "",
       username: "",
       profilePicture: "",
@@ -52,29 +54,36 @@ class Profile extends React.Component {
     // Get the user information
     axios.get('/api/users/' + this.props.match.params.username)
       .then(data => {
-        // Update the state
-        this.setState({
-          ...data.data.data,
-          profilePending: false,
-        });
-
-        // Get the users statuses
-        axios.get('/api/users/' + this.props.match.params.username + '/statuses')
-          .then(statuses => {
-            this.setState({
-              statuses: statuses.data.data,
-              statusesPending: false,
-            });
-          })
-          .catch(err => {
-            this.setState({
-              error: err,
-            });
+        if (data.data.success) {
+          // Update the state
+          this.setState({
+            ...data.data.data,
+            profilePending: false,
           });
+
+          // Get the users statuses
+          axios.get('/api/users/' + this.props.match.params.username + '/statuses')
+            .then(statuses => {
+              this.setState({
+                statuses: statuses.data.data,
+                statusesPending: false,
+              });
+            })
+            .catch(err => {
+              this.setState({
+                error: err,
+              });
+            });
+        } else {
+          this.setState({
+            userError: "User with specified username not found. Check the URL and try again.",
+            profilePending: false,
+          });
+        }
       })
       .catch(() => {
         this.setState({
-          error: "User with the specified username not found",
+          userError: "There was an error querying the database. Check the URL and try again.",
           profilePending: false,
         });
       });
@@ -134,11 +143,13 @@ class Profile extends React.Component {
 
   // Render the component
   render() {
-    if (this.state.error) {
-      /**
-       * TODO handle error
-       */
-      console.log(this.state.error);
+    if (this.state.userError) {
+      return (
+        <NotFound
+          title="User not found"
+          text={ this.state.userError }
+        />
+      );
     }
     return (
       <div className="profile">
