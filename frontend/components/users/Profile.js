@@ -18,14 +18,8 @@ import UserPreview from '../newsfeed/UserPreview';
  * List of posts and ability to write on their wall to the right / middle
  *
  * TODO handle errors
- * TODO pull user information
  * TODO render user statuses
- * TODO handle posts on user's wall
- * TODO have different errors (statuses, user not found, post error, etc)
- * TODO count num posts
- * TODO count num friends
- * TODO handle loading data visualization
- * TODO handle change between user show pages
+ * TODO create additional entry for adding post to wall
  */
 class Profile extends React.Component {
   // Constructor method
@@ -212,9 +206,9 @@ class Profile extends React.Component {
         // If checking for the friendship status is pending
         return(
           <div className="btn btn-primary disabled btn-sm marg-bot-1">
-            &nbsp; &nbsp;
+            &nbsp; &nbsp; &nbsp; &nbsp;
             <i className="fa fa-circle-o-notch fa-spin fa-fw" />
-            &nbsp; &nbsp;
+            &nbsp; &nbsp; &nbsp; &nbsp;
           </div>
         );
       } else if (!this.state.isFriendPending && !this.state.isFriend) {
@@ -353,7 +347,7 @@ class Profile extends React.Component {
                         { !this.state.statusesPending && (
                           <div className="card">
                             <p className="marg-bot-0">
-                              There are no more statuses for <span className="capitalize">{ this.state.name }</span> to show.
+                              There are no more statuses to show for <span className="capitalize">{ this.state.name }</span>.
                             </p>
                           </div>
                         ) }

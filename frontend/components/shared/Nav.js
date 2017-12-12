@@ -8,9 +8,6 @@ import axios from 'axios';
 /**
  * Renders the navbar at the top of the screen on all pages.
  *
- * TODO make this stateful depending on if the user is logged in or not.
- * Currently, it assumes that the user is not logged in.
- *
  * TODO fix bugs with clicking on stuff
  */
 class Nav extends React.Component {
@@ -106,9 +103,9 @@ class Nav extends React.Component {
   // Render suggestions based on search
   renderSuggestions() {
     return this.state.users.map(user => (
-      <Link
+      <a
         className="suggestion"
-        to={ "/users/" + user.username }
+        href={ "/users/" + user.username }
         key={ user.username }
       >
         <div
@@ -118,7 +115,7 @@ class Nav extends React.Component {
         <p>
           { user.name }
         </p>
-      </Link>
+      </a>
     ));
   }
 
