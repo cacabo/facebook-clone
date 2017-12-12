@@ -141,6 +141,13 @@ class Home extends React.Component {
               callback={ this.newStatusCallback }
             />
             { this.state.pending ? (<Loading />) : (this.renderStatuses()) }
+            { !this.state.pending && (
+              <div className="card">
+                <p className="marg-bot-0">
+                  There are no more statuses to show. Add more friends or wait and refresh your page for more content.
+                </p>
+              </div>
+            ) }
             <div className="space-4" />
           </div>
           <div className="col-md-3 col-xl-4 hidden-md-down">

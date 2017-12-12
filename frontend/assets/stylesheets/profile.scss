@@ -64,6 +64,32 @@
       }
     }
   }
+
+  .toggle-wrapper {
+    padding-bottom: 1rem;
+
+    .toggle {
+      background: $snow;
+      margin-right: 0.5rem;
+      padding: 0.25rem 0.5rem;
+      border-radius: 0.4rem;
+      border: 1px solid rgba(0, 0, 0, 0.15);
+      cursor: hand;
+      cursor: pointer;
+      font-weight: bold;
+      color: $light-gray;
+
+      &.active {
+        background: white;
+        color: $gray;
+      }
+
+      &:hover {
+        color: $gray !important;
+        background: $light-snow;
+      }
+    }
+  }
 }
 
 @media screen and (max-width: 992px) {

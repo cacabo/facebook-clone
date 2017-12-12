@@ -80,7 +80,9 @@ class Search extends React.Component {
     return (
       <Thin>
         <div className="card">
-          <h3 className="bold">Search suggestions</h3>
+          <h3 className="bold marg-bot-1">
+            User search suggestions
+          </h3>
           {
             this.state.pending ? (
               <Loading />

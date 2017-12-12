@@ -8,6 +8,7 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import NotFound from '../NotFound';
 import Login from '../users/Login';
+import UserPreview from '../newsfeed/UserPreview';
 
 /**
  * Render's a user's profile
@@ -33,6 +34,7 @@ class Profile extends React.Component {
     this.state = {
       statusesError: "",
       userError: "",
+      friendsError: "",
       name: "",
       username: "",
       profilePicture: "",
@@ -40,13 +42,24 @@ class Profile extends React.Component {
       bio: "",
       interests: "",
       statuses: [],
+      friends: [],
+      isFriend: false,
       profilePending: true,
       statusesPending: true,
+      friendsPending: true,
+      isFriendPending: true,
+      addFriendPending: false,
+      location: "STATUSES",
     };
 
     // Bind this to helper methods
     this.renderStatuses = this.renderStatuses.bind(this);
+    this.renderFriends = this.renderFriends.bind(this);
     this.newStatusCallback = this.newStatusCallback.bind(this);
+    this.handleClickFriendsToggle = this.handleClickFriendsToggle.bind(this);
+    this.handleClickStatusesToggle = this.handleClickStatusesToggle.bind(this);
+    this.renderButton = this.renderButton.bind(this);
+    this.handleAddFriend = this.handleAddFriend.bind(this);
   }
 
   // Set the state upon load
@@ -97,6 +110,27 @@ class Profile extends React.Component {
       });
   }
 
+  // Handle click to statuses toggle
+  handleClickStatusesToggle() {
+    this.setState({
+      location: "STATUSES",
+    });
+  }
+
+  // Handle click to friends toggle
+  handleClickFriendsToggle() {
+    this.setState({
+      location: "FRIENDS",
+    });
+
+    // If friends have yet to load
+    if (this.state.friendsPending) {
+      /**
+       * TODO make request to load friends
+       */
+    }
+  }
+
   // Helper method to render a newly created status
   newStatusCallback(data) {
     // Get the object
@@ -129,6 +163,27 @@ class Profile extends React.Component {
       });
   }
 
+  // Helper method to handle adding a friend
+  handleAddFriend() {
+    this.setState({
+      addFriendPending: true,
+    });
+
+    // TODO
+  }
+
+  // Helper function to render the friends
+  renderFriends() {
+    return this.state.friends.map(user => (
+      <UserPreview
+        name={ user.name }
+        username={ user.username }
+        profilePicture={ user.profilePicture }
+        key={ user.username }
+      />
+    ));
+  }
+
   // Helper function to render the statuses
   renderStatuses() {
     return this.state.statuses.map(status => (
@@ -147,6 +202,52 @@ class Profile extends React.Component {
         id={ status.id }
       />
     ));
+  }
+
+  // Helper function to render profile buttons
+  renderButton() {
+    // If this is not the user's own profile
+    if (this.props.username !== this.state.username) {
+      if (this.state.isFriendPending) {
+        // If checking for the friendship status is pending
+        return(
+          <div className="btn btn-primary disabled btn-sm marg-bot-1">
+            &nbsp; &nbsp;
+            <i className="fa fa-circle-o-notch fa-spin fa-fw" />
+            &nbsp; &nbsp;
+          </div>
+        );
+      } else if (!this.state.isFriendPending && !this.state.isFriend) {
+        if (this.state.addFriendPending) {
+          // If we are in the process of adding the friend
+          return(
+            <div className="btn btn-primary btn-sm marg-bot-1 disabled" onClick={ this.handleAddFriend }>
+              Add friend <i className="fa fa-circle-o-notch fa-spin fa-fw" />
+            </div>
+          );
+        }
+
+        // If the current user is not friends with the profile's user
+        return(
+          <div className="btn btn-primary btn-sm marg-bot-1">
+            Add friend
+          </div>
+        );
+      }
+      return (
+        // If the current user is friends with the profile's user
+        <div className="btn btn-primary btn-sm marg-bot-1">
+          <i className="fa fa-fw fa-check" aria-hidden="true" /> &nbsp; Friends
+        </div>
+      );
+    }
+
+    // If the current user is the profile's user
+    return (
+      <Link to="/users/edit" className="btn btn-primary btn-sm">
+        Edit profile
+      </Link>
+    );
   }
 
   // Render the component
@@ -211,33 +312,73 @@ class Profile extends React.Component {
                   <p>
                     { this.state.interests }
                   </p>
-                  {
-                    (this.props.username === this.state.username) && (
-                      <Link to="/users/edit" className="btn btn-primary btn-sm">
-                        Edit profile
-                      </Link>
-                    )
-                  }
+                  { this.renderButton() }
                 </div>
                 <div className="col-12 col-md-8 col-lg-7">
-                  <StatusForm
-                    placeholder={ `Write on ${ firstName }\'s wall...` }
-                    receiver={ this.state.username }
-                    callback={ this.newStatusCallback }
-                  />
+                  <div className="toggle-wrapper">
+                    <a
+                      className={ this.state.location === "STATUSES" ? "toggle active" : "toggle" }
+                      onClick={ this.handleClickStatusesToggle }
+                    >
+                      Statuses
+                    </a>
+                    <a
+                      className={ this.state.location === "FRIENDS" ? "toggle active" : "toggle" }
+                      onClick={ this.handleClickFriendsToggle}
+                    >
+                      Friends
+                    </a>
+                  </div>
                   {
-                    this.state.statusesError && (
-                      <div className="alert alert-danger error">
-                        <p className="bold marg-bot-025">
-                          There was an error:
-                        </p>
-                        <p className="marg-bot-0">
-                          { this.state.statusesError }
-                        </p>
+                    this.state.location === "STATUSES" ? (
+                      <div className="status-wrapper">
+                        <StatusForm
+                          placeholder={ `Write on ${ firstName }\'s wall...` }
+                          receiver={ this.state.username }
+                          callback={ this.newStatusCallback }
+                        />
+                        {
+                          this.state.statusesError && (
+                            <div className="alert alert-danger error">
+                              <p className="bold marg-bot-025">
+                                There was an error:
+                              </p>
+                              <p className="marg-bot-0">
+                                { this.state.statusesError }
+                              </p>
+                            </div>
+                          )
+                        }
+                        { !this.state.statusesPending ? (this.renderStatuses()) : (<Loading />) }
+                        { !this.state.statusesPending && (
+                          <div className="card">
+                            <p className="marg-bot-0">
+                              There are no more statuses for <span className="capitalize">{ this.state.name }</span> to show.
+                            </p>
+                          </div>
+                        ) }
+                      </div>
+                    ) : (
+                      <div className="card">
+                        <h3 className="marg-bot-1 bold">
+                          Listing all friends
+                        </h3>
+                        {
+                          this.state.friendsError && (
+                            <div className="alert alert-danger error">
+                              <p className="marg-bot-05 bold">
+                                There was an error:
+                              </p>
+                              <p className="marg-bot-0">
+                                { this.state.friendsError }
+                              </p>
+                            </div>
+                          )
+                        }
+                        { !this.state.friendsPending ? (this.renderFriends()) : (<Loading />)}
                       </div>
                     )
                   }
-                  { !this.state.statusesPending ? (this.renderStatuses()) : (<Loading />) }
                 </div>
               </div>
             </div>
