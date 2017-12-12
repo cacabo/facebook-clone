@@ -131,6 +131,14 @@ class Profile extends React.Component {
       });
   }
 
+  // Handle if the user goes to a new profile
+  componentDidUpdate() {
+    if (this.props.match.params.username !== this.state.username) {
+      // Refresh the page
+      window.location = window.location.href;
+    }
+  }
+
   // Handle click to statuses toggle
   handleClickStatusesToggle() {
     this.setState({
@@ -366,7 +374,7 @@ class Profile extends React.Component {
 
     // Otherwise, the user is found or is in the process of begin found
     return (
-      <div className="profile">
+      <div className="profile" key={this.props.location.pathname}>
         <div
           className="cover-photo"
           style={{ backgroundImage: `url(${this.state.coverPhoto})` }}
@@ -494,6 +502,7 @@ class Profile extends React.Component {
 
 Profile.propTypes = {
   match: PropTypes.object,
+  location: PropTypes.object,
   username: PropTypes.string,
 };
 
