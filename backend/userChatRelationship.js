@@ -14,7 +14,7 @@ function createUserChatRelationship(username, room, callback) {
 	} else {
     // Create chat object
 		const relObject = {
-			username: receiver,
+			username: username,
 			title: title,
 			room: room,
 		};

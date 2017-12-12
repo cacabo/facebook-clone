@@ -40,7 +40,36 @@ class Chat extends React.Component {
     this.handleInvite = this.handleInvite.bind(this);
   }
 
-  // Autosize the text area to fit the text that's pasted into it
+  // Reload the messages when switched to a different chat
+  componentDidUpdate() {
+    console.log("another chat: " + this.props.match.params.id);
+
+    /*
+    * TODO load all messages for this chat room
+    */
+    axios.get('/api/users/' + this.props.username + '/chats/' + this.props.match.params.id + '/messages')
+      .then(checkData => {
+          console.log("Reached here2");
+
+        // If success is true, user has invited already
+        if(checkData.data.success === true) {
+          console.log(checkData.data.data);
+          // this.setState({
+
+          // });
+        } else {
+            console.log("Failed to get invites");
+        }
+      })
+      .catch(err => {
+        console.log("Error darn");
+        console.log(err);
+      });
+
+
+
+  }
+
   componentDidMount() {
     autosize(document.querySelectorAll('textarea')); 
 
@@ -67,34 +96,48 @@ class Chat extends React.Component {
   // Does socket sending here. Append this to own message list. 
   handleSubmit(event) {
     event.preventDefault();
-    const messageToSend = this.state.message; //have to do this.state not this alone
+    const messageToSend = this.state.message;
 
     console.log("Current Room from send: " + this.props.match.params.id);
     console.log("Chat ID: " + this.props.match.params.id);
 
-    const messageParams = {
-      user: this.state.currentUser,
-      body: messageToSend,
-      createdAt: Date.now,
-      room: this.props.match.params.id
-    };
+    // Creates a new message in the database
+    axios.post('/api/users/' + this.state.currentUser + '/chats/' + this.props.match.params.id + '/newMessage/' + messageToSend)
+      .then((messageData) => {
+        if (messageData.data.success) {
+          console.log("Successfully created a new message: " + messageToSend);
 
-    sendMessage(JSON.stringify(messageParams), (success) => {
-      if (success) {
-        this.setState((prevState, props) => {
-          let oldMessage = this.state.messages;
-          oldMessage.push(messageParams);
-          return {
-            messages: oldMessage,
-            message: ""
-          }
-        });
-      } else {
-        /**
-         * TODO handle unsent message error
-         */
-      }
-    });
+          const messageParams = {
+            user: this.state.currentUser,
+            body: messageToSend,
+            room: this.props.match.params.id
+          };
+
+          // Sends message over the socket
+          sendMessage(JSON.stringify(messageParams), (success) => {
+            if (success) {
+              this.setState((prevState, props) => {
+                let oldMessage = this.state.messages;
+                oldMessage.push(messageParams);
+                return {
+                  messages: oldMessage,
+                  message: ""
+                }
+              });
+            } else {
+              /**
+               * TODO handle unsent message error
+               */
+            }
+          });
+        } else {
+          // There was an error creating a new message
+          console.log(messageData.data.err);
+        }
+      })
+      .catch(messageErr => {
+          console.log(messageErr);
+      });
   }
 
   handleInvite(event) {

@@ -40,13 +40,16 @@ class Chats extends React.Component {
         }
       ],
     };
+
     this.handleAcceptInvite = this.handleAcceptInvite.bind(this);
     this.getInvites = this.getInvites.bind(this);
   }
 
+
+
   componentDidMount() {
     // Listening for new invitations to join chats
-    // data returns the invitation information including room, sender, and users in the room
+    // Data has room, sender, and users in the room
     subscribeToInvitations((data) => {
       const invitationData = JSON.parse(data);
       console.log("invited to join " + invitationData.roomToJoin);
@@ -100,7 +103,7 @@ class Chats extends React.Component {
           console.log(checkData.data.data);
           this.setState({
             /**
-            * TODO set state with list of invites
+            * TODO setup state with list of invites
             */
           });
         } else {

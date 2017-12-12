@@ -597,6 +597,99 @@ router.post('/users/:receiver/chats/:roomID/deleteInvite', (req, res) => {
 });
 
 /**
+ * Gets all messages for a particular room
+ */
+router.get('/users/:username/chats/:roomID/messages', (req, res) => {
+  const username = req.params.username;
+  const room = req.params.roomID;
+
+  console.log("Reached here");
+
+  db.getMessages(room, (data, err) => {
+    if (err || !data) {
+      res.send({
+        success: false,
+        err: err,
+      });
+    } else {
+      res.send({
+        success: true,
+        data: data
+      });
+    }
+  });
+});
+
+/**
+ * Creates a message for a room
+ */
+router.post('/users/:username/chats/:roomID/newMessage/:message', (req, res) => {
+  const username = req.params.username;
+  const roomID = req.params.roomID;
+  const body = req.params.message;
+
+  console.log("Create new message post reached");
+
+  db.createMessage(username, body, roomID, (success, err) => {
+    if (err || !success) {
+      res.send({
+        success: false,
+        err: err,
+      });
+    } else {
+      res.send({
+        success: true,
+      });
+    }
+  });
+});
+
+/**
+ * Gets all chats for a user
+ */
+router.get('/users/:username/chats', (req, res) => {
+  const username = req.params.username;
+
+  // Get all chats of a user using username
+  db.getChats(username, (data, err) => {
+    if (err || !data) {
+      res.send({
+        success: false,
+        err: err,
+      });
+    } else {
+      res.send({
+        success: true,
+        data: data
+      });
+    }
+  });
+});
+
+/**
+ * Creates a createUserChatRelationship
+ */
+router.post('/users/:username/chats/:roomID/newUserChatRelationship', (req, res) => {
+  const username = req.params.username;
+  const roomID = req.params.roomID;
+
+  // Creates a user chat realtionship
+  db.createUserChatRelationship(username, roomID, (success, err) => {
+    if (err || !success) {
+      res.send({
+        success: false,
+        err: err,
+      });
+    } else {
+      res.send({
+        success: true,
+      });
+    }
+  });
+});
+
+
+/**
  * Handle a 404
  */
 router.get('*', (req, res) => {

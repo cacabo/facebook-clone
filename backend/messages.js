@@ -8,9 +8,9 @@ const async = require('async');
  * Create a message
  */
 function createMessage(username, body, room, callback) {
-	if (!sender) {
+	if (!username) {
 		callback(null, "Username must be populated");
-	} else if (!receiver) {
+	} else if (!body) {
 		callback(null, "Body must be populated");
 	} else if (!room) {
 		callback(null, "Room must be populated");
@@ -23,8 +23,11 @@ function createMessage(username, body, room, callback) {
 			room: room,
 		};
 
+    console.log(username + " " + body + " " + room + messageObject);
+
 		//Put the message in to the database
 		Message.create(messageObject, (err, data) => {
+      console.log(data);
 			if (err || !data) {
         callback(null, "Failed to put message in database.");
 			} else {

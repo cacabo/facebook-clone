@@ -5,7 +5,6 @@ const comments = require('./comments');
 
 const invites = require('./invites');
 const messages = require('./messages');
-const chats = require('./chats');
 const userChatRelationship = require('./userChatRelationship');
 
 /**
@@ -150,6 +149,10 @@ const database = {
   createInvite: invites.createInvite,
   getInvites: invites.getInvites,
   deleteInvite: invites.deleteInvite,
+  getChats: userChatRelationship.getChats,
+  createUserChatRelationship : userChatRelationship.createUserChatRelationship,
+  getMessages: messages.getMessages,
+  createMessage: messages.createMessage,
 };
 
 module.exports = database;
