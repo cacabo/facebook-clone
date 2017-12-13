@@ -240,7 +240,7 @@ router.get('/users/:username/statuses/', (req, res) => {
   const username = req.params.username;
 
   // Get the statuses from the database
-  db.getUserStatuses(username, (data, err) => {
+  db.getUserFeed(username, (data, err) => {
     if (err) {
       // If there is an error or no data is sent
       res.send({
