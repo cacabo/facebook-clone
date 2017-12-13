@@ -138,6 +138,7 @@ const database = {
   getStatuses: statuses.getStatuses,
   getStatus: statuses.getStatus,
   getUserStatuses: statuses.getUserStatuses,
+  getNewsfeedStatuses: statuses.getNewsfeedStatuses,
   addLike: likes.addLike,
   deleteLike: likes.deleteLike,
   checkLike: likes.checkLike,

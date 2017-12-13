@@ -315,10 +315,9 @@ function getNewsfeedStatuses(user, callback) {
             } else {
               // Get all friendships, and clean data
               const friends = data.Items.map(item => (item.attrs.user2));
-
               // Add current user1
               friends.push(user);
-
+              console.log("FRIENDS ALL: " + friends);
               // For all friends
               async.each(friends, (friend, keysCallback) => {
                 // Find all of user2's statuses
@@ -328,37 +327,53 @@ function getNewsfeedStatuses(user, callback) {
                   } else {
                     // Add all the users' statuses into the map
                     const userStatuses = dataFriend;
+                    console.log("Friend: ");
+                    console.log(userStatuses);
                     userStatuses.forEach( (userStatus) => {
+                      console.log("User status's id is: " + userStatus.id);
                       statusMap[userStatus.id] = userStatus;
                     });
 
+                    console.log(statusMap);
+
                     const allReceivedStatuses = [];
 
-                    // Find all statuses in which the receiver is the current user
+                    // Find all statuses in which the receiver is the current friend
                     StatusReceiver
-                      .query(user)
+                      .query(friend)
                       .loadAll()
                       .exec((err2, data2) => {
                         if (err2 || !data2) {
                           callback(null, "Error finding status receiver statuses.");
                         } else {
                           // Get the queried statuses
-                          const receivedStatuses = data2.Items.map(item => (item.attrs));
+                          const receivedStatuses = data2.Items.map(item => (item.attrs.id));
 
-                          // Push all the received statuses into the global variable
-                          receivedStatuses.forEach( (receivedStatus) => {
-                            allReceivedStatuses.push(receivedStatus);
+                          // Query for received statuses and push all of them into the global variable
+                          async.each( receivedStatuses, (receivedStatus, keysCallback2) => {
+                            // Querying for status
+                            Status
+                              .query(friend)
+                              .where('id').equals(receivedStatus)
+                              .exec((err3, data3) => {
+                                if(err3) {
+                                  callback(null, "There was an error finding received status: " + err3);
+                                }
+                                // Put found status into map
+                                statusMap[receivedStatus] = data3.Items[0].attrs;
+                              });
+                            keysCallback2();
+                          }, (asyncErr2) => {
+                            if(asyncErr2) {
+                              callback(null, asyncErr2);
+                            }
                           });
 
-                          // Now get all these received statuses and put into map to remove duplicates
-                          allReceivedStatuses.forEach( (receivedStatus) => {
-                            statusMap[receivedStatus.id] = receivedStatus;
-                          });
+                          keysCallback();
                         }
                       });
                   }
                 });
-                keysCallback();
               }, (asyncErr) => {
                 if (asyncErr) {
                   // If there is an error with the async operation
@@ -371,6 +386,7 @@ function getNewsfeedStatuses(user, callback) {
                   Object.keys(statusMap).forEach( (key) => {
                     statuses.push(statusMap[key]);
                   });
+                  console.log("STATUS ARRAY PLEASE LORD JESUS: " + statuses);
                   // Sort the statuses
                   statuses.sort((a, b) => {
                     const aCreatedAt = new Date(a.createdAt);

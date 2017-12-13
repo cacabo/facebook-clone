@@ -156,6 +156,33 @@ router.post('/statuses/new', (req, res) => {
   });
 });
 
+router.get('/newsfeed', (req, res) => {
+  if (!req.session.username) {
+    // If the current user is not logged in
+    res.send({
+      success: false,
+      error: "User must be logged in.",
+    });
+  }
+
+  const user = req.session.username;
+
+  // Get newsfeed statuses of the user that is logged in
+  db.getNewsfeedStatuses(user, (data, err) => {
+    if (err || !data) {
+      res.send({
+        success: false,
+        error: err,
+      });
+    } else {
+      res.send({
+        success: true,
+        data: data,
+      });
+    }
+  });
+});
+
 /**
  * Update a user object
  */
