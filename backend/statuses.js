@@ -317,7 +317,7 @@ function getNewsfeedStatuses(user, callback) {
               const friends = data.Items.map(item => (item.attrs.user2));
               // Add current user1
               friends.push(user);
-              console.log("FRIENDS ALL: " + friends);
+
               // For all friends
               async.each(friends, (friend, keysCallback) => {
                 // Find all of user2's statuses
@@ -327,16 +327,9 @@ function getNewsfeedStatuses(user, callback) {
                   } else {
                     // Add all the users' statuses into the map
                     const userStatuses = dataFriend;
-                    console.log("Friend: ");
-                    console.log(userStatuses);
                     userStatuses.forEach( (userStatus) => {
-                      console.log("User status's id is: " + userStatus.id);
                       statusMap[userStatus.id] = userStatus;
                     });
-
-                    console.log(statusMap);
-
-                    const allReceivedStatuses = [];
 
                     // Find all statuses in which the receiver is the current friend
                     StatusReceiver
@@ -347,29 +340,29 @@ function getNewsfeedStatuses(user, callback) {
                           callback(null, "Error finding status receiver statuses.");
                         } else {
                           // Get the queried statuses
-                          const receivedStatuses = data2.Items.map(item => (item.attrs.id));
+                          const receivedStatuses = data2.Items.map(item => ({
+                            id: item.attrs.id,
+                            user: item.attrs.user,
+                          }));
 
                           // Query for received statuses and push all of them into the global variable
-                          async.each( receivedStatuses, (receivedStatus, keysCallback2) => {
+                          async.each(receivedStatuses, (receivedStatus, keysCallback2) => {
                             // Querying for status
-                            Status
-                              .query(friend)
-                              .where('id').equals(receivedStatus)
-                              .exec((err3, data3) => {
-                                if(err3) {
-                                  callback(null, "There was an error finding received status: " + err3);
-                                }
+                            Status.get(receivedStatus.user, receivedStatus.id, (err3, data3) => {
+                              if (err3) {
+                                callback(null, "There was an error finding received status: " + err3);
+                              } else if (data.Items !== 0) {
                                 // Put found status into map
-                                statusMap[receivedStatus] = data3.Items[0].attrs;
-                              });
-                            keysCallback2();
+                                statusMap[receivedStatus] = data3.attrs;
+                                keysCallback2();
+                              }
+                            });
                           }, (asyncErr2) => {
-                            if(asyncErr2) {
+                            if (asyncErr2) {
                               callback(null, asyncErr2);
                             }
+                            keysCallback();
                           });
-
-                          keysCallback();
                         }
                       });
                   }
@@ -386,7 +379,6 @@ function getNewsfeedStatuses(user, callback) {
                   Object.keys(statusMap).forEach( (key) => {
                     statuses.push(statusMap[key]);
                   });
-                  console.log("STATUS ARRAY PLEASE LORD JESUS: " + statuses);
                   // Sort the statuses
                   statuses.sort((a, b) => {
                     const aCreatedAt = new Date(a.createdAt);
