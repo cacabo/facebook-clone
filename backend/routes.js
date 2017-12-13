@@ -533,8 +533,8 @@ router.post('/users/:inviter/chats/:roomID/invite/:receiver', (req, res) => {
   const sender = req.params.inviter;
   const receiver = req.params.receiver;
   const room = req.params.roomID;
-          
-  // Create the user in the database
+  
+  // Create an invite with sender, receiver, and room        
   db.createInvite(sender, receiver, room, (data, err) => {
     if (err) {
       res.send({
@@ -603,9 +603,8 @@ router.get('/users/:username/chats/:roomID/messages', (req, res) => {
   const username = req.params.username;
   const room = req.params.roomID;
 
-  console.log("Reached here");
-
-  db.getMessages(room, (data, err) => {
+  // Gets messages based on username and room
+  db.getMessages(username, room, (data, err) => {
     if (err || !data) {
       res.send({
         success: false,
@@ -625,12 +624,11 @@ router.get('/users/:username/chats/:roomID/messages', (req, res) => {
  */
 router.post('/users/:username/chats/:roomID/newMessage/:message', (req, res) => {
   const username = req.params.username;
-  const roomID = req.params.roomID;
+  const room = req.params.roomID;
   const body = req.params.message;
 
-  console.log("Create new message post reached");
-
-  db.createMessage(username, body, roomID, (success, err) => {
+  // Creates message with username, body, and room
+  db.createMessage(username, body, room, (success, err) => {
     if (err || !success) {
       res.send({
         success: false,
@@ -652,6 +650,8 @@ router.get('/users/:username/chats', (req, res) => {
 
   // Get all chats of a user using username
   db.getChats(username, (data, err) => {
+    console.log("Data");
+    console.log(data);
     if (err || !data) {
       res.send({
         success: false,
@@ -673,7 +673,7 @@ router.post('/users/:username/chats/:roomID/newUserChatRelationship', (req, res)
   const username = req.params.username;
   const roomID = req.params.roomID;
 
-  // Creates a user chat realtionship
+  // Creates a user chat relationship
   db.createUserChatRelationship(username, roomID, (success, err) => {
     if (err || !success) {
       res.send({

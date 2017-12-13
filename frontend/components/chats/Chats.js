@@ -43,9 +43,8 @@ class Chats extends React.Component {
 
     this.handleAcceptInvite = this.handleAcceptInvite.bind(this);
     this.getInvites = this.getInvites.bind(this);
+    this.getChats = this.getChats.bind(this);
   }
-
-
 
   componentDidMount() {
     // Listening for new invitations to join chats
@@ -58,6 +57,9 @@ class Chats extends React.Component {
       })
       console.log("received invitation!!!");
     });
+
+    // Render chats
+    this.getChats();
   }
 
   // Accepts an invitation when invitation received
@@ -72,18 +74,9 @@ class Chats extends React.Component {
       .then(checkData => {
         // If success is true, user has deleted invite already
         if(checkData.data.success === true) {
-          console.log("successefully deleted invite");
-
-          this.setState({
-            /**
-            * TODO set state with list of invites
-            */
-          });
+          console.log("Successefully deleted invite");
         } else {
-            console.log("failure");
-            /**
-            * TODO handle fail
-            */
+            console.log("Failed to delete invite");
         }
       })
       .catch(err => {
@@ -108,6 +101,24 @@ class Chats extends React.Component {
           });
         } else {
             console.log("Failed to get invites");
+        }
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  }
+
+  // Gets all chats associated with this user
+  getChats() {
+    axios.get('/api/users/' + this.props.username + '/chats')
+      .then(checkData => {
+        // If success is true, user has invited already
+        if(checkData.data.success === true) {
+          this.setState({
+            chats: checkData.data.data
+          });
+        } else {
+            console.log("Failed to get chats");
         }
       })
       .catch(err => {

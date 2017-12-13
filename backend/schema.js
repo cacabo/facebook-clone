@@ -5,18 +5,6 @@ const Joi = require('joi');
 // Configure AWS
 vogels.AWS.config.loadFromPath('./config.json');
 
-// Define a schema for user chat
-const Chat = vogels.define("Chat", {
-  hashKey: "room",
-  timestamps: true,
-  schema: {
-    creator: Joi.string(),
-    title: Joi.string(),
-    room: Joi.string(),
-  },
-  tableName: "chats",
-});
-
 // Define a schema for user chat realtionships
 const UserChatRelationship = vogels.define("UserChatRelationship", {
   hashKey: "username",
@@ -137,6 +125,7 @@ const tables = {
   Comment,
   Invite,
   Message,
+  UserChatRelationship,
 };
 
 module.exports = tables;

@@ -1,5 +1,5 @@
 // Import the user table
-const { Message, User } = require('./schema.js');
+const { Message, UserChatRelationship } = require('./schema.js');
 const uuid = require('uuid-v4');
 const async = require('async');
 
@@ -23,8 +23,6 @@ function createMessage(username, body, room, callback) {
 			room: room,
 		};
 
-    console.log(username + " " + body + " " + room + messageObject);
-
 		//Put the message in to the database
 		Message.create(messageObject, (err, data) => {
       console.log(data);
@@ -40,79 +38,57 @@ function createMessage(username, body, room, callback) {
 /**
  * Get all messages for a room
  */
-function getMessages(room, callback) {
+function getMessages(username, room, callback) {
 	// Error checking on the room name
   if (!room || room.length === 0) {
     callback(null, "Room must be well-defined");
   }
 
-  // Check that the room exists
-  Chat.get(room, (roomErr, roomData) => {
-    if (roomErr || !roomData) {
-      callback(null, "Room not found.");
-    }
+  // Query for the messages
+  Message
+    .query(room)
+    .loadAll()
+    .exec((err, data) => {
+      if (err || !data) {
+        callback(null, err);
+      } else {
+        // Prune out the message data
+        const messages = data.Items.map(item => {
+          const message = item.attrs;
+          // message.roomData = roomObj;
+          return message;
+        });
 
-    // Store the room object
-    const roomObj = roomData.attrs;
-
-    // Else, query for the messages
-    Message
-      .query(room)
-      .loadAll()
-      .exec((err, data) => {
-        if (err || !data) {
-          callback(null, err);
-        } else {
-          // Prune out the message data
-          const messages = data.Items.map(item => {
-            const message = item.attrs;
-            message.roomData = roomObj;
-            return message;
-          });
-
-          // Get the recipient name
-          async.each(messages, (message, keysCallback) => {
-            if (message.receiver) {
-              Message.get(message.receiver, (receiverErr, receiverData) => {
-                if (receiverErr || !receiverData) {
-                  callback(receiverErr, null);
-                } else {
-                  // Find the user object
-                  const receiverObj = userData.attrs;
-
-                  // Delete unneeded info
-                  delete receiverObj.password;
-                  delete receiverObj.affiliation;
-                  delete receiverObj.interests;
-                  delete receiverObj.bio;
-                  delete receiverObj.coverPhoto;
-
-                  // Update the message object
-                  message.receiverData = receiverObj;
-                  keysCallback(); 
-                }
-              });
-            } else {
-              keysCallback();
-            }
-          }, (asyncErr) => {
-            if (asyncErr) {
-              callback(asyncErr, null);
-            }
-
-            // Sort the messages
-            messages.sort((a, b) => {
-              const aCreatedAt = new Date(a.createdAt);
-              const bCreatedAt = new Date(b.createdAt);
-              return bCreatedAt - aCreatedAt;
+        // Get the recipient name
+        async.each(messages, (message, keysCallback) => {
+          if (message.receiver) {
+            Message.get(message.receiver, (receiverErr, receiverData) => {
+              if (receiverErr || !receiverData) {
+                callback(receiverErr, null);
+              } else {
+                keysCallback(); 
+              }
             });
+          } else {
+            keysCallback();
+          }
+        }, (asyncErr) => {
+          if (asyncErr) {
+            callback(asyncErr, null);
+          }
 
-            // Return the messages to the user
-            callback(messages, err);
+          // Sort the messages
+          messages.sort((a, b) => {
+            const aCreatedAt = new Date(a.createdAt);
+            const bCreatedAt = new Date(b.createdAt);
+            return bCreatedAt - aCreatedAt;
           });
-        }
-      });
-  });
+
+          // Return the messages to the user
+          callback(messages, err);
+        });
+      }
+    });
 }
 
 // Create an object to store the helper functions

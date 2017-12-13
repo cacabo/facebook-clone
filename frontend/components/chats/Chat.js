@@ -24,6 +24,7 @@ class Chat extends React.Component {
     // Set the state of the application
     this.state = {
       message: "",
+      currentInvite: "",
       currentUser: this.props.username,
       messages: [],
       users: [],
@@ -38,38 +39,36 @@ class Chat extends React.Component {
     this.handleChangeMessage = this.handleChangeMessage.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleInvite = this.handleInvite.bind(this);
+    this.reloadMessages = this.reloadMessages.bind(this);
+    this.handleChangeInvite = this.handleChangeInvite.bind(this);
   }
 
   // Reload the messages when switched to a different chat
-  componentDidUpdate() {
-    console.log("another chat: " + this.props.match.params.id);
+  componentDidUpdate(prevProps) {
+    if (prevProps.match.params.id !== this.props.match.params.id) {
+      this.reloadMessages()
+    }
+  }
 
-    /*
-    * TODO load all messages for this chat room
-    */
-    axios.get('/api/users/' + this.props.username + '/chats/' + this.props.match.params.id + '/messages')
+  // Reloads all of the messages
+  reloadMessages() {
+    axios.get('/api/users/' + this.state.currentUser + '/chats/' + this.props.match.params.id + '/messages')
       .then(checkData => {
-          console.log("Reached here2");
-
-        // If success is true, user has invited already
+        // If success is true, user has retrieved messages
         if(checkData.data.success === true) {
-          console.log(checkData.data.data);
-          // this.setState({
-
-          // });
+          this.setState({
+            messages: checkData.data.data
+          });
         } else {
             console.log("Failed to get invites");
         }
       })
       .catch(err => {
-        console.log("Error darn");
         console.log(err);
       });
-
-
-
   }
 
+  //Prepares component to listen to new messages
   componentDidMount() {
     autosize(document.querySelectorAll('textarea')); 
 
@@ -83,23 +82,30 @@ class Chat extends React.Component {
           oldMessage.push(messageInfo);
           return {messages: oldMessage}
         }
-    }));   
+    })); 
+
+    // Load current messages
+    this.reloadMessages()  
   }
 
-  // Helper method to handle a change to state
+  // Handles change to message field
   handleChangeMessage(event) {
     this.setState({
       message: event.target.value,
     });
   }
 
-  // Does socket sending here. Append this to own message list. 
+  // Handles change to invite field
+  handleChangeInvite(event) {
+    this.setState({
+      currentInvite: event.target.value,
+    });
+  }
+
+  // Does socket message sending
   handleSubmit(event) {
     event.preventDefault();
     const messageToSend = this.state.message;
-
-    console.log("Current Room from send: " + this.props.match.params.id);
-    console.log("Chat ID: " + this.props.match.params.id);
 
     // Creates a new message in the database
     axios.post('/api/users/' + this.state.currentUser + '/chats/' + this.props.match.params.id + '/newMessage/' + messageToSend)
@@ -140,26 +146,30 @@ class Chat extends React.Component {
       });
   }
 
+  // Sends an invite to another user
   handleInvite(event) {
-    // Temporary recevier of invitations
-    const personToInvite = 'victor';
+    event.preventDefault();
 
-    axios.post('/api/users/' + this.state.currentUser + '/chats/' + this.props.match.params.id + '/invite/' + personToInvite)
-      .then((inviteData) => {
-        if (inviteData.data.success) {
-          // TODO will need to check if person you are inviting is a friend first
-          // Parameters: chat id, user we want to invite, current user, cb
-          invite(this.props.match.params.id, personToInvite, this.state.currentUser, () => {
-              console.log("Invite successful");
-          });
-        } else {
-          // There was an error creating a new invite
-          console.log(inviteData.data.err);
-        }
-      })
-      .catch(inviteErr => {
-          console.log(inviteErr);
-      });
+    // Creates a new invite object and puts in table
+    if (this.state.currentInvite) {
+      axios.post('/api/users/' + this.state.currentUser + '/chats/' + this.props.match.params.id + '/invite/' + this.state.currentInvite)
+        .then((inviteData) => {
+          if (inviteData.data.success) {
+            // TODO will need to check if person you are inviting is a friend first
+            // Parameters: chat id, user we want to invite, current user, cb
+            // Does the invite over socket
+            invite(this.props.match.params.id, this.state.currentInvite, this.state.currentUser, () => {
+                console.log("Invite successful");
+            });
+          } else {
+            // There was an error creating a new invite
+            console.log(inviteData.data.err);
+          }
+        })
+        .catch(inviteErr => {
+            console.log(inviteErr);
+        });
+    }
   }
 
   /**
@@ -216,10 +226,25 @@ class Chat extends React.Component {
             value="Send"
           />
         </form>
-        <button className="btn btn-gray"
-            onClick={ this.handleInvite } >
-            Invite
-        </button>
+
+        <form className="message-form" onSubmit={ this.handleInvite }>
+          <textarea
+            name="invite"
+            value={ this.state.currentInvite }
+            onChange={ this.handleChangeInvite }
+            className="form-control"
+            type="text"
+          />
+          <input
+            type="submit"
+            className={
+              this.state.currentInvite ?
+              "btn btn-gray" :
+              "btn btn-gray disabled"
+            }
+            value="Invite"
+          />
+        </form>
       </Chats>
     );
   }

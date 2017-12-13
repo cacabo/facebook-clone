@@ -44,80 +44,62 @@ function getInvites(username, callback) {
     callback(null, "Username must be well-defined");
   }
 
-  // Check that the user exists
-  User.get(username, (userErr, userData) => {
-    if (userErr || !userData) {
-      callback(null, "User not found.");
-    }
+  // Else, query for the invites
+  Invite
+    .query(username)
+    .loadAll()
+    .exec((err, data) => {
+      if (err || !data) {
+        callback(null, err);
+      } else {
+        // Prune out the invite data
+        const invites = data.Items.map(item => {
+          const invite = item.attrs;
+          return invite;
+        });
 
-    // Store the user object
-    const userObj = userData.attrs;
+        // Get the recipient name
+        async.each(invites, (invite, keysCallback) => {
+          if (invite.receiver) {
+            Invite.get(invite.receiver, (receiverErr, receiverData) => {
+              if (receiverErr || !receiverData) {
+                callback(receiverErr, null);
+              } else {
+                // Find the user object
+                const receiverObj = userData.attrs;
 
-    // Delete unneeded info
-    delete userObj.password;
-    delete userObj.affiliation;
-    delete userObj.interests;
-    delete userObj.bio;
-    delete userObj.coverPhoto;
+                // Delete unneeded info
+                delete receiverObj.password;
+                delete receiverObj.affiliation;
+                delete receiverObj.interests;
+                delete receiverObj.bio;
+                delete receiverObj.coverPhoto;
 
-    // Else, query for the invites
-    Invite
-      .query(username)
-      .loadAll()
-      .exec((err, data) => {
-        if (err || !data) {
-          callback(null, err);
-        } else {
-          // Prune out the invite data
-          const invites = data.Items.map(item => {
-            const invite = item.attrs;
-            invite.userData = userObj;
-            return invite;
-          });
-
-          // Get the recipient name
-          async.each(invites, (invite, keysCallback) => {
-            if (invite.receiver) {
-              Invite.get(invite.receiver, (receiverErr, receiverData) => {
-                if (receiverErr || !receiverData) {
-                  callback(receiverErr, null);
-                } else {
-                  // Find the user object
-                  const receiverObj = userData.attrs;
-
-                  // Delete unneeded info
-                  delete receiverObj.password;
-                  delete receiverObj.affiliation;
-                  delete receiverObj.interests;
-                  delete receiverObj.bio;
-                  delete receiverObj.coverPhoto;
-
-                  // Update the invite object
-                  invite.receiverData = receiverObj;
-                  keysCallback(); 
-                }
-              });
-            } else {
-              keysCallback();
-            }
-          }, (asyncErr) => {
-            if (asyncErr) {
-              callback(asyncErr, null);
-            }
-
-            // Sort the invites
-            invites.sort((a, b) => {
-              const aCreatedAt = new Date(a.createdAt);
-              const bCreatedAt = new Date(b.createdAt);
-              return bCreatedAt - aCreatedAt;
+                // Update the invite object
+                invite.receiverData = receiverObj;
+                keysCallback(); 
+              }
             });
+          } else {
+            keysCallback();
+          }
+        }, (asyncErr) => {
+          if (asyncErr) {
+            callback(asyncErr, null);
+          }
 
-            // Return the invites to the user
-            callback(invites, err);
+          // Sort the invites
+          invites.sort((a, b) => {
+            const aCreatedAt = new Date(a.createdAt);
+            const bCreatedAt = new Date(b.createdAt);
+            return bCreatedAt - aCreatedAt;
           });
-        }
-      });
-  });
+
+          // Return the invites to the user
+          callback(invites, err);
+        });
+      }
+    });
 }
 
 /**
