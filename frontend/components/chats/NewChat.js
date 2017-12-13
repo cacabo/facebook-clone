@@ -1,6 +1,8 @@
 import React from 'react';
 import Chats from './Chats';
 import autosize from 'autosize';
+const uuid = require('uuid-v4');
+import axios from 'axios';
 import { connect } from 'react-redux';
 
 /**
@@ -19,6 +21,7 @@ class NewChat extends React.Component {
       members: "",
     };
     this.handleChangeMembers = this.handleChangeMembers.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   // Autosize the text area to fit the text that's pasted into it
@@ -37,35 +40,22 @@ class NewChat extends React.Component {
   handleSubmit(event) {
     console.log("New chat for submitted");
     event.preventDefault();
-    // Creates a new chat in the database
+
+    /*
+    * TODO Use async to send invites to everyone
+    */
 
     const roomID = uuid();
+
+    // Creates a new chat in the database
     axios.post('/api/users/' + this.props.username + '/chats/' + roomID +'/newUserChatRelationship')
       .then((chatData) => {
         if (chatData.data.success) {
           const chatParams = {
             username: this.state.currentUser,
-            title: messageToSend,
+            title: 'Chat ' + roomID,
             room: roomID
           };
-
-          // Sends message over the socket
-          sendMessage(JSON.stringify(chatParams), (success) => {
-            if (success) {
-              this.setState((prevState, props) => {
-                let oldMessage = this.state.messages;
-                oldMessage.push(messageParams);
-                return {
-                  messages: oldMessage,
-                  message: ""
-                }
-              });
-            } else {
-              /**
-               * TODO handle unsent message error
-               */
-            }
-          });
         } else {
           // There was an error creating a new message
           console.log(messageData.data.err);

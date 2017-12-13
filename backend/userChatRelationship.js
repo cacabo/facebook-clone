@@ -1,4 +1,3 @@
-// Import the user table
 const { UserChatRelationship } = require('./schema.js');
 const uuid = require('uuid-v4');
 const async = require('async');
@@ -15,7 +14,7 @@ function createUserChatRelationship(username, room, callback) {
     // Create relsationship object
 		const relObject = {
 			username: username,
-			title: title,
+			title: room,
 			room: room,
 		};
 
