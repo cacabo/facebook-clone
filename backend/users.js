@@ -1,5 +1,5 @@
 // Import the user table
-const { User, Affiliation } = require('./schema.js');
+const { User, Affiliation, Interest } = require('./schema.js');
 const async = require('async');
 
 /**
@@ -86,6 +86,57 @@ function createUser(user, callback) {
 }
 
 /**
+ * Helper function to handle a change in affiliation
+ */
+function changeAffiliation(oldAffiliation, oldUser, callback) {
+  if (oldAffiliation === oldUser.affiliation) {
+    callback(true, null);
+  } else {
+    // Remove the old affiliation from the database if there is one
+    if (oldAffiliation) {
+      // Destroy the existing affiliation from the database
+      Affiliation.destroy(oldAffiliation, oldUser.username, (destroyErr) => {
+        if (destroyErr) {
+          callback(false, destroyErr.message);
+        } else {
+          if (oldUser.affiliation) {
+            // Add the updated affiliation
+            Affiliation.create({
+              affiliation: oldUser.affiliation,
+              username: oldUser.username,
+            }, (affiliationErr, affiliationData) => {
+              // If there was an issue adding the affiliation to the database
+              if (affiliationErr || !affiliationData) {
+                callback(false, affiliationErr.message);
+              } else {
+                callback(true, null);
+              }
+            });
+          } else {
+            callback(true, null);
+          }
+        }
+      });
+    } else if (oldUser.affiliation) {
+      // Add the updated affiliation
+      Affiliation.create({
+        affiliation: oldUser.affiliation,
+        username: oldUser.username,
+      }, (affiliationErr, affiliationData) => {
+        // If there was an issue adding the affiliation to the database
+        if (affiliationErr || !affiliationData) {
+          callback(false, affiliationErr.message);
+        } else {
+          callback(true, null);
+        }
+      });
+    } else {
+      callback(true, null);
+    }
+  }
+}
+
+/**
  * Update a user based on the passed in information
  */
 function updateUser(updatedUser, callback) {
@@ -117,51 +168,14 @@ function updateUser(updatedUser, callback) {
         if (updateErr || !updatedData) {
           callback(null, "Failed to update user");
         } else {
-          if (oldAffiliation === updatedUser.affiliation) {
-            callback(updatedData, null);
-          } else {
-            // Remove the old affiliation from the database if there is one
-            if (oldAffiliation) {
-              // Destroy the existing affiliation from the database
-              Affiliation.destroy(oldAffiliation, oldUser.username, (destroyErr) => {
-                if (destroyErr) {
-                  callback(null, destroyErr.message);
-                } else {
-                  if (updatedUser.affiliation) {
-                    // Add the updated affiliation
-                    Affiliation.create({
-                      affiliation: updatedUser.affiliation,
-                      username: oldUser.username,
-                    }, (affiliationErr, affiliationData) => {
-                      // If there was an issue adding the affiliation to the database
-                      if (affiliationErr || !affiliationData) {
-                        callback(null, affiliationErr.message);
-                      } else {
-                        callback(updatedData, null);
-                      }
-                    });
-                  } else {
-                    callback(updatedData, null);
-                  }
-                }
-              });
-            } else if (updatedUser.affiliation) {
-              // Add the updated affiliation
-              Affiliation.create({
-                affiliation: updatedUser.affiliation,
-                username: oldUser.username,
-              }, (affiliationErr, affiliationData) => {
-                // If there was an issue adding the affiliation to the database
-                if (affiliationErr || !affiliationData) {
-                  callback(null, affiliationErr.message);
-                } else {
-                  callback(updatedData, null);
-                }
-              });
+          changeAffiliation(oldAffiliation, oldUser, (success, affiliationErr) => {
+            if (!success) {
+              callback(null, affiliationErr);
             } else {
+              // TODO HANDLE INTERESTS
               callback(updatedData, null);
             }
-          }
+          });
         }
       });
     }
