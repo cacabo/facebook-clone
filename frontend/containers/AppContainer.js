@@ -20,6 +20,7 @@ import NotFound from '../components/NotFound';
 import Nav from '../components/shared/Nav';
 import LoggedInAuth from '../components/users/LoggedInAuth';
 import Search from '../components/users/Search';
+import Affiliation from '../components/users/Affiliation';
 
 /**
  * Component to render the app
@@ -75,6 +76,11 @@ class AppContainer extends React.Component {
       )} />
     );
 
+    // Handle getting all users by affiliation
+    const affiliationRoute = (
+      <Route exact path="/users/affiliations/:affiliation" component={Affiliation} />
+    );
+
     // Handle search for user route
     const searchRoute = (
       <Route exact path="/users/search/:prefix" component={Search} />
@@ -122,11 +128,13 @@ class AppContainer extends React.Component {
         <Router>
           <div>
             <Nav />
+            <div className="nav-spacer" />
             <Switch>
               { homeRoute }
               { registerRoute }
               { loginRoute }
               { searchRoute }
+              { affiliationRoute }
               { editProfileRoute }
               { userProfileRoute }
               { newChatRoute }

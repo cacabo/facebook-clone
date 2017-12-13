@@ -5,12 +5,13 @@ import { Redirect } from 'react-router';
 import autosize from 'autosize';
 import PropTypes from 'prop-types';
 import Loading from '../shared/Loading';
+import { connect } from 'react-redux';
+import { update } from '../../actions/index';
 import axios from 'axios';
 
 /**
  * Component to render a form to edit a user's profile\
  *
- * TODO better error checking for images
  * TODO change password
  */
 class EditProfile extends React.Component {
@@ -60,20 +61,23 @@ class EditProfile extends React.Component {
               autosize(document.querySelectorAll('textarea'));
             })
             .catch(() => {
-              /**
-               * TODO
-               */
+              this.setState({
+                error: "Failed to load user.",
+                pending: false,
+              });
             });
         } else {
-          /**
-           * TODO
-           */
+          this.setState({
+            error: "Failed to load user.",
+            pending: false,
+          });
         }
       })
       .catch(() => {
-        /**
-         * TODO
-         */
+        this.setState({
+          error: "Failed to load user.",
+          pending: false,
+        });
       });
   }
 
@@ -157,14 +161,17 @@ class EditProfile extends React.Component {
       // Update the user information in the database
       axios.post("/api/users/" + this.state.username + "/update/", this.state)
         .then(() => {
+          // Dispatch the update event to Redux
+          this.props.onUpdate(this.state.profilePicture, this.state.name);
+
           // Redirect the user away from the page
           this.setState({
             redirect: true,
           });
         })
-        .catch(() => {
+        .catch((err) => {
           this.setState({
-            error: "Error updating user in database. Check the form and try again.",
+            error: err,
           });
         });
     }
@@ -299,6 +306,20 @@ class EditProfile extends React.Component {
 
 EditProfile.propTypes = {
   match: PropTypes.object,
+  onUpdate: PropTypes.func,
 };
 
-export default EditProfile;
+const mapStateToProps = (/* state */) => {
+  return {};
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    onUpdate: (profilePicture, name) => dispatch(update(profilePicture, name)),
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(EditProfile);

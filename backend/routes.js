@@ -44,6 +44,29 @@ router.get('/logout', (req, res) => {
 });
 
 /**
+ * Find users with the passed in affiliation
+ */
+router.get('/users/affiliations/:affiliation/', (req, res) => {
+  // Get the prefix from the request
+  const affiliation = req.params.affiliation;
+
+  // Get the users from the database
+  db.affiliationUsers(affiliation, (data, err) => {
+    if (err || !data) {
+      res.send({
+        success: false,
+        error: err,
+      });
+    } else {
+      res.send({
+        success: true,
+        data: data,
+      });
+    }
+  });
+});
+
+/**
  * Search for users
  */
 router.get('/users/search/:prefix/', (req, res) => {
@@ -145,7 +168,7 @@ router.post('/statuses/new', (req, res) => {
     if (err || !data) {
       res.send({
         success: false,
-        error: "Error adding user to database.",
+        error: err,
       });
     } else {
       res.send({
@@ -165,13 +188,49 @@ router.post('/users/:username/update/', (req, res) => {
 
   // Ensure that the two uesernames are the same
   if (sessionUsername === reqUsername) {
+    // Regular expression for validating URL's
+    const urlRegex = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
+
+    // Error checking
+    if (!req.body.name) {
+      res.send({
+        success: false,
+        error: "Name must be populated.",
+      });
+    } else if (req.body.affiliation && req.body.affiliation.length > 50) {
+      res.send({
+        success: false,
+        error: "Affiliation can be at most 50 characters.",
+      });
+    } else if (req.body.bio && req.body.bio.length > 200) {
+      res.send({
+        success: false,
+        error: "Bio must be less than 200 characters.",
+      });
+    } else if (req.body.interests && req.body.interests.length > 200) {
+      res.send({
+        success: false,
+        error: "Interests must be less than 200 characters.",
+      });
+    } else if (req.body.profilePicture && !urlRegex.test(req.body.profilePicture)) {
+      res.send({
+        success: false,
+        error: "Profile picture must be a valid url.",
+      });
+    } else if (req.body.coverPhoto && !urlRegex.test(req.body.coverPhoto)) {
+      res.send({
+        success: false,
+        error: "Cover photo must be a valid URL.",
+      });
+    }
+
     // Update the object to contain the information we want
     const obj = {
       username: sessionUsername,
       name: req.body.name,
-      affiliation: req.body.affiliation,
+      affiliation: req.body.affiliation.toLowerCase(),
       bio: req.body.bio,
-      interests: req.body.interests,
+      interests: req.body.interests.toLowerCase(),
       profilePicture: req.body.profilePicture,
       coverPhoto: req.body.coverPhoto,
     };
@@ -295,14 +354,14 @@ router.post('/users/sessions/new', (req, res) => {
     if (err || !data) {
       res.send({
         success: false,
-        err: "User not found, consider signing up.",
+        error: "User not found, consider signing up.",
       });
     } else if (data) {
       // Else the user exists: check the password
       if (hash !== data.password) {
         res.send({
           success: false,
-          err: "Username and password do not match."
+          error: "Username and password do not match."
         });
       } else {
         // Update the user session
@@ -329,15 +388,63 @@ router.get('/users/:username/friends/new', (req, res) => {
   const friend1 = req.session.username;
 
   // Create the friendship in the database
-  db.createFriendship(friend1, friend2, (data, err) => {
+  db.addFriendship(friend1, friend2, (data, err) => {
     if (err || !data) {
       res.send({
         success: false,
-        err: err,
+        error: err,
       });
     } else {
       res.send({
         success: true,
+        data: data.data
+      });
+    }
+  });
+});
+
+/**
+ * Get a list of user's friends
+ */
+router.get('/users/:username/friends', (req, res) => {
+  // Friend the current user is friending
+  const user = req.params.username;
+
+  // Create the friendship in the database
+  db.getFriendships(user, (data, err) => {
+    if (err || !data) {
+      res.send({
+        success: false,
+        error: err,
+      });
+    } else {
+      res.send({
+        success: true,
+        data: data
+      });
+    }
+  });
+});
+
+/**
+ * Get specific friend
+ */
+router.get('/users/:username/friends/:friendUsername', (req, res) => {
+  // Friend the current user is friending
+  const user = req.params.username;
+  const friend = req.params.friendUsername;
+
+  // Create the friendship in the database
+  db.getFriend(user, friend, (data, err) => {
+    if (err || !data) {
+      res.send({
+        success: false,
+        error: err,
+      });
+    } else {
+      res.send({
+        success: true,
+        data: data
       });
     }
   });
@@ -358,7 +465,7 @@ router.get('/users/:username/statuses/:statusID/checkLike', (req, res) => {
       // Not liked yet
       res.send({
         success: false,
-        err: checkErr,
+        error: checkErr,
       });
     } else {
       // Already liked
@@ -388,7 +495,7 @@ router.get('/users/:username/statuses/:statusID/likes', (req, res) => {
         if (addErr || !addData) {
           res.send({
             success: false,
-            err: addErr,
+            error: addErr,
           });
         } else {
           res.send({
@@ -403,7 +510,7 @@ router.get('/users/:username/statuses/:statusID/likes', (req, res) => {
         if (deleteErr || !deleteData) {
           res.send({
             success: false,
-            err: deleteErr,
+            error: deleteErr,
           });
         } else {
           res.send({
@@ -430,7 +537,7 @@ router.post('/users/:username/statuses/:statusID/comments/new', (req, res) => {
     if (addErr || !addData) {
       res.send({
         success: false,
-        err: addErr,
+        error: addErr,
       });
     } else {
       res.send({
@@ -452,7 +559,7 @@ router.get('/users/:username/statuses/:statusID/comments', (req, res) => {
     if (err || !data) {
       res.send({
         success: false,
-        err: err,
+        error: err,
       });
     } else {
       res.send({
@@ -514,7 +621,7 @@ router.get('/users/:username/statuses/:statusID/likes', (req, res) => {
     if (err || !data) {
       res.send({
         success: false,
-        err: err,
+        error: err,
       });
     } else {
       res.send({

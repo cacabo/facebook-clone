@@ -1,5 +1,6 @@
 // Import the user table
-const { User } = require('./schema.js');
+const { User, Affiliation } = require('./schema.js');
+const async = require('async');
 
 /**
  * Get a user with the specified username
@@ -30,6 +31,7 @@ function createUser(user, callback) {
   if (!user.username ||
       !user.firstName ||
       !user.lastName ||
+      !user.birthday ||
       !user.password ||
       !user.confirmPassword) {
     callback(null, "All fields must be populated");
@@ -85,7 +87,6 @@ function createUser(user, callback) {
 
 /**
  * Update a user based on the passed in information
- * TODO error checking
  */
 function updateUser(updatedUser, callback) {
   // Find the username from the updated user object
@@ -98,6 +99,9 @@ function updateUser(updatedUser, callback) {
     } else {
       // Isolate the old user object
       const oldUser = oldUserData.attrs;
+
+      // Also save the old affiliation
+      const oldAffiliation = oldUser.affiliation;
 
       // Update the user's fields
       oldUser.name = updatedUser.name.toLowerCase();
@@ -113,11 +117,107 @@ function updateUser(updatedUser, callback) {
         if (updateErr || !updatedData) {
           callback(null, "Failed to update user");
         } else {
-          callback(updatedData, null);
+          if (oldAffiliation === updatedUser.affiliation) {
+            callback(updatedData, null);
+          } else {
+            // Remove the old affiliation from the database if there is one
+            if (oldAffiliation) {
+              // Destroy the existing affiliation from the database
+              Affiliation.destroy(oldAffiliation, oldUser.username, (destroyErr) => {
+                if (destroyErr) {
+                  callback(null, destroyErr.message);
+                } else {
+                  if (updatedUser.affiliation) {
+                    // Add the updated affiliation
+                    Affiliation.create({
+                      affiliation: updatedUser.affiliation,
+                      username: oldUser.username,
+                    }, (affiliationErr, affiliationData) => {
+                      // If there was an issue adding the affiliation to the database
+                      if (affiliationErr || !affiliationData) {
+                        callback(null, affiliationErr.message);
+                      } else {
+                        callback(updatedData, null);
+                      }
+                    });
+                  } else {
+                    callback(updatedData, null);
+                  }
+                }
+              });
+            } else if (updatedUser.affiliation) {
+              // Add the updated affiliation
+              Affiliation.create({
+                affiliation: updatedUser.affiliation,
+                username: oldUser.username,
+              }, (affiliationErr, affiliationData) => {
+                // If there was an issue adding the affiliation to the database
+                if (affiliationErr || !affiliationData) {
+                  callback(null, affiliationErr.message);
+                } else {
+                  callback(updatedData, null);
+                }
+              });
+            } else {
+              callback(updatedData, null);
+            }
+          }
         }
       });
     }
   });
+}
+
+/**
+ * Get all users with the passed in affiliation
+ */
+function affiliationUsers(affiliation, callback) {
+  // Error checking on the prefix
+  if (!affiliation) {
+    callback(null, "Affiliation must be defined.");
+  }
+
+  // Query for the users we want by name
+  Affiliation
+    .query(affiliation)
+    .loadAll()
+    .exec((err, data) => {
+      if (err) {
+        callback(null, err.message);
+      } else {
+        // Glean the usernames of all users from the database
+        const usernames = data.Items.map(user => (user.attrs.username));
+
+        // Maintain an array for users
+        const users = [];
+
+        // Load the user data for each user
+        async.each(usernames, (username, keysCallback) => {
+          User.get(username, (userErr, userData) => {
+            if (userErr || !userData) {
+              callback(null, userErr);
+            } else {
+              // Create a user object with the relevant info
+              const user = {
+                username: userData.attrs.username,
+                name: userData.attrs.name,
+                profilePicture: userData.attrs.profilePicture,
+              };
+
+              // Put the object into the array
+              users.push(user);
+              keysCallback();
+            }
+          });
+        }, asyncErr => {
+          if (asyncErr) {
+            callback(null, asyncErr);
+          } else {
+            callback(users, null);
+          }
+        });
+      }
+    });
 }
 
 /**
@@ -126,7 +226,7 @@ function updateUser(updatedUser, callback) {
 function searchUsers(prefix, callback) {
   // Error checking on the prefix
   if (!prefix) {
-    callback(null, "Prefix must be defined");
+    callback(null, "Prefix must be defined.");
   }
 
   // Query for the users we want by name
@@ -149,6 +249,7 @@ const users = {
   createUser,
   updateUser,
   searchUsers,
+  affiliationUsers,
 };
 
 // Export the object

@@ -1,5 +1,5 @@
 // Import the user table
-const { Status, User } = require('./schema.js');
+const { Status, User, StatusReceiver } = require('./schema.js');
 const uuid = require('uuid-v4');
 const async = require('async');
 
@@ -28,7 +28,27 @@ function createStatus(content, receiver, user, callback) {
       if (err || !data) {
         callback(null, "Failed to put status in database.");
       } else {
-        callback(data, null);
+        if (obj.receiver) {
+          // Create the status receiver object
+          const statusReceiver = {
+            receiver: obj.receiver,
+            id: data.attrs.id,
+          };
+
+          // This allows for easy lookup of statuses for which a given user
+          // is the receiver.
+          StatusReceiver.create(statusReceiver, (receiverErr, receiverData) => {
+            if (receiverErr || !receiverData) {
+              callback(null, "Failed to create status receiver entry.");
+            } else {
+              // Send the data back if successful
+              callback(data, null);
+            }
+          });
+        } else {
+          // Send the data back if there is no receiver
+          callback(data, null);
+        }
       }
     });
   }
