@@ -180,6 +180,36 @@ router.post('/statuses/new', (req, res) => {
 });
 
 /**
+ * Get newsfeed statuses of the user that is logged in (friends as well as his/her own)
+ */
+router.get('/newsfeed', (req, res) => {
+  if (!req.session.username) {
+    // If the current user is not logged in
+    res.send({
+      success: false,
+      error: "User must be logged in.",
+    });
+  }
+
+  const user = req.session.username;
+
+  // Get newsfeed statuses of the user that is logged in
+  db.getNewsfeedStatuses(user, (data, err) => {
+    if (err || !data) {
+      res.send({
+        success: false,
+        error: err,
+      });
+    } else {
+      res.send({
+        success: true,
+        data: data,
+      });
+    }
+  });
+});
+
+/**
  * Update a user object
  */
 router.post('/users/:username/update/', (req, res) => {
@@ -269,7 +299,7 @@ router.get('/users/:username/statuses/', (req, res) => {
   const username = req.params.username;
 
   // Get the statuses from the database
-  db.getUserStatuses(username, (data, err) => {
+  db.getUserFeed(username, (data, err) => {
     if (err) {
       // If there is an error or no data is sent
       res.send({

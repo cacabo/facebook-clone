@@ -102,6 +102,7 @@ const StatusReceiver = vogels.define("StatusReceiver", {
   schema: {
     receiver: Joi.string(),
     id: Joi.string(),
+    user: Joi.string(),
   },
 });
 
