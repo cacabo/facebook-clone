@@ -44,6 +44,29 @@ router.get('/logout', (req, res) => {
 });
 
 /**
+ * Find users with the passed in affiliation
+ */
+router.get('/users/affiliations/:affiliation/', (req, res) => {
+  // Get the prefix from the request
+  const affiliation = req.params.affiliation;
+
+  // Get the users from the database
+  db.affiliationUsers(affiliation, (data, err) => {
+    if (err || !data) {
+      res.send({
+        success: false,
+        error: err,
+      });
+    } else {
+      res.send({
+        success: true,
+        data: data,
+      });
+    }
+  });
+});
+
+/**
  * Search for users
  */
 router.get('/users/search/:prefix/', (req, res) => {
