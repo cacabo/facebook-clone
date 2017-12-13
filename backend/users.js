@@ -86,7 +86,6 @@ function createUser(user, callback) {
 
 /**
  * Update a user based on the passed in information
- * TODO error checking
  */
 function updateUser(updatedUser, callback) {
   // Find the username from the updated user object

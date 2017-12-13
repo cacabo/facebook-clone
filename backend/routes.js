@@ -165,13 +165,49 @@ router.post('/users/:username/update/', (req, res) => {
 
   // Ensure that the two uesernames are the same
   if (sessionUsername === reqUsername) {
+    // Regular expression for validating URL's
+    const urlRegex = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
+
+    // Error checking
+    if (!req.body.name) {
+      res.send({
+        success: false,
+        error: "Name must be populated.",
+      });
+    } else if (req.body.affiliation && req.body.affiliation.length > 50) {
+      res.send({
+        success: false,
+        error: "Affiliation can be at most 50 characters.",
+      });
+    } else if (req.body.bio && req.body.bio.length > 200) {
+      res.send({
+        success: false,
+        error: "Bio must be less than 200 characters.",
+      });
+    } else if (req.body.interests && req.body.interests.length > 200) {
+      res.send({
+        success: false,
+        error: "Interests must be less than 200 characters.",
+      });
+    } else if (this.state.profilePicture && !urlRegex.test(this.state.profilePicture)) {
+      res.send({
+        success: false,
+        error: "Profile picture must be a valid url.",
+      });
+    } else if (this.state.coverPhoto && !urlRegex.test(this.state.coverPhoto)) {
+      res.send({
+        success: false,
+        error: "Cover photo must be a valid URL.",
+      });
+    }
+
     // Update the object to contain the information we want
     const obj = {
       username: sessionUsername,
       name: req.body.name,
-      affiliation: req.body.affiliation,
+      affiliation: req.body.affiliation.toLowerCase(),
       bio: req.body.bio,
-      interests: req.body.interests,
+      interests: req.body.interests.toLowerCase(),
       profilePicture: req.body.profilePicture,
       coverPhoto: req.body.coverPhoto,
     };

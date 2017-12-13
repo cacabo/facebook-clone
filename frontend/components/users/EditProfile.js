@@ -12,7 +12,6 @@ import axios from 'axios';
 /**
  * Component to render a form to edit a user's profile\
  *
- * TODO better error checking for images
  * TODO change password
  */
 class EditProfile extends React.Component {
@@ -62,20 +61,23 @@ class EditProfile extends React.Component {
               autosize(document.querySelectorAll('textarea'));
             })
             .catch(() => {
-              /**
-               * TODO
-               */
+              this.setState({
+                error: "Failed to load user.",
+                pending: false,
+              });
             });
         } else {
-          /**
-           * TODO
-           */
+          this.setState({
+            error: "Failed to load user.",
+            pending: false,
+          });
         }
       })
       .catch(() => {
-        /**
-         * TODO
-         */
+        this.setState({
+          error: "Failed to load user.",
+          pending: false,
+        });
       });
   }
 
