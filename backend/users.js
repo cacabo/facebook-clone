@@ -1,5 +1,6 @@
 // Import the user table
 const { User, Affiliation } = require('./schema.js');
+const async = require('async');
 
 /**
  * Get a user with the specified username
@@ -168,12 +169,64 @@ function updateUser(updatedUser, callback) {
 }
 
 /**
+ * Get all users with the passed in affiliation
+ */
+function affiliationUsers(affiliation, callback) {
+  // Error checking on the prefix
+  if (!affiliation) {
+    callback(null, "Affiliation must be defined.");
+  }
+
+  // Query for the users we want by name
+  Affiliation
+    .query(affiliation)
+    .loadAll()
+    .exec((err, data) => {
+      if (err) {
+        callback(null, err.message);
+      } else {
+        // Glean the usernames of all users from the database
+        const usernames = data.Items.map(user => (user.attrs.username));
+
+        // Maintain an array for users
+        const users = [];
+
+        // Load the user data for each user
+        async.each(usernames, (username, keysCallback) => {
+          User.get(username, (userErr, userData) => {
+            if (userErr || !userData) {
+              callback(null, userErr);
+            } else {
+              // Create a user object with the relevant info
+              const user = {
+                username: userData.attrs.username,
+                name: userData.attrs.name,
+                profilePicture: userData.attrs.profilePicture,
+              };
+
+              // Put the object into the array
+              users.push(user);
+              keysCallback();
+            }
+          });
+        }, asyncErr => {
+          if (asyncErr) {
+            callback(null, asyncErr);
+          } else {
+            callback(users, null);
+          }
+        });
+      }
+    });
+}
+
+/**
  * Search for users by a prefix
  */
 function searchUsers(prefix, callback) {
   // Error checking on the prefix
   if (!prefix) {
-    callback(null, "Prefix must be defined");
+    callback(null, "Prefix must be defined.");
   }
 
   // Query for the users we want by name
@@ -196,6 +249,7 @@ const users = {
   createUser,
   updateUser,
   searchUsers,
+  affiliationUsers,
 };
 
 // Export the object

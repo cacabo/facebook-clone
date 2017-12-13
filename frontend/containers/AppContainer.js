@@ -77,7 +77,7 @@ class AppContainer extends React.Component {
     );
 
     // Handle getting all users by affiliation
-    const searchRoute = (
+    const affiliationRoute = (
       <Route exact path="/users/affiliations/:affiliation" component={Affiliation} />
     );
 
@@ -136,6 +136,7 @@ class AppContainer extends React.Component {
               { registerRoute }
               { loginRoute }
               { searchRoute }
+              { affiliationRoute }
               { editProfileRoute }
               { userProfileRoute }
               { newChatRoute }
