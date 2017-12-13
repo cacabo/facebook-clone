@@ -1,5 +1,5 @@
 // Import the user table
-const { Status, User, StatusReceiver } = require('./schema.js');
+const { Status, User, StatusReceiver, Friendship } = require('./schema.js');
 const uuid = require('uuid-v4');
 const async = require('async');
 
@@ -33,6 +33,7 @@ function createStatus(content, receiver, user, callback) {
           const statusReceiver = {
             receiver: obj.receiver,
             id: data.attrs.id,
+            user: obj.user,
           };
 
           // This allows for easy lookup of statuses for which a given user
@@ -297,12 +298,58 @@ function getUserStatuses(username, callback) {
   });
 }
 
+function getNewsfeedStatuses(user, callback) {
+  if (!user) {
+    callback(null, "User is null.");
+  } else {
+    const statusMap = {};
+    getUserStatuses(user, (data1, err1) => {
+      // noice
+      Friendship
+        .query(user)
+        .loadAll()
+        .exec((err, data) => {
+          // Error finding friendships
+          if (err || !data) {
+            callback(null, "There was an error finding friendships: " + err);
+          } else {
+            // Get all friendships, and clean data
+            const friendships = data.Items.map(item => (item.attrs));
+
+            // For each friendship, find other friend
+            async.each(friendships, (friendship, keysCallback) => {
+              // Find the user who wrote the comment
+              const user2 = friendship.user2;
+
+
+              // Find all of user2's statuses
+            }, (asyncErr) => {
+              if (asyncErr) {
+                // If there is an error with the async operation
+                callback(null, asyncErr);
+              } else {
+                // Sort the friendships in alphabetical order of name
+                friendships.sort((a, b) => (
+                  (a && a.name) ? (a.name.localeCompare(b.name)) : (-1)
+                ));
+
+                // Return the comments to the user
+                callback(friendships, err);
+              }
+            });
+          }
+        });
+      });
+  }
+}
+
 // Create an object to store the helper functions
 const statuses = {
   createStatus,
   getStatuses,
   getStatus,
   getUserStatuses,
+  getNewsfeedStatuses,
 };
 
 // Export the object
