@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
 import NotFound from '../NotFound';
 import Login from '../users/Login';
 import UserPreview from '../newsfeed/UserPreview';
+import moment from 'moment';
 
 /**
  * Render's a user's profile
@@ -19,7 +20,6 @@ import UserPreview from '../newsfeed/UserPreview';
  *
  * TODO handle errors
  * TODO render user statuses
- * TODO style new statuses
  * TODO birthday
  * TODO link to users with same affiliation
  * TODO network visualizer
@@ -37,6 +37,7 @@ class Profile extends React.Component {
       username: "",
       profilePicture: "",
       coverPhoto: "",
+      birthday: "",
       bio: "",
       interests: "",
       statuses: [],
@@ -58,6 +59,7 @@ class Profile extends React.Component {
     this.handleClickStatusesToggle = this.handleClickStatusesToggle.bind(this);
     this.renderButton = this.renderButton.bind(this);
     this.handleAddFriend = this.handleAddFriend.bind(this);
+    this.renderBirthday = this.renderBirthday.bind(this);
   }
 
   // Set the state upon load
@@ -354,6 +356,12 @@ class Profile extends React.Component {
     );
   }
 
+  // Render the birthday
+  renderBirthday() {
+    const m = moment(this.state.birthday);
+    return m.format("MMMM Do, YYYY");
+  }
+
   // Render the component
   render() {
     // Render login if the user is not logged in
@@ -398,24 +406,44 @@ class Profile extends React.Component {
 
               <div className="row">
                 <div className="col-12 col-md-4 about">
-                  <strong>
-                    Learn more about { firstName }
-                  </strong>
-                  <p>
-                    { this.state.bio }
-                  </p>
-                  <strong>
-                    Affiliations
-                  </strong>
-                  <p>
-                    { this.state.affiliation }
-                  </p>
-                  <strong>
-                    Interests
-                  </strong>
-                  <p>
-                    { this.state.interests }
-                  </p>
+                  <div>
+                    <p className="bold marg-bot-025">
+                      Learn more about { firstName }
+                    </p>
+                    { this.state.bio && (
+                      <p>
+                        { this.state.bio }
+                      </p>
+                    ) }
+                  </div>
+                  { this.state.affiliation && (
+                    <div className="about-section">
+                      <p className="bold marg-bot-025">
+                        Affiliation 🏢
+                      </p>
+                      <p>
+                        { this.state.affiliation }
+                      </p>
+                    </div>
+                  ) }
+                  { this.state.interests && (
+                    <div className="about-section">
+                      <p className="bold marg-bot-025">
+                        Interests 💭
+                      </p>
+                      <p>
+                        { this.state.interests }
+                      </p>
+                    </div>
+                  ) }
+                  <div className="about-section">
+                    <p className="bold marg-bot-025">
+                      Birthday 🎉
+                    </p>
+                    <p>
+                      { this.renderBirthday() }
+                    </p>
+                  </div>
                   {
                     this.state.friendError && (
                       <div className="alert alert-danger error">
@@ -428,6 +456,7 @@ class Profile extends React.Component {
                       </div>
                     )
                   }
+                  <div className="space-1" />
                   { this.renderButton() }
                 </div>
                 <div className="col-12 col-md-8 col-lg-7">

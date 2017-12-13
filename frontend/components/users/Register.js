@@ -25,7 +25,6 @@ class Register extends React.Component {
       password: "",
       confirmPassword: "",
       error: "",
-      birthday: null,
     };
 
     // Binding "this" to each state helper method
@@ -59,6 +58,13 @@ class Register extends React.Component {
     });
   }
 
+  // Handle a change to the birthday event
+  handleChangeBirthday(event) {
+    this.setState({
+      birthday: event.target.value,
+    });
+  }
+
   // Handle a change to the password state
   handleChangePassword(event) {
     this.setState({
@@ -78,6 +84,8 @@ class Register extends React.Component {
     // Prevent the default submit action
     event.preventDefault();
 
+    console.log(this.state);
+
     // Keep track of if the registration is valid or not
     let isValid = true;
 
@@ -86,7 +94,8 @@ class Register extends React.Component {
         !this.state.firstName ||
         !this.state.lastName ||
         !this.state.password ||
-        !this.state.confirmPassword) {
+        !this.state.confirmPassword ||
+        !this.state.birthday) {
       this.setState({
         error: "All fields must be populated."
       });
@@ -159,6 +168,7 @@ class Register extends React.Component {
         username: this.state.username,
         firstName: this.state.firstName,
         lastName: this.state.lastName,
+        birthday: new Date(this.state.birthday),
         password: this.state.password,
         confirmPassword: this.state.confirmPassword,
       };
@@ -250,6 +260,17 @@ class Register extends React.Component {
             </div>
 
             <label>
+              Date
+            </label>
+            <input
+              type="date"
+              name="birthday"
+              className="form-control marg-bot-1"
+              id="birthday"
+              onChange={ this.handleChangeBirthday }
+            />
+
+            <label>
               Password
             </label>
             <input
@@ -279,7 +300,8 @@ class Register extends React.Component {
                   this.state.firstName &&
                   this.state.lastName &&
                   this.state.password &&
-                  this.state.confirmPassword
+                  this.state.confirmPassword &&
+                  this.state.birthday
                 ) ?
                 "btn btn-primary full-width cursor" :
                 "btn btn-primary full-width disabled"

@@ -30,6 +30,7 @@ function createUser(user, callback) {
   if (!user.username ||
       !user.firstName ||
       !user.lastName ||
+      !user.birthday ||
       !user.password ||
       !user.confirmPassword) {
     callback(null, "All fields must be populated");
