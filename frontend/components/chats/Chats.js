@@ -24,7 +24,7 @@ import { joinRoom } from './socketrouter';
        chats: [],
     };
 
-    this.handleAcceptInvite = this.handleAcceptInvite.bind(this);
+    this.confirmInvite = this.confirmInvite.bind(this);
     this.getInvites = this.getInvites.bind(this);
     this.getChats = this.getChats.bind(this);
   }
@@ -36,7 +36,7 @@ import { joinRoom } from './socketrouter';
       const invitationData = JSON.parse(data);
       console.log("invited to join " + invitationData.roomToJoin);
       this.setState({
-        currentInvitation: invitationData.roomToJoin
+        currentInvitation: invitationData
       })
       console.log("received invitation!!!");
     });
@@ -48,14 +48,27 @@ import { joinRoom } from './socketrouter';
   }
 
   // Accepts an invitation when invitation received
-  handleAcceptInvite(event) {
-    if (this.state.currentInvitation) {
-      console.log("joined room " + this.state.currentInvitation);
-      joinRoom(this.state.currentInvitation, [], function(success) {})
-    } 
+  confirmInvite(event) {
+    // Creates a new user chat realtionship
+    if (this.state.currentInvitation.roomToJoin) {    
+      axios.post('/api/users/' + this.props.username + '/chats/' + this.state.currentInvitation.roomToJoin 
+        + '/newUserChatRelationship/' + this.state.currentInvitation.chatTitle)
+      .then((chatData) => {
+        if (chatData.data.success) {
+          console.log("joined room " + this.state.chatTitle);
+          joinRoom(this.state.currentInvitation.roomToJoin, [], function(success) {})
+        } else {
+            // There was an error creating a new chat relationship
+            console.log(chatData.data.err);
+          }
+        })
+      .catch(chatErr => {
+        console.log(chatErr);
+      });
+    }
 
     // Deletes the invite from the table once user accepts it
-    axios.post('/api/users/' + this.props.username + '/chats/' + this.state.currentInvitation + '/deleteInvite')
+    axios.post('/api/users/' + this.props.username + '/chats/' + this.state.currentInvitation.roomToJoin + '/deleteInvite')
     .then(checkData => {
         // If success is true, user has deleted invite already
         if(checkData.data.success === true) {
@@ -142,10 +155,10 @@ import { joinRoom } from './socketrouter';
       { this.props.children }
       </div>
       <button className="btn btn-gray"
-      onClick={ this.handleAcceptInvite }> 
+      onClick={ this.confirmInvite }> 
       Accept 
       </button>
-      <div> invited to join { this.state.currentInvitation } </div>
+      <div> invited to join: { this.state.currentInvitation.chatTitle } </div>
       </div>
       );
   }

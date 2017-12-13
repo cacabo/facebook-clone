@@ -57,7 +57,7 @@ class Chat extends React.Component {
             messages: checkData.data.data
           });
         } else {
-            console.log("Failed to get invites");
+            console.log("Failed to get messages");
         }
       })
       .catch(err => {
@@ -104,9 +104,6 @@ class Chat extends React.Component {
     event.preventDefault();
     const messageToSend = this.state.message;
 
-    console.log("Current Room from send: " + this.props.match.params.id);
-    console.log("Chat ID: " + this.props.match.params.id);
-
     // Creates a new message in the database
     axios.post('/api/users/' + this.state.currentUser + '/chats/' + this.props.match.params.id + '/newMessage/' + messageToSend)
       .then((messageData) => {
@@ -152,14 +149,13 @@ class Chat extends React.Component {
 
     // Creates a new invite object and puts in table
     if (this.state.currentInvite) {
-      axios.post('/api/users/' + this.state.currentUser + '/chats/' + this.props.match.params.id + '/invite/' + this.state.currentInvite)
+      axios.post('/api/users/' + this.state.currentUser + '/chats/' + this.props.match.params.id + '/invite/' + this.props.match.params.chatTitle)
         .then((inviteData) => {
           if (inviteData.data.success) {
             // TODO will need to check if person you are inviting is a friend first
             // Parameters: chat id, user we want to invite, current user, cb
             // Does the invite over socket
-            console.log("ROOM: " + this.props.match.params.id);
-            invite(this.props.match.params.id, this.state.currentInvite, this.state.currentUser, () => {
+            invite(this.props.match.params.id, this.props.match.params.chatTitle, this.state.currentInvite, this.state.currentUser, () => {
                 console.log("Invite successful");
             });
           } else {

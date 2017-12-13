@@ -66,13 +66,9 @@ class NewChat extends React.Component {
         //   room: roomID
         // };
 
-
         /*
-        * TODO Must reload list of chats in Chats
+        * TODO Must reload list of chats in Chats parent
         */
-
-        // this.props.getChats();
-
       } else {
           // There was an error creating a new message
           console.log(chatData.data.err);

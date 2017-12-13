@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
  */
 const ChatPreview = ({ username, chatTitle, room }) => {
   return (
-    <Link className="chat-preview" to={ "/chats/" + room }>
+    <Link className="chat-preview" to={ "/chats/" + room + '/title/' + chatTitle }>
       { chatTitle }
     </Link>
   );

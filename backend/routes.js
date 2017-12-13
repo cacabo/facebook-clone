@@ -759,7 +759,7 @@ router.get('/users/:username/chats', (req, res) => {
   db.getChats(username, (data, err) => {
     console.log("Data");
     console.log(data);
-    
+
     if (err || !data) {
       res.send({
         success: false,

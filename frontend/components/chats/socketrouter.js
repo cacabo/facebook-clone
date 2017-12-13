@@ -32,15 +32,14 @@ function sendMessage(message, cb) {
 }
 
 // Invites a user to a room
-function invite(room, username, inviter, cb) {
+function invite(room, chatTitle, username, inviter, cb) {
 	const params = {
 		sender: inviter,
 		roomToReceive: username + 'inviteRoom',
 		roomToJoin: room,
+		chatTitle: chatTitle,
 		users: [],
 	};
-
-	console.log("HEEEEEY " + JSON.stringify(params));
 
 	socket.emit('invite', JSON.stringify(params));
 	cb(true);
