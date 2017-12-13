@@ -25,6 +25,7 @@ class Register extends React.Component {
       password: "",
       confirmPassword: "",
       error: "",
+      birthday: null,
     };
 
     // Binding "this" to each state helper method
@@ -33,6 +34,7 @@ class Register extends React.Component {
     this.handleChangeLastName = this.handleChangeLastName.bind(this);
     this.handleChangePassword = this.handleChangePassword.bind(this);
     this.handleChangeConfirmPassword = this.handleChangeConfirmPassword.bind(this);
+    this.handleChangeBirthday = this.handleChangeBirthday.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 

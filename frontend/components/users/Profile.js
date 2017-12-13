@@ -19,7 +19,6 @@ import UserPreview from '../newsfeed/UserPreview';
  *
  * TODO handle errors
  * TODO render user statuses
- * TODO create additional entry for adding post to wall
  * TODO style new statuses
  * TODO birthday
  * TODO link to users with same affiliation
@@ -201,6 +200,7 @@ class Profile extends React.Component {
           name: this.state.name,
           username: this.state.username,
         };
+        status.isNew = true;
 
         // Update state to contain the new status
         this.setState({
@@ -299,6 +299,7 @@ class Profile extends React.Component {
         userData={ status.userData }
         receiverData={ status.receiverData }
         receiver={ status.receiver }
+        isNew={ status.isNew ? status.isNew : false }
         key={ status.id }
         id={ status.id }
       />

@@ -12,12 +12,24 @@ const User = vogels.define("User", {
   schema: {
     username: Joi.string(),
     name: Joi.string(),
+    birthday: Joi.date(),
     password: Joi.string(),
     bio: Joi.string().allow(null),
     interests: Joi.string().allow(null).allow("").optional(),
     affiliation: Joi.string().allow(null).allow("").optional(),
     profilePicture: Joi.string().allow(null).allow("").optional(),
     coverPhoto: Joi.string().allow(null).allow("").optional(),
+  }
+});
+
+// Define a schema for affiliations
+const Affiliation = vogels.define("Affiliation", {
+  hashKey: "affiliation",
+  rangeKey: "username",
+  timestamps: false,
+  schema: {
+    affiliation: Joi.string(),
+    username: Joi.string(),
   }
 });
 
@@ -102,6 +114,7 @@ vogels.createTables((err) => {
 // Create an object storing all the tables
 const tables = {
   User,
+  Affiliation,
   Status,
   Like,
   Comment,
