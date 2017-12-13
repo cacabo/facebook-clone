@@ -341,34 +341,35 @@ function getUserFeed(user, callback) {
                         callback(null, "There was an error finding received status: " + err3);
                       } else if (data3.Items !== 0) {
                         // Put found status into map
-                        statusMap[receivedStatus] = data3.attrs;
-                        keysCallback2();
+                        statusMap[receivedStatus.id] = data3.attrs;
                       }
+                      keysCallback2();
                     });
                   }, (asyncErr2) => {
                     if (asyncErr2) {
                       callback(null, asyncErr2);
+                    } else {
+                      // The list of statuses that we will return
+                      const statuses = [];
+
+                      // Iterate through statuses in map, and put them all into the array
+                      Object.keys(statusMap).forEach( (key) => {
+                        statuses.push(statusMap[key]);
+                      });
+
+                      // Sort the statuses
+                      statuses.sort((a, b) => {
+                        const aCreatedAt = new Date(a.createdAt);
+                        const bCreatedAt = new Date(b.createdAt);
+                        return bCreatedAt - aCreatedAt;
+                      });
+
+                      // Return the comments to the user
+                      callback(statuses, err1);
                     }
                   });
                 }
               });
-            // The list of statuses that we will return
-            const statuses = [];
-
-            // Iterate through statuses in map, and put them all into the array
-            Object.keys(statusMap).forEach( (key) => {
-              statuses.push(statusMap[key]);
-            });
-
-            // Sort the statuses
-            statuses.sort((a, b) => {
-              const aCreatedAt = new Date(a.createdAt);
-              const bCreatedAt = new Date(b.createdAt);
-              return bCreatedAt - aCreatedAt;
-            });
-
-            // Return the comments to the user
-            callback(statuses, err1);
           }
         });
       }
@@ -432,7 +433,7 @@ function getNewsfeedStatuses(user, callback) {
                             callback(null, "There was an error finding received status: " + err3);
                           } else if (data.Items !== 0) {
                             // Put found status into map
-                            statusMap[receivedStatus] = data3.attrs;
+                            statusMap[receivedStatus.id] = data3.attrs;
                             keysCallback2();
                           }
                         });
