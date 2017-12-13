@@ -7,38 +7,38 @@ const async = require('async');
 /**
  * Create a message
  */
-function createMessage(username, body, room, callback) {
-	if (!username) {
-		callback(null, "Username must be populated");
-	} else if (!body) {
-		callback(null, "Body must be populated");
-	} else if (!room) {
-		callback(null, "Room must be populated");
-	} else {
+ function createMessage(username, body, room, callback) {
+   if (!username) {
+    callback(null, "Username must be populated");
+  } else if (!body) {
+    callback(null, "Body must be populated");
+  } else if (!room) {
+    callback(null, "Room must be populated");
+  } else {
     // Create message object
-		const messageObject = {
-			id: uuid(),
-			username: username,
-			body: body,
-			room: room,
-		};
+    const messageObject = {
+     id: uuid(),
+     username: username,
+     body: body,
+     room: room,
+   };
 
 		//Put the message in to the database
 		Message.create(messageObject, (err, data) => {
       console.log(data);
-			if (err || !data) {
+      if (err || !data) {
         callback(null, "Failed to put message in database.");
-			} else {
-				callback(data, null);
-			}
-		});
+      } else {
+        callback(data, null);
+      }
+    });
 	}
 }
 
 /**
  * Get all messages for a room
  */
-function getMessages(username, room, callback) {
+ function getMessages(username, room, callback) {
 	// Error checking on the room name
   if (!room || room.length === 0) {
     callback(null, "Room must be well-defined");
@@ -46,12 +46,12 @@ function getMessages(username, room, callback) {
 
   // Query for the messages
   Message
-    .query(room)
-    .loadAll()
-    .exec((err, data) => {
-      if (err || !data) {
-        callback(null, err);
-      } else {
+  .query(room)
+  .loadAll()
+  .exec((err, data) => {
+    if (err || !data) {
+      callback(null, err);
+    } else {
         // Prune out the message data
         const messages = data.Items.map(item => {
           const message = item.attrs;

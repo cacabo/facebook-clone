@@ -12,9 +12,11 @@ function subscribeToMessages(cb) {
 }
 
 // Listens for invitations
-function subscribeToInvitations(cb) {
+function subscribeToInvitations(username, cb) {
+	// User is part of a specialized room for receving invitations
+	socket.emit('joinRoom', username + 'inviteRoom');
+
 	socket.on('invite', (data) => {
-		//popup indicator in cb
 		cb(data);
 	});
 }
@@ -24,10 +26,7 @@ function sendMessage(message, cb) {
 	const messageData = JSON.parse(message);
 	const room = messageData.room;
 
-	//store message in database mapped to room
-
 	console.log("Sent message " + message + " " + room);
-	
 	socket.emit('message', message);
 	cb(true);
 }
@@ -40,6 +39,8 @@ function invite(room, username, inviter, cb) {
 		roomToJoin: room,
 		users: [],
 	};
+
+	console.log("HEEEEEY " + JSON.stringify(params));
 
 	socket.emit('invite', JSON.stringify(params));
 	cb(true);

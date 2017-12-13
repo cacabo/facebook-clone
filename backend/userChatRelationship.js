@@ -13,15 +13,12 @@ function createUserChatRelationship(username, title, room, callback) {
 	} else if (!room) {
     callback(null, "Room must be populated");
   } else {
-    // Create relsationship object
+    // Create relationship object
 		const relObject = {
 			username: username,
 			chatTitle: title,
 			room: room,
 		};
-
-    console.log("HHHUHUHU");
-    console.log(relObject);
 
 		//Put the relationship in to the database
 		UserChatRelationship.create(relObject, (err, data) => {

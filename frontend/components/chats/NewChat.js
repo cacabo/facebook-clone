@@ -60,11 +60,11 @@ class NewChat extends React.Component {
     axios.post('/api/users/' + this.props.username + '/chats/' + roomID +'/newUserChatRelationship/' + this.state.chatTitle)
     .then((chatData) => {
       if (chatData.data.success) {
-        const chatParams = {
-          username: this.state.currentUser,
-          chatTitle: this.state.chatTitle,
-          room: roomID
-        };
+        // const chatParams = {
+        //   username: this.state.currentUser,
+        //   chatTitle: this.state.chatTitle,
+        //   room: roomID
+        // };
 
 
         /*

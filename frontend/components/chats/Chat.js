@@ -32,9 +32,6 @@ class Chat extends React.Component {
 
     console.log("Current User " + this.props.username);
 
-    // Everyone is part of a specialized room for receving invitations
-    joinRoom(this.state.currentUser + 'inviteRoom', function(success) {})
-
     // Bind this to helper methods
     this.handleChangeMessage = this.handleChangeMessage.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -45,7 +42,6 @@ class Chat extends React.Component {
 
   // Reload the messages when switched to a different chat
   componentDidUpdate(prevProps) {
-    console.log(this.props.match.params.chatTitle);
     if (prevProps.match.params.id !== this.props.match.params.id) {
       this.reloadMessages()
     }
@@ -108,6 +104,9 @@ class Chat extends React.Component {
     event.preventDefault();
     const messageToSend = this.state.message;
 
+    console.log("Current Room from send: " + this.props.match.params.id);
+    console.log("Chat ID: " + this.props.match.params.id);
+
     // Creates a new message in the database
     axios.post('/api/users/' + this.state.currentUser + '/chats/' + this.props.match.params.id + '/newMessage/' + messageToSend)
       .then((messageData) => {
@@ -159,6 +158,7 @@ class Chat extends React.Component {
             // TODO will need to check if person you are inviting is a friend first
             // Parameters: chat id, user we want to invite, current user, cb
             // Does the invite over socket
+            console.log("ROOM: " + this.props.match.params.id);
             invite(this.props.match.params.id, this.state.currentInvite, this.state.currentUser, () => {
                 console.log("Invite successful");
             });

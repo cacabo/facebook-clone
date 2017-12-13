@@ -20,25 +20,8 @@ import { joinRoom } from './socketrouter';
     super(props);
 
     this.state = {
-      /**
-       * TODO store room names here after making a query to the database
-       */
-
        currentInvitation: '',
-       chats: [
-       {
-        name: "Dope group chat",
-        id: 1,
-      },
-      {
-        name: "Even better group chat",
-        id: 12,
-      },
-      {
-        name: "The best group chat",
-        id: 4,
-      }
-      ],
+       chats: [],
     };
 
     this.handleAcceptInvite = this.handleAcceptInvite.bind(this);
@@ -49,7 +32,7 @@ import { joinRoom } from './socketrouter';
   componentDidMount() {
     // Listening for new invitations to join chats
     // Data has room, sender, and users in the room
-    subscribeToInvitations((data) => {
+    subscribeToInvitations(this.props.username, (data) => {
       const invitationData = JSON.parse(data);
       console.log("invited to join " + invitationData.roomToJoin);
       this.setState({
@@ -72,7 +55,7 @@ import { joinRoom } from './socketrouter';
     } 
 
     // Deletes the invite from the table once user accepts it
-    axios.post('/api/users/' + this.props.username + '/chats/' + 1 + '/deleteInvite')
+    axios.post('/api/users/' + this.props.username + '/chats/' + this.state.currentInvitation + '/deleteInvite')
     .then(checkData => {
         // If success is true, user has deleted invite already
         if(checkData.data.success === true) {
@@ -136,7 +119,7 @@ import { joinRoom } from './socketrouter';
         <ChatPreview
         username={ chat.username }
         chatTitle={ chat.chatTitle }
-        id={ chat.room }
+        room={ chat.room }
         key={ uuid() }
         />
         );

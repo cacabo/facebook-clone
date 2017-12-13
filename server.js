@@ -57,6 +57,9 @@ socket.on('connection', (socket) => {
 
 		// Below is temporary for testing purposes since will have to already be part of a room to invite someone.
 		socket.join(rooms.roomToJoin);
+
+		console.log("Room to receive: " + rooms.roomToReceive);
+		console.log(data);
 		socket.broadcast.to(rooms.roomToReceive).emit('invite', data);
 	});
 
