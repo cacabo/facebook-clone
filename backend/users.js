@@ -1,5 +1,5 @@
 // Import the user table
-const { User } = require('./schema.js');
+const { User, Affiliation } = require('./schema.js');
 
 /**
  * Get a user with the specified username
@@ -99,6 +99,9 @@ function updateUser(updatedUser, callback) {
       // Isolate the old user object
       const oldUser = oldUserData.attrs;
 
+      // Also save the old affiliation
+      const oldAffiliation = oldUser.affiliation;
+
       // Update the user's fields
       oldUser.name = updatedUser.name.toLowerCase();
       oldUser.affiliation = updatedUser.affiliation;
@@ -113,7 +116,51 @@ function updateUser(updatedUser, callback) {
         if (updateErr || !updatedData) {
           callback(null, "Failed to update user");
         } else {
-          callback(updatedData, null);
+          if (oldAffiliation === updatedUser.affiliation) {
+            callback(updatedData, null);
+          } else {
+            // Remove the old affiliation from the database if there is one
+            if (oldAffiliation) {
+              // Destroy the existing affiliation from the database
+              Affiliation.destroy(oldAffiliation, oldUser.username, (destroyErr) => {
+                if (destroyErr) {
+                  callback(null, destroyErr.message);
+                } else {
+                  if (updatedUser.affiliation) {
+                    // Add the updated affiliation
+                    Affiliation.create({
+                      affiliation: updatedUser.affiliation,
+                      username: oldUser.username,
+                    }, (affiliationErr, affiliationData) => {
+                      // If there was an issue adding the affiliation to the database
+                      if (affiliationErr || !affiliationData) {
+                        callback(null, affiliationErr.message);
+                      } else {
+                        callback(updatedData, null);
+                      }
+                    });
+                  } else {
+                    callback(updatedData, null);
+                  }
+                }
+              });
+            } else if (updatedUser.affiliation) {
+              // Add the updated affiliation
+              Affiliation.create({
+                affiliation: updatedUser.affiliation,
+                username: oldUser.username,
+              }, (affiliationErr, affiliationData) => {
+                // If there was an issue adding the affiliation to the database
+                if (affiliationErr || !affiliationData) {
+                  callback(null, affiliationErr.message);
+                } else {
+                  callback(updatedData, null);
+                }
+              });
+            } else {
+              callback(updatedData, null);
+            }
+          }
         }
       });
     }

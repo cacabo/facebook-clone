@@ -189,12 +189,12 @@ router.post('/users/:username/update/', (req, res) => {
         success: false,
         error: "Interests must be less than 200 characters.",
       });
-    } else if (this.state.profilePicture && !urlRegex.test(this.state.profilePicture)) {
+    } else if (req.body.profilePicture && !urlRegex.test(req.body.profilePicture)) {
       res.send({
         success: false,
         error: "Profile picture must be a valid url.",
       });
-    } else if (this.state.coverPhoto && !urlRegex.test(this.state.coverPhoto)) {
+    } else if (req.body.coverPhoto && !urlRegex.test(req.body.coverPhoto)) {
       res.send({
         success: false,
         error: "Cover photo must be a valid URL.",

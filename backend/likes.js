@@ -123,7 +123,7 @@ function deleteLike(liker, statusUser, statusID, callback) {
               const likeObject = likeData.Items[0].attrs;
               Like
                 .destroy(likeObject.statusID, likeObject.liker, (deleteErr) => {
-                  if(deleteErr) {
+                  if (deleteErr) {
                     callback(null, "Error trying to delete like: " + deleteErr.message);
                   } else {
                     // Old status object
@@ -132,9 +132,9 @@ function deleteLike(liker, statusUser, statusID, callback) {
                     // Decrement status's likeCount
                     statusObject.likesCount = parseInt(oldStatus.likesCount, 10) - 1;
                     Status.update(oldStatus, (updateErr, updateData) => {
-                      if(updateErr || !updateData) {
+                      if (updateErr || !updateData) {
                         callback(null, "There was an error updating likes count.");
-                      } else{
+                      } else {
                         callback({success: true}, null);
                       }
                     });

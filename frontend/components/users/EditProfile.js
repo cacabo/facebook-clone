@@ -169,9 +169,9 @@ class EditProfile extends React.Component {
             redirect: true,
           });
         })
-        .catch(() => {
+        .catch((err) => {
           this.setState({
-            error: "Error updating user in database. Check the form and try again.",
+            error: err,
           });
         });
     }
