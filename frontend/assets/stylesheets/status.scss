@@ -1,6 +1,14 @@
-// Styling for statuses
+/**
+ * Styling for statuses
+ */
 .card.status {
   padding: 0rem !important;
+  transition: all 0.2s ease;
+
+  &.new {
+    background: $yellow;
+    border-color: $dark-yellow;
+  }
 
   .image {
     width: 100%;
@@ -81,38 +89,103 @@
   }
 
   .comments {
-    .comments-form {
-      background: $light-snow;
-      display: flex;
-      padding: 0.5rem 1rem;
+    background: $light-snow;
+    border-radius: 0rem 0rem 0.4rem 0.4rem !important;
+    padding-bottom: 0.5rem;
+
+    .comments-form-wrapper {
+      padding: 0.75rem 1rem;
       border-top: 1px solid $lighter-gray;
-      border-bottom: 1px solid $lighter-gray;
-      align-items: flex-start;
 
-      .form-control {
-        flex: 1;
-        border-radius: 0.8rem;
-        border-color: $lighter-gray;
-        padding: 0.25rem 0.75rem;
-        resize: none;
-        font-size: 0.9rem;
-        transition: all 0.2s ease;
-        min-height: 1.5rem;
-
-        &:focus,
-        &:active {
-          border-color: $light-gray;
-        }
+      .error {
+        padding: 0.25rem 1rem;
+        font-size: 0.8rem;
       }
 
-      .btn {
-        font-size: 0.9rem !important;
+      .comments-form {
+        display: flex;
+        padding: 0rem;
+        align-items: flex-start;
+
+        .img {
+          width: 1.6rem;
+          height: 1.6rem;
+          border-radius: 50%;
+          margin-right: 0.5rem;
+          background: $light-gray;
+          background-position: center;
+          background-repeat: no-repeat;
+          background-size: cover;
+        }
+
+        .form-control {
+          flex: 1;
+          border-radius: 0.8rem;
+          border-color: $lighter-gray;
+          padding: 0.25rem 0.75rem;
+          resize: none;
+          font-size: 0.9rem;
+          transition: all 0.2s ease;
+          min-height: 1.5rem;
+
+          &:focus,
+          &:active {
+            border-color: $light-gray;
+          }
+        }
+
+        .btn {
+          font-size: 0.9rem !important;
+        }
       }
     }
 
     .comment {
       padding: 0.5rem 1rem;
       font-size: 0.9rem;
+      display: flex;
+      background: transparent;
+      transition: all 0.2s ease;
+
+      &.new {
+        background: $yellow;
+        border-color: $dark-yellow;
+      }
+
+      .img {
+        width: 1.6rem;
+        height: 1.6rem;
+        background: $light-gray;
+        border-radius: 50%;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        margin-right: 0.5rem;
+      }
+
+      .text {
+        flex: 1;
+        padding: 0.1rem 0rem 0rem 0rem;
+
+        .name, .content {
+          margin-bottom: 0;
+          display: inline-block;
+        }
+
+        .name {
+          text-transform: capitalize;
+          font-weight: bold;
+          margin-right: 0.5rem;
+        }
+      }
+
+      .timestamp {
+        margin-bottom: 0;
+        font-style: italic;
+        color: $light-gray;
+        text-align: right;
+        margin-left: 0.5rem;
+      }
     }
 
     &.hidden {

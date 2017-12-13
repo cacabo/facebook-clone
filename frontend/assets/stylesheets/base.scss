@@ -8,6 +8,23 @@
 @import 'chat';
 
 // General app styling
+body {
+  background: $snow;
+}
+
+.alert-warning {
+  border-color: $dark-yellow;
+  background: $yellow;
+}
+
+.nav-spacer {
+  background: $snow;
+  height: 54px;
+  position: relative;
+  display: block;
+  width: 100%;
+}
+
 .app-wrapper {
   min-height: 100vh;
   width: 100%;
@@ -16,6 +33,10 @@
 
 textarea {
   min-height: 1.75rem;
+}
+
+.capitalize {
+  text-transform: capitalize;
 }
 
 .white {
@@ -110,7 +131,7 @@ a {
   text-align: center;
 
   .fa {
-    color: $light-gray;
+    color: $lighter-gray;
   }
 }
 

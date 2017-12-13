@@ -130,6 +130,7 @@ function addLike(liker, status, callback) {
   //   });
   // }
 }
+const friendships = require('./friendships');
 
 // Create the database object to export
 const database = {
@@ -137,6 +138,7 @@ const database = {
   createUser: users.createUser,
   updateUser: users.updateUser,
   searchUsers: users.searchUsers,
+  affiliationUsers: users.affiliationUsers,
   createStatus: statuses.createStatus,
   getStatuses: statuses.getStatuses,
   getStatus: statuses.getStatus,
@@ -153,6 +155,9 @@ const database = {
   createUserChatRelationship : userChatRelationship.createUserChatRelationship,
   getMessages: messages.getMessages,
   createMessage: messages.createMessage,
+  addFriendship: friendships.addFriendship,
+  getFriendships: friendships.getFriendships,
+  getFriend: friendships.getFriend,
 };
 
 module.exports = database;

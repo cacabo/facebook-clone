@@ -1,15 +1,16 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import Thin from '../shared/Thin';
 import Loading from '../shared/Loading';
 import UserPreview from '../newsfeed/UserPreview';
 import PropTypes from 'prop-types';
 import axios from 'axios';
+import { connect } from 'react-redux';
+import Login from './Login';
 
 /**
  * Component rendered when the URL entered by a user is not found
  */
-class Search extends React.Component {
+class Affiliation extends React.Component {
   // Constructor method
   constructor(props) {
     super(props);
@@ -24,7 +25,7 @@ class Search extends React.Component {
   // Load suggestions
   componentDidMount() {
     // Make the API request
-    axios.get("/api/users/search/" + this.props.match.params.prefix)
+    axios.get("/api/users/affiliations/" + this.props.match.params.affiliation)
       .then(res => {
         if (res.data.success) {
           this.setState({
@@ -70,18 +71,24 @@ class Search extends React.Component {
     // If no users are found
     return (
       <p className="marg-bot-0">
-        No users matching your search were found.
+        No users matching the passed in affiliation were found.
       </p>
     );
   }
 
   // Render the component
   render() {
+    if (!this.props.username) {
+      // If the user is not logged in
+      return (<Login notice="You must be logged in to view this page." />);
+    }
+
+    // If the user is logged in
     return (
       <Thin>
         <div className="card">
           <h3 className="bold marg-bot-1">
-            User search suggestions
+            Users with the affiliation "{ this.props.match.params.affiliation }"
           </h3>
           {
             this.state.pending ? (
@@ -96,8 +103,22 @@ class Search extends React.Component {
   }
 }
 
-Search.propTypes = {
+Affiliation.propTypes = {
   match: PropTypes.object,
+  username: PropTypes.string,
 };
 
-export default Search;
+const mapStateToProps = (state) => {
+  return {
+    username: state.userState.username,
+  };
+};
+
+const mapDispatchToProps = () => {
+  return {};
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Affiliation);

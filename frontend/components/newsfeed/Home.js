@@ -3,7 +3,6 @@ import StatusForm from './StatusForm';
 import Status from './Status';
 import FriendRecommendations from './FriendRecommendations';
 import OnlineNow from './OnlineNow';
-import uuid from 'uuid-v4';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import Loading from '../shared/Loading';
@@ -18,7 +17,10 @@ import Loading from '../shared/Loading';
  * TODO handle success / push notifications when the user successfully logs in,
  * creates a post, etc.
  *
- * TODO render errors when loading content
+ * TODO style new statuses
+ * TODO periodically reload as things update
+ * TODO README documentation
+ * TODO Notifications
  */
 class Home extends React.Component {
   // Constructor method
@@ -29,6 +31,7 @@ class Home extends React.Component {
     this.state = {
       pending: true,
       statuses: [],
+      error: "",
     };
 
     // Bind this to helper methods
@@ -50,6 +53,7 @@ class Home extends React.Component {
           this.setState({
             pending: false,
             statuses: res.data.data,
+            error: "",
           });
         } else {
           this.setState({
@@ -77,6 +81,7 @@ class Home extends React.Component {
       .then(userData => {
         const userObj = userData.data.data;
         status.userData = userObj;
+        status.isNew = true;
 
         // Update state to contain the new status
         this.setState({
@@ -113,6 +118,7 @@ class Home extends React.Component {
           createdAt={ status.createdAt }
           likesCount={ status.likesCount }
           type={ status.type }
+          isNew={ status.isNew ? status.isNew : false }
           id={ status.id }
         />
       );
@@ -141,7 +147,24 @@ class Home extends React.Component {
               placeholder="What's on your mind?"
               callback={ this.newStatusCallback }
             />
-            { this.state.pending ? (<Loading />) : (this.renderStatuses()) }
+            { this.state.error && (
+              <div className="alert alert-danger error">
+                <p className="strong marg-bot-05">
+                  There was an error
+                </p>
+                <p className="marg-bot-1">
+                  { this.state.error }
+                </p>
+              </div>
+            ) }
+            { (this.state.pending && !this.state.error) ? (<Loading />) : (this.renderStatuses()) }
+            { !this.state.pending && (
+              <div className="card">
+                <p className="marg-bot-0">
+                  There are no more statuses to show. Add more friends or wait and refresh your page for more content.
+                </p>
+              </div>
+            ) }
             <div className="space-4" />
           </div>
           <div className="col-md-3 col-xl-4 hidden-md-down">
