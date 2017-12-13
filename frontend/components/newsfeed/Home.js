@@ -15,12 +15,11 @@ import Loading from '../shared/Loading';
  * 3. a list of friends currently online.
  *
  * TODO handle success / push notifications when the user successfully logs in,
- * creates a post, etc.
- *
- * TODO style new statuses
+ *      creates a post, etc.
  * TODO periodically reload as things update
  * TODO README documentation
  * TODO Notifications
+ * TODO export error to its own component
  */
 class Home extends React.Component {
   // Constructor method

@@ -1,10 +1,11 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import Thin from '../shared/Thin';
 import Loading from '../shared/Loading';
 import UserPreview from '../newsfeed/UserPreview';
 import PropTypes from 'prop-types';
 import axios from 'axios';
+import { connect } from 'react-redux';
+import Login from './Login';
 
 /**
  * Component rendered when the URL entered by a user is not found
@@ -77,6 +78,12 @@ class Search extends React.Component {
 
   // Render the component
   render() {
+    if (!this.props.username) {
+      // If the user is not logged in
+      return (<Login notice="You must be logged in to view this page." />);
+    }
+
+    // If the user is logged in
     return (
       <Thin>
         <div className="card">
@@ -98,6 +105,20 @@ class Search extends React.Component {
 
 Search.propTypes = {
   match: PropTypes.object,
+  username: PropTypes.string,
 };
 
-export default Search;
+const mapStateToProps = (state) => {
+  return {
+    username: state.userState.username,
+  };
+};
+
+const mapDispatchToProps = () => {
+  return {};
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Search);

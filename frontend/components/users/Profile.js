@@ -60,6 +60,7 @@ class Profile extends React.Component {
     this.renderButton = this.renderButton.bind(this);
     this.handleAddFriend = this.handleAddFriend.bind(this);
     this.renderBirthday = this.renderBirthday.bind(this);
+    this.renderInterests = this.renderInterests.bind(this);
   }
 
   // Set the state upon load
@@ -362,6 +363,26 @@ class Profile extends React.Component {
     return m.format("MMMM Do, YYYY");
   }
 
+  // Render a user's interests
+  renderInterests() {
+    // Find the comma separated interests
+    const interests = this.state.interests.split(', ');
+
+    // Return the formatted interests
+    const interestsObj = interests.map(interest => (
+      <span className="interest">
+        { interest }
+      </span>
+    ));
+
+    // Return the array wrapped in a div
+    return (
+      <div className="interests">
+        { interestsObj }
+      </div>
+    );
+  }
+
   // Render the component
   render() {
     // Render login if the user is not logged in
@@ -431,9 +452,7 @@ class Profile extends React.Component {
                       <p className="bold marg-bot-025">
                         Interests 💭
                       </p>
-                      <p>
-                        { this.state.interests }
-                      </p>
+                      { this.renderInterests() }
                     </div>
                   ) }
                   <div className="about-section">
@@ -458,6 +477,7 @@ class Profile extends React.Component {
                   }
                   <div className="space-1" />
                   { this.renderButton() }
+                  <div className="space-2" />
                 </div>
                 <div className="col-12 col-md-8 col-lg-7">
                   <div className="toggle-wrapper">
