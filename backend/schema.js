@@ -5,6 +5,48 @@ const Joi = require('joi');
 // Configure AWS
 vogels.AWS.config.loadFromPath('./config.json');
 
+// Define a schema for user chat realtionships
+const UserChatRelationship = vogels.define("UserChatRelationship", {
+  hashKey: "username",
+  rangeKey: "room",
+  timestamps: true,
+  schema: {
+    username: Joi.string(),
+    title: Joi.string(),
+    room: Joi.string(),
+  },
+  tableName: "userChatRelationship",
+});
+
+// Define a schema for messages
+const Message = vogels.define("Message", {
+  hashKey: "room",
+  rangeKey: "id",
+  timestamps: true,
+  schema: {
+    id: Joi.string(),
+    username: Joi.string(),
+    body: Joi.string(),
+    room: Joi.string(),
+  },
+  tableName: "messages",
+});
+
+// Define a schema for invites
+const Invite = vogels.define("Invite", {
+  hashKey: "username",
+  rangeKey: "room",
+  timestamps: true,
+  schema: {
+    id: Joi.string(),
+    username: Joi.string(),
+    sender: Joi.string(),
+    body: Joi.string(),
+    room: Joi.string(),
+  },
+  tableName: "invites",
+});
+
 // Define the schema for users
 const User = vogels.define("User", {
   hashKey: "username",
@@ -118,6 +160,9 @@ const tables = {
   Status,
   Like,
   Comment,
+  Invite,
+  Message,
+  UserChatRelationship,
   StatusReceiver,
   Friendship,
 };

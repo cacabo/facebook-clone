@@ -52,11 +52,10 @@ function joinRoom(room, users, cb) {
 		 * TODO create new room and invite users to join. Must also join yourself
 		 * Special invites where they automatically join
 		 */
-	} else {
-		socket.emit('joinRoom', room);
+		} else {
+			socket.emit('joinRoom', room);
+		}
 	}
-	cb(true);
-}
 
 // Leaves a room
 function leaveRoom(room, cb) {

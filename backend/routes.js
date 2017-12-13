@@ -631,6 +631,171 @@ router.get('/users/:username/statuses/:statusID/likes', (req, res) => {
   });
 });
 
+
+/**
+ * Create a new invite
+ */
+router.post('/users/:inviter/chats/:roomID/invite/:receiver', (req, res) => {
+  // Get the status and liker
+  const sender = req.params.inviter;
+  const receiver = req.params.receiver;
+  const room = req.params.roomID;
+  
+  // Create an invite with sender, receiver, and room        
+  db.createInvite(sender, receiver, room, (data, err) => {
+    if (err) {
+      res.send({
+        success: false,
+        error: err,
+      });
+    } else {
+      // Propogate the success to the component
+      res.send({
+        success: true,
+        data: data,
+        username: req.session.username,
+      });
+    }
+  });
+});
+
+/**
+ * Gets all invites for a particular user
+ */
+router.get('/users/:username/invites', (req, res) => {
+  const username = req.params.username;
+
+  // Get all invites of a user using username
+  db.getInvites(username, (data, err) => {
+    if (err || !data) {
+      res.send({
+        success: false,
+        err: err,
+      });
+    } else {
+      res.send({
+        success: true,
+        data: data
+      });
+    }
+  });
+});
+
+/**
+ * Deletes an invite for a particular user/room after they accept it
+ */
+router.post('/users/:receiver/chats/:roomID/deleteInvite', (req, res) => {
+  const receiver = req.params.receiver;
+  const roomID = req.params.roomID;
+
+  // Deletes an invite using the reveier of invite and room invited to
+  db.deleteInvite(receiver, roomID, (success, err) => {
+    if (err || !success) {
+      res.send({
+        success: false,
+        err: err,
+      });
+    } else {
+      res.send({
+        success: true,
+      });
+    }
+  });
+});
+
+/**
+ * Gets all messages for a particular room
+ */
+router.get('/users/:username/chats/:roomID/messages', (req, res) => {
+  const username = req.params.username;
+  const room = req.params.roomID;
+
+  // Gets messages based on username and room
+  db.getMessages(username, room, (data, err) => {
+    if (err || !data) {
+      res.send({
+        success: false,
+        err: err,
+      });
+    } else {
+      res.send({
+        success: true,
+        data: data
+      });
+    }
+  });
+});
+
+/**
+ * Creates a message for a room
+ */
+router.post('/users/:username/chats/:roomID/newMessage/:message', (req, res) => {
+  const username = req.params.username;
+  const room = req.params.roomID;
+  const body = req.params.message;
+
+  // Creates message with username, body, and room
+  db.createMessage(username, body, room, (success, err) => {
+    if (err || !success) {
+      res.send({
+        success: false,
+        err: err,
+      });
+    } else {
+      res.send({
+        success: true,
+      });
+    }
+  });
+});
+
+/**
+ * Gets all chats for a user
+ */
+router.get('/users/:username/chats', (req, res) => {
+  const username = req.params.username;
+
+  // Get all chats of a user using username
+  db.getChats(username, (data, err) => {
+    console.log("Data");
+    console.log(data);
+    if (err || !data) {
+      res.send({
+        success: false,
+        err: err,
+      });
+    } else {
+      res.send({
+        success: true,
+        data: data
+      });
+    }
+  });
+});
+
+/**
+ * Creates a createUserChatRelationship
+ */
+router.post('/users/:username/chats/:roomID/newUserChatRelationship', (req, res) => {
+  const username = req.params.username;
+  const roomID = req.params.roomID;
+
+  // Creates a user chat relationship
+  db.createUserChatRelationship(username, roomID, (success, err) => {
+    if (err || !success) {
+      res.send({
+        success: false,
+        err: err,
+      });
+    } else {
+      res.send({
+        success: true,
+      });
+    }
+  });
+});
+
+
 /**
  * Handle a 404
  */

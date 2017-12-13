@@ -2,6 +2,7 @@ import React from 'react';
 import autosize from 'autosize';
 import Chats from './Chats';
 import uuid from 'uuid-v4';
+import axios from 'axios';
 import SocketIOClient from 'socket.io-client';
 import { subscribeToMessages } from './socketrouter';
 import { sendMessage } from './socketrouter';
@@ -23,22 +24,51 @@ class Chat extends React.Component {
     // Set the state of the application
     this.state = {
       message: "",
+      currentInvite: "",
       currentUser: this.props.username,
       messages: [],
       users: [],
     } 
 
-    console.log("Current User " + this.state.currentUser);
-    // Everyone is part of a room for receving invitations
+    console.log("Current User " + this.props.username);
+
+    // Everyone is part of a specialized room for receving invitations
     joinRoom(this.state.currentUser + 'inviteRoom', function(success) {})
 
     // Bind this to helper methods
     this.handleChangeMessage = this.handleChangeMessage.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleInvite = this.handleInvite.bind(this);
+    this.reloadMessages = this.reloadMessages.bind(this);
+    this.handleChangeInvite = this.handleChangeInvite.bind(this);
   }
 
-  // Autosize the text area to fit the text that's pasted into it
+  // Reload the messages when switched to a different chat
+  componentDidUpdate(prevProps) {
+    if (prevProps.match.params.id !== this.props.match.params.id) {
+      this.reloadMessages()
+    }
+  }
+
+  // Reloads all of the messages
+  reloadMessages() {
+    axios.get('/api/users/' + this.state.currentUser + '/chats/' + this.props.match.params.id + '/messages')
+      .then(checkData => {
+        // If success is true, user has retrieved messages
+        if(checkData.data.success === true) {
+          this.setState({
+            messages: checkData.data.data
+          });
+        } else {
+            console.log("Failed to get invites");
+        }
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  }
+
+  //Prepares component to listen to new messages
   componentDidMount() {
     autosize(document.querySelectorAll('textarea')); 
 
@@ -52,54 +82,94 @@ class Chat extends React.Component {
           oldMessage.push(messageInfo);
           return {messages: oldMessage}
         }
-    }));   
+    })); 
+
+    // Load current messages
+    this.reloadMessages()  
   }
 
-  // Helper method to handle a change to state
+  // Handles change to message field
   handleChangeMessage(event) {
     this.setState({
       message: event.target.value,
     });
   }
 
-  // Does socket sending here. Append this to own message list. 
-  handleSubmit(event) {
-    const messageToSend = this.state.message; //have to do this.state not this alone
-
-    console.log("Current Room from send: " + this.props.match.params.id);
-    console.log("Chat ID: " + this.props.match.params.id);
-
-    const messageParams = {
-      user: this.state.currentUser,
-      body: messageToSend,
-      createdAt: Date.now,
-      room: this.props.match.params.id
-    };
-
-    sendMessage(JSON.stringify(messageParams), (success) => {
-      if (success) {
-        this.setState((prevState, props) => {
-          let oldMessage = this.state.messages;
-          oldMessage.push(messageParams);
-          return {
-            messages: oldMessage,
-            message: ""
-          }
-        });
-      } else {
-        /**
-         * TODO handle unsent message error
-         */
-      }
+  // Handles change to invite field
+  handleChangeInvite(event) {
+    this.setState({
+      currentInvite: event.target.value,
     });
   }
 
+  // Does socket message sending
+  handleSubmit(event) {
+    event.preventDefault();
+    const messageToSend = this.state.message;
+
+    // Creates a new message in the database
+    axios.post('/api/users/' + this.state.currentUser + '/chats/' + this.props.match.params.id + '/newMessage/' + messageToSend)
+      .then((messageData) => {
+        if (messageData.data.success) {
+          console.log("Successfully created a new message: " + messageToSend);
+
+          const messageParams = {
+            user: this.state.currentUser,
+            body: messageToSend,
+            room: this.props.match.params.id
+          };
+
+          // Sends message over the socket
+          sendMessage(JSON.stringify(messageParams), (success) => {
+            if (success) {
+              this.setState((prevState, props) => {
+                let oldMessage = this.state.messages;
+                oldMessage.push(messageParams);
+                return {
+                  messages: oldMessage,
+                  message: ""
+                }
+              });
+            } else {
+              /**
+               * TODO handle unsent message error
+               */
+            }
+          });
+        } else {
+          // There was an error creating a new message
+          console.log(messageData.data.err);
+        }
+      })
+      .catch(messageErr => {
+          console.log(messageErr);
+      });
+  }
+
+  // Sends an invite to another user
   handleInvite(event) {
-    // TODO will need to check if person you are inviting is a friend first
-    // Parameters: chat id, user we want to invite, current user, cb
-    invite(this.props.match.params.id, 'victor', this.state.currentUser, () => {
-        console.log("Invite successful");
-    });
+    event.preventDefault();
+
+    // Creates a new invite object and puts in table
+    if (this.state.currentInvite) {
+      axios.post('/api/users/' + this.state.currentUser + '/chats/' + this.props.match.params.id + '/invite/' + this.state.currentInvite)
+        .then((inviteData) => {
+          if (inviteData.data.success) {
+            // TODO will need to check if person you are inviting is a friend first
+            // Parameters: chat id, user we want to invite, current user, cb
+            // Does the invite over socket
+            invite(this.props.match.params.id, this.state.currentInvite, this.state.currentUser, () => {
+                console.log("Invite successful");
+            });
+          } else {
+            // There was an error creating a new invite
+            console.log(inviteData.data.err);
+          }
+        })
+        .catch(inviteErr => {
+            console.log(inviteErr);
+        });
+    }
   }
 
   /**
@@ -156,10 +226,25 @@ class Chat extends React.Component {
             value="Send"
           />
         </form>
-        <button className="btn btn-gray"
-            onClick={ this.handleInvite } >
-            Invite
-        </button>
+
+        <form className="message-form" onSubmit={ this.handleInvite }>
+          <textarea
+            name="invite"
+            value={ this.state.currentInvite }
+            onChange={ this.handleChangeInvite }
+            className="form-control"
+            type="text"
+          />
+          <input
+            type="submit"
+            className={
+              this.state.currentInvite ?
+              "btn btn-gray" :
+              "btn btn-gray disabled"
+            }
+            value="Invite"
+          />
+        </form>
       </Chats>
     );
   }

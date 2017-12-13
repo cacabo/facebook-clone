@@ -107,9 +107,7 @@ class AppContainer extends React.Component {
 
     // Handle chat show route
     const chatRoute = (
-      <Route exact path="/chats/:id" render={() => (
-        <LoggedInAuth toBeRendered={<Chat />} />
-      )} />
+      <Route exact path="/chats/:id" component={Chat} />
     );
 
     // Handle chat index route
