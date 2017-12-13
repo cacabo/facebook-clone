@@ -15,6 +15,21 @@
     background-attachment: fixed;
   }
 
+  .affiliation {
+    display: inline-block;
+    background: white;
+    border-radius: 0.2rem;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    font-weight: normal;
+    color: black;
+    padding: 0.1rem 0.4rem;
+    margin-bottom: 0.5rem;
+
+    &:hover {
+      background: $light-snow;
+    }
+  }
+
   .about-section {
     padding-top: 0.5rem !important;
     border-top: 1px solid rgba(0, 0, 0, 0.15);

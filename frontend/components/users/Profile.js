@@ -421,9 +421,9 @@ class Profile extends React.Component {
                       <p className="bold marg-bot-025">
                         Affiliation 🏢
                       </p>
-                      <p>
+                      <Link to={ `/users/affiliations/${this.state.affiliation}` } className="affiliation">
                         { this.state.affiliation }
-                      </p>
+                      </Link>
                     </div>
                   ) }
                   { this.state.interests && (
