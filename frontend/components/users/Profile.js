@@ -20,6 +20,10 @@ import UserPreview from '../newsfeed/UserPreview';
  * TODO handle errors
  * TODO render user statuses
  * TODO create additional entry for adding post to wall
+ * TODO style new statuses
+ * TODO birthday
+ * TODO link to users with same affiliation
+ * TODO network visualizer
  */
 class Profile extends React.Component {
   // Constructor method
@@ -133,7 +137,7 @@ class Profile extends React.Component {
 
   // Handle if the user goes to a new profile
   componentDidUpdate() {
-    if (this.props.match.params.username !== this.state.username) {
+    if (this.state.username && (this.props.match.params.username !== this.state.username)) {
       // Refresh the page
       window.location = window.location.href;
     }

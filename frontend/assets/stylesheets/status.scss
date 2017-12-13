@@ -3,6 +3,12 @@
  */
 .card.status {
   padding: 0rem !important;
+  transition: all 0.2s ease;
+
+  &.new {
+    background: $yellow;
+    border-color: $dark-yellow;
+  }
 
   .image {
     width: 100%;
@@ -138,6 +144,13 @@
       padding: 0.5rem 1rem;
       font-size: 0.9rem;
       display: flex;
+      background: transparent;
+      transition: all 0.2s ease;
+
+      &.new {
+        background: $yellow;
+        border-color: $dark-yellow;
+      }
 
       .img {
         width: 1.6rem;

@@ -8,37 +8,63 @@ import moment from 'moment';
  *
  * TODO add user information
  */
-const Comment = ({ text, userData, createdAt }) => {
-  // Find the date from the timestamp
-  const d = new Date(createdAt);
-  const timestamp = moment(d).fromNow(true);
+class Comment extends React.Component {
+  // Constructor method
+  constructor(props) {
+    super(props);
 
-  // Render the comment
-  return (
-    <div className="comment">
-      <div
-        className="img"
-        style={{ backgroundImage: `url(${userData.profilePicture})`}}
-      />
-      <div className="text">
-        <p className="content">
-          <Link className="name" to={ "/users/" + userData.username }>
-            { userData.name }
-          </Link>
-          { text }
+    // Set the state
+    this.state = {
+      isNew: this.props.isNew,
+    };
+  }
+
+  // When the component has mounted
+  componentDidMount() {
+    // Set a timeout for removing isNew after 5 seconds
+    if (this.state.isNew) {
+      setTimeout(() => {
+        this.setState({
+          isNew: false,
+        });
+      }, 5000);
+    }
+  }
+
+  // Render method
+  render() {
+    // Find the date from the timestamp
+    const d = new Date(this.props.createdAt);
+    const timestamp = moment(d).fromNow(true);
+
+    // Return the component
+    return (
+      <div className={ this.state.isNew ? "comment new" : "comment" }>
+        <div
+          className="img"
+          style={{ backgroundImage: `url(${this.props.userData.profilePicture})`}}
+        />
+        <div className="text">
+          <p className="content">
+            <Link className="name" to={ "/users/" + this.props.userData.username }>
+              { this.props.userData.name }
+            </Link>
+            { this.props.text }
+          </p>
+        </div>
+        <p className="timestamp">
+          { timestamp }
         </p>
       </div>
-      <p className="timestamp">
-        { timestamp }
-      </p>
-    </div>
-  );
-};
+    );
+  }
+}
 
 Comment.propTypes = {
   text: PropTypes.string,
   userData: PropTypes.object,
   createdAt: PropTypes.string,
+  isNew: PropTypes.bool,
 };
 
 export default Comment;

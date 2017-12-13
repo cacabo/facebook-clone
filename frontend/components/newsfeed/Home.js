@@ -17,7 +17,10 @@ import Loading from '../shared/Loading';
  * TODO handle success / push notifications when the user successfully logs in,
  * creates a post, etc.
  *
- * TODO render errors when loading content
+ * TODO style new statuses
+ * TODO periodically reload as things update
+ * TODO README documentation
+ * TODO Notifications
  */
 class Home extends React.Component {
   // Constructor method
@@ -78,6 +81,7 @@ class Home extends React.Component {
       .then(userData => {
         const userObj = userData.data.data;
         status.userData = userObj;
+        status.isNew = true;
 
         // Update state to contain the new status
         this.setState({
@@ -114,6 +118,7 @@ class Home extends React.Component {
           createdAt={ status.createdAt }
           likesCount={ status.likesCount }
           type={ status.type }
+          isNew={ status.isNew ? status.isNew : false }
           id={ status.id }
         />
       );

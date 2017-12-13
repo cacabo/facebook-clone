@@ -12,6 +12,11 @@ body {
   background: $snow;
 }
 
+.alert-warning {
+  border-color: $dark-yellow;
+  background: $yellow;
+}
+
 .nav-spacer {
   background: $snow;
   height: 54px;

@@ -15,11 +15,9 @@ import Loading from '../shared/Loading';
  * State handles whether comments show up or not. By default, they are hidden.
  * Toggle the comments box by clicking on the comments icon or text.
  *
- * TODO stateful likes
- * TODO pull user information from DB
- * TODO actually render comments
- * TODO render comment
- * TODO render comment after writing it without refreshing
+ * TODO style new comments
+ * TODO new friend updates (different types of statuses)
+ * TODO profile updates
  */
 class Status extends React.Component {
   // Constructor method
@@ -37,6 +35,7 @@ class Status extends React.Component {
       comments: [],
       comment: "",
       commentError: "",
+      isNew: this.props.isNew,
     };
 
     // Bind this to helper functions
@@ -75,6 +74,15 @@ class Status extends React.Component {
          */
         console.log(err);
       });
+
+    // Set a timeout for removing isNew after 5 seconds
+    if (this.state.isNew) {
+      setTimeout(() => {
+        this.setState({
+          isNew: false,
+        });
+      }, 5000);
+    }
   }
 
   // Handle a click on the comments icon
@@ -136,21 +144,7 @@ class Status extends React.Component {
       axios.get('/api/users/' + this.props.user + '/statuses/' + this.props.id + '/likes')
         .then(likeData => {
           // If updating like was done properly, we switch isLiked state
-          if (likeData.data.success) {
-            // this.setState({
-            //   isLiked: !this.state.isLiked,
-            // });
-            // // If we liked, then increase the count, else decrease count
-            // if (this.state.isLiked) {
-            //   this.setState({
-            //     likesCount: this.state.likesCount + 1,
-            //   });
-            // } else {
-            //   this.setState({
-            //     likesCount: this.state.likesCount - 1,
-            //   });
-            // }
-          } else {
+          if (!likeData.data.success) {
             // There was an error adding/deleting like
             // Revert to the past state
             if (this.state.isLiked) {
@@ -226,6 +220,10 @@ class Status extends React.Component {
             // Add user data to the comment
             comment.userData = userData;
 
+            // Denote that the comment is new
+            comment.isNew = true;
+            comment.comment = comment.content;
+
             // Update the state
             this.setState({
               comments: [
@@ -271,6 +269,7 @@ class Status extends React.Component {
         key={ comment.id }
         id={ comment.id }
         createdAt={ comment.createdAt }
+        isNew={ comment.isNew ? comment.isNew : false }
       />
     ));
   }
@@ -283,7 +282,7 @@ class Status extends React.Component {
 
     // Return the component to be rendered
     return(
-      <div className="card status">
+      <div className={ this.state.isNew ? "card status new" : "card status" }>
         <div className="user">
           <div className="userImg" style={
             { backgroundImage: "url(" + this.props.userData.profilePicture + ")" }
@@ -373,6 +372,7 @@ Status.propTypes = {
   receiver: PropTypes.string,
   receiverData: PropTypes.object,
   id: PropTypes.string,
+  isNew: PropTypes.bool,
 };
 
 const mapStateToProps = (state) => {
