@@ -298,48 +298,92 @@ function getUserStatuses(username, callback) {
   });
 }
 
+
 function getNewsfeedStatuses(user, callback) {
   if (!user) {
     callback(null, "User is null.");
   } else {
     const statusMap = {};
-    getUserStatuses(user, (data1, err1) => {
-      // noice
-      Friendship
-        .query(user)
-        .loadAll()
-        .exec((err, data) => {
-          // Error finding friendships
-          if (err || !data) {
-            callback(null, "There was an error finding friendships: " + err);
-          } else {
-            // Get all friendships, and clean data
-            const friendships = data.Items.map(item => (item.attrs));
+        // Now query for all of current user's friends, find all of their statuses
+    Friendship
+          .query(user)
+          .loadAll()
+          .exec((err, data) => {
+            // Error finding friendships
+            if (err || !data) {
+              callback(null, "There was an error finding friendships: " + err);
+            } else {
+              // Get all friendships, and clean data
+              const friends = data.Items.map(item => (item.attrs.user2));
 
-            // For each friendship, find other friend
-            async.each(friendships, (friendship, keysCallback) => {
-              // Find the user who wrote the comment
-              const user2 = friendship.user2;
+              // Add current user1
+              friends.push(user);
 
+              // For all friends
+              async.each(friends, (friend, keysCallback) => {
+                // Find all of user2's statuses
+                getUserStatuses(friend, (dataFriend, errFriend) => {
+                  if (errFriend || !dataFriend) {
+                    callback(null, "There was an error trying to find statuses.");
+                  } else {
+                    // Add all the users' statuses into the map
+                    const userStatuses = dataFriend;
+                    userStatuses.forEach( (userStatus) => {
+                      statusMap[userStatus.id] = userStatus;
+                    });
 
-              // Find all of user2's statuses
-            }, (asyncErr) => {
-              if (asyncErr) {
-                // If there is an error with the async operation
-                callback(null, asyncErr);
-              } else {
-                // Sort the friendships in alphabetical order of name
-                friendships.sort((a, b) => (
-                  (a && a.name) ? (a.name.localeCompare(b.name)) : (-1)
-                ));
+                    const allReceivedStatuses = [];
 
-                // Return the comments to the user
-                callback(friendships, err);
-              }
-            });
-          }
-        });
-      });
+                    // Find all statuses in which the receiver is the current user
+                    StatusReceiver
+                      .query(user)
+                      .loadAll()
+                      .exec((err2, data2) => {
+                        if (err2 || !data2) {
+                          callback(null, "Error finding status receiver statuses.");
+                        } else {
+                          // Get the queried statuses
+                          const receivedStatuses = data2.Items.map(item => (item.attrs));
+
+                          // Push all the received statuses into the global variable
+                          receivedStatuses.forEach( (receivedStatus) => {
+                            allReceivedStatuses.push(receivedStatus);
+                          });
+
+                          // Now get all these received statuses and put into map to remove duplicates
+                          allReceivedStatuses.forEach( (receivedStatus) => {
+                            statusMap[receivedStatus.id] = receivedStatus;
+                          });
+                        }
+                      });
+                  }
+                });
+                keysCallback();
+              }, (asyncErr) => {
+                if (asyncErr) {
+                  // If there is an error with the async operation
+                  callback(null, asyncErr);
+                } else {
+                  // the list of statuses that we will return
+                  const statuses = [];
+
+                  // iterate through statuses in map, and put them all into the array
+                  Object.keys(statusMap).forEach( (key) => {
+                    statuses.push(statusMap[key]);
+                  });
+                  // Sort the statuses
+                  statuses.sort((a, b) => {
+                    const aCreatedAt = new Date(a.createdAt);
+                    const bCreatedAt = new Date(b.createdAt);
+                    return bCreatedAt - aCreatedAt;
+                  });
+
+                  // Return the comments to the user
+                  callback(statuses, err);
+                }
+              });
+            }
+          });
   }
 }
 
