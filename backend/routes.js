@@ -157,7 +157,7 @@ router.post('/statuses/new', (req, res) => {
 });
 
 /**
- * Get newsfeed statuses of the user that is logged in (friends as well as his own);
+ * Get newsfeed statuses of the user that is logged in (friends as well as his/her own)
  */
 router.get('/newsfeed', (req, res) => {
   if (!req.session.username) {
