@@ -5,18 +5,23 @@ const async = require('async');
 /**
  * Create a UserChatRelationship
  */
-function createUserChatRelationship(username, room, callback) {
+function createUserChatRelationship(username, title, room, callback) {
 	if (!username) {
 		callback(null, "Username must be populated");
+	} else if (!title) {
+		callback(null, "Title must be populated");
 	} else if (!room) {
-		callback(null, "Room must be populated");
-	} else {
+    callback(null, "Room must be populated");
+  } else {
     // Create relsationship object
 		const relObject = {
 			username: username,
-			title: room,
+			chatTitle: title,
 			room: room,
 		};
+
+    console.log("HHHUHUHU");
+    console.log(relObject);
 
 		//Put the relationship in to the database
 		UserChatRelationship.create(relObject, (err, data) => {

@@ -45,6 +45,7 @@ class Chat extends React.Component {
 
   // Reload the messages when switched to a different chat
   componentDidUpdate(prevProps) {
+    console.log(this.props.match.params.chatTitle);
     if (prevProps.match.params.id !== this.props.match.params.id) {
       this.reloadMessages()
     }

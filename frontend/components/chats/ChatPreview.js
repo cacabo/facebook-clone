@@ -5,17 +5,18 @@ import PropTypes from 'prop-types';
 /**
  * Component to render a preview of a group chat
  */
-const ChatPreview = ({ name, id }) => {
+const ChatPreview = ({ username, chatTitle, id }) => {
   return (
-    <Link className="chat-preview" to={ "/chats/" + id }>
-      { name }
+    <Link className="chat-preview" to={ "/chats/" + chatTitle }>
+      { chatTitle }
     </Link>
   );
 };
 
 ChatPreview.propTypes = {
-  name: PropTypes.string,
-  id: PropTypes.number,
+  username: PropTypes.string,
+  chatTitle: PropTypes.string,
+  id: PropTypes.string,
 };
 
 export default ChatPreview;

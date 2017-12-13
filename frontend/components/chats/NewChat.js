@@ -18,8 +18,10 @@ class NewChat extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      chatTitle: "",
       members: "",
     };
+    this.handleChangeTitle = this.handleChangeTitle.bind(this);
     this.handleChangeMembers = this.handleChangeMembers.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
@@ -36,9 +38,16 @@ class NewChat extends React.Component {
     });
   }
 
+  // Handle a change to the title state
+  handleChangeTitle(event) {
+    this.setState({
+      chatTitle: event.target.value,
+    });
+  }
+
   // Handle when the new chat form is submitted
   handleSubmit(event) {
-    console.log("New chat for submitted");
+    console.log("New chat for submitted " + this.state.chatTitle + " " + this.state.members);
     event.preventDefault();
 
     /*
@@ -48,49 +57,65 @@ class NewChat extends React.Component {
     const roomID = uuid();
 
     // Creates a new chat in the database
-    axios.post('/api/users/' + this.props.username + '/chats/' + roomID +'/newUserChatRelationship')
-      .then((chatData) => {
-        if (chatData.data.success) {
-          const chatParams = {
-            username: this.state.currentUser,
-            title: 'Chat ' + roomID,
-            room: roomID
-          };
-        } else {
+    axios.post('/api/users/' + this.props.username + '/chats/' + roomID +'/newUserChatRelationship/' + this.state.chatTitle)
+    .then((chatData) => {
+      if (chatData.data.success) {
+        const chatParams = {
+          username: this.state.currentUser,
+          chatTitle: this.state.chatTitle,
+          room: roomID
+        };
+
+
+        /*
+        * TODO Must reload list of chats in Chats
+        */
+
+        // this.props.getChats();
+
+      } else {
           // There was an error creating a new message
-          console.log(messageData.data.err);
+          console.log(chatData.data.err);
         }
       })
-      .catch(messageErr => {
-          console.log(messageErr);
-      });
+    .catch(chatErr => {
+      console.log(chatErr);
+    });
   }
 
   // Render the component
   render() {
     return (
       <Chats>
-        <form className="message-form" onSubmit={ this.handleSubmit }>
-          <textarea
-            name="members"
-            value={ this.state.members }
-            onChange={ this.handleChangeMembers }
-            rows="1"
-            className="form-control"
-          />
-          <input
-            type="submit"
-            className={
-              this.state.members ?
-              "btn btn-gray" :
-              "btn btn-gray disabled"
-            }
-            value="Create chat"
-          />
-        </form>
-        <div className="space-1"/>
+      <form className="message-form" onSubmit={ this.handleSubmit }>
+      <textarea
+      name="members"
+      value={ this.state.chatTitle }
+      onChange={ this.handleChangeTitle }
+      rows="1"
+      className="form-control"
+      />
+
+      <textarea
+      name="members"
+      value={ this.state.members }
+      onChange={ this.handleChangeMembers }
+      rows="1"
+      className="form-control"
+      />
+      <input
+      type="submit"
+      className={
+        this.state.members ?
+        "btn btn-gray" :
+        "btn btn-gray disabled"
+      }
+      value="Create chat"
+      />
+      </form>
+      <div className="space-1"/>
       </Chats>
-    );
+      );
   }
 }
 
@@ -107,4 +132,4 @@ const mapDispatchToProps = (/* dispatch */) => {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(NewChat);
+  )(NewChat);

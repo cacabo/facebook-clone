@@ -77,6 +77,7 @@ import { joinRoom } from './socketrouter';
         // If success is true, user has deleted invite already
         if(checkData.data.success === true) {
           console.log("Successefully deleted invite");
+          this.getChats();
         } else {
           console.log("Failed to delete invite");
         }
@@ -133,8 +134,9 @@ import { joinRoom } from './socketrouter';
     return this.state.chats.map(chat => {
       return (
         <ChatPreview
-        name={ chat.name }
-        id={ chat.id }
+        username={ chat.username }
+        chatTitle={ chat.chatTitle }
+        id={ chat.room }
         key={ uuid() }
         />
         );

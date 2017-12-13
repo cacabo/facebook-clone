@@ -12,7 +12,7 @@ const UserChatRelationship = vogels.define("UserChatRelationship", {
   timestamps: true,
   schema: {
     username: Joi.string(),
-    title: Joi.string(),
+    chatTitle: Joi.string(),
     room: Joi.string(),
   },
   tableName: "userChatRelationship",

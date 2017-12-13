@@ -776,12 +776,13 @@ router.get('/users/:username/chats', (req, res) => {
 /**
  * Creates a createUserChatRelationship
  */
-router.post('/users/:username/chats/:roomID/newUserChatRelationship', (req, res) => {
+router.post('/users/:username/chats/:roomID/newUserChatRelationship/:chatTitle', (req, res) => {
   const username = req.params.username;
   const roomID = req.params.roomID;
+  const title = req.params.chatTitle;
 
   // Creates a user chat relationship
-  db.createUserChatRelationship(username, roomID, (success, err) => {
+  db.createUserChatRelationship(username, title, roomID, (success, err) => {
     if (err || !success) {
       res.send({
         success: false,
