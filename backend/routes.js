@@ -227,6 +227,8 @@ router.get('/newsfeed', (req, res) => {
 
 /**
  * Update a user object
+ *
+ * TODO ensure there are no duplicate interests
  */
 router.post('/users/:username/update/', (req, res) => {
   const sessionUsername = req.session.username;
@@ -281,34 +283,56 @@ router.post('/users/:username/update/', (req, res) => {
         error: "Interests can contain only letters, spaces, and commas."
       });
     } else {
-      // If there was no formatting error
-      // Update the object to contain the information we want
-      const obj = {
-        username: sessionUsername,
-        name: req.body.name,
-        affiliation: req.body.affiliation.toLowerCase(),
-        bio: req.body.bio,
-        interests: req.body.interests.toLowerCase(),
-        profilePicture: req.body.profilePicture,
-        coverPhoto: req.body.coverPhoto,
-      };
+      // Ensure that formatting is valid
+      let valid = true;
 
-      // Send the object to the database
-      db.updateUser(obj, (data, err) => {
-        if (err || !data) {
-          // If there was an error updating
-          res.send({
-            success: false,
-            error: err,
-          });
-        } else {
-          // If the update was successful
-          res.send({
-            success: true,
-            data: data,
-          });
-        }
-      });
+      if (req.body.interests) {
+        // Ensure that there are no duplicate interests
+        const interests = req.body.interests.split(', ');
+        const interestsObj = {};
+        interests.map(interest => {
+          if (valid && interestsObj[interest]) {
+            valid = false;
+            res.send({
+              success: false,
+              error: "Interests must all be unique",
+            });
+          } else {
+            interestsObj[interest] = true;
+          }
+        });
+      }
+
+      if (valid) {
+        // If there was no formatting error
+        // Update the object to contain the information we want
+        const obj = {
+          username: sessionUsername,
+          name: req.body.name,
+          affiliation: req.body.affiliation.toLowerCase(),
+          bio: req.body.bio,
+          interests: req.body.interests.toLowerCase(),
+          profilePicture: req.body.profilePicture,
+          coverPhoto: req.body.coverPhoto,
+        };
+
+        // Send the object to the database
+        db.updateUser(obj, (data, err) => {
+          if (err || !data) {
+            // If there was an error updating
+            res.send({
+              success: false,
+              error: err,
+            });
+          } else {
+            // If the update was successful
+            res.send({
+              success: true,
+              data: data,
+            });
+          }
+        });
+      }
     }
   } else {
     // If there is no username match
