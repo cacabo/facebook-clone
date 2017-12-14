@@ -222,7 +222,7 @@ class Status extends React.Component {
 
             // Denote that the comment is new
             comment.isNew = true;
-            comment.comment = comment.content;
+            comment.comment = this.state.comment;
 
             // Update the state
             this.setState({
