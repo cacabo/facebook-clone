@@ -859,8 +859,6 @@ router.get('/users/:username/chats', (req, res) => {
 
   // Get all chats of a user using username
   db.getChats(username, (data, err) => {
-    console.log("Data");
-    console.log(data);
     if (err || !data) {
       res.send({
         success: false,

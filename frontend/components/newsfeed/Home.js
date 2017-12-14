@@ -90,10 +90,9 @@ class Home extends React.Component {
         });
       })
       .catch(err => {
-        /**
-         * TODO
-         */
-        console.log(err);
+        this.setState({
+          error: err,
+        });
       });
   }
 

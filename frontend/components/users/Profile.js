@@ -75,8 +75,6 @@ class Profile extends React.Component {
           // Get the user's statuses
           axios.get('/api/users/' + this.props.match.params.username + '/statuses')
             .then(statuses => {
-              console.log("STATUSES");
-              console.log(statuses);
               if (statuses.data.success) {
                 this.setState({
                   statuses: statuses.data.data,
