@@ -128,7 +128,6 @@ function getFriendships(user, callback) {
 
                 // Delete unneeded info from the object
                 delete userObj.password;
-                delete userObj.affiliation;
                 delete userObj.interests;
                 delete userObj.bio;
                 delete userObj.coverPhoto;
@@ -150,7 +149,8 @@ function getFriendships(user, callback) {
                 (a && a.name) ? (a.name.localeCompare(b.name)) : (-1)
               ));
 
-              // Return the comments to the user
+              console.log(friendships);
+              // Return the friends to the user
               callback(friendships, err);
             }
           });

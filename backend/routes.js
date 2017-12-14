@@ -485,6 +485,26 @@ router.get('/users/:username/friends', (req, res) => {
 });
 
 /**
+ * Get the friend visualizer
+ */
+router.get('/visualizer', (req, res) => {
+  // const user = req.session.username;
+  const user = "ccabo";
+  db.getVisualizer(user, (data, err) => {
+    if (err || !data) {
+      res.send({
+        success: false,
+        error: err,
+      });
+    } else {
+      res.send({
+        success: true,
+        data: data
+      });
+    }
+  });
+});
+/**
  * Get specific friend
  */
 router.get('/users/:username/friends/:friendUsername', (req, res) => {
