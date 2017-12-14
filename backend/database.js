@@ -33,12 +33,9 @@ const database = {
   getInvites: invites.getInvites,
   deleteInvite: invites.deleteInvite,
   getChats: userChatRelationship.getChats,
-  createUserChatRelationship : userChatRelationship.createUserChatRelationship,
+  createUserChatRelationship: userChatRelationship.createUserChatRelationship,
   getMessages: messages.getMessages,
   createMessage: messages.createMessage,
-  addFriendship: friendships.addFriendship,
-  getFriendships: friendships.getFriendships,
-  getFriend: friendships.getFriend,
 };
 
 module.exports = database;

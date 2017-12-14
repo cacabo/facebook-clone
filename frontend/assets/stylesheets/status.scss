@@ -57,6 +57,14 @@
 
   .text {
     padding: 0rem 1rem;
+
+    &.bio {
+      color: gray;
+      font-style: italic;
+      border-left: 4px solid $light-gray;
+      padding-left: 0.5rem;
+      margin-left: 1rem;
+    }
   }
 
   .timestamp {
