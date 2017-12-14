@@ -370,7 +370,7 @@ class Profile extends React.Component {
 
     // Return the formatted interests
     const interestsObj = interests.map(interest => (
-      <span className="interest">
+      <span className="interest" key={ interest }>
         { interest }
       </span>
     ));

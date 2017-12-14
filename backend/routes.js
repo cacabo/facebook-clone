@@ -186,7 +186,7 @@ router.post('/users/:username/update/', (req, res) => {
   const sessionUsername = req.session.username;
   const reqUsername = req.params.username;
 
-  // Ensure that the two uesernames are the same
+  // Ensure that the two usernames are the same
   if (sessionUsername === reqUsername) {
     // Regular expression for validating URL's
     const urlRegex = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
@@ -222,35 +222,36 @@ router.post('/users/:username/update/', (req, res) => {
         success: false,
         error: "Cover photo must be a valid URL.",
       });
+    } else {
+      // If there was no formatting error
+      // Update the object to contain the information we want
+      const obj = {
+        username: sessionUsername,
+        name: req.body.name,
+        affiliation: req.body.affiliation.toLowerCase(),
+        bio: req.body.bio,
+        interests: req.body.interests.toLowerCase(),
+        profilePicture: req.body.profilePicture,
+        coverPhoto: req.body.coverPhoto,
+      };
+
+      // Send the object to the database
+      db.updateUser(obj, (data, err) => {
+        if (err || !data) {
+          // If there was an error updating
+          res.send({
+            success: false,
+            error: err,
+          });
+        } else {
+          // If the update was successful
+          res.send({
+            success: true,
+            data: data,
+          });
+        }
+      });
     }
-
-    // Update the object to contain the information we want
-    const obj = {
-      username: sessionUsername,
-      name: req.body.name,
-      affiliation: req.body.affiliation.toLowerCase(),
-      bio: req.body.bio,
-      interests: req.body.interests.toLowerCase(),
-      profilePicture: req.body.profilePicture,
-      coverPhoto: req.body.coverPhoto,
-    };
-
-    // Send the object to the database
-    db.updateUser(obj, (data, err) => {
-      if (err || !data) {
-        // If there was an error updating
-        res.send({
-          success: false,
-          error: err,
-        });
-      } else {
-        // If the update was successful
-        res.send({
-          success: true,
-          data: data,
-        });
-      }
-    });
   } else {
     // If there is no username match
     res.send({

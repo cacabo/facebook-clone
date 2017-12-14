@@ -88,22 +88,22 @@ function createUser(user, callback) {
 /**
  * Helper function to handle a change in affiliation
  */
-function changeAffiliation(oldAffiliation, oldUser, callback) {
-  if (oldAffiliation === oldUser.affiliation) {
+function changeAffiliation(oldAffiliation, user, callback) {
+  if (oldAffiliation === user.affiliation) {
     callback(true, null);
   } else {
     // Remove the old affiliation from the database if there is one
     if (oldAffiliation) {
       // Destroy the existing affiliation from the database
-      Affiliation.destroy(oldAffiliation, oldUser.username, (destroyErr) => {
+      Affiliation.destroy(oldAffiliation, user.username, (destroyErr) => {
         if (destroyErr) {
           callback(false, destroyErr.message);
         } else {
-          if (oldUser.affiliation) {
+          if (user.affiliation) {
             // Add the updated affiliation
             Affiliation.create({
-              affiliation: oldUser.affiliation,
-              username: oldUser.username,
+              affiliation: user.affiliation,
+              username: user.username,
             }, (affiliationErr, affiliationData) => {
               // If there was an issue adding the affiliation to the database
               if (affiliationErr || !affiliationData) {
@@ -117,11 +117,11 @@ function changeAffiliation(oldAffiliation, oldUser, callback) {
           }
         }
       });
-    } else if (oldUser.affiliation) {
+    } else if (user.affiliation) {
       // Add the updated affiliation
       Affiliation.create({
-        affiliation: oldUser.affiliation,
-        username: oldUser.username,
+        affiliation: user.affiliation,
+        username: user.username,
       }, (affiliationErr, affiliationData) => {
         // If there was an issue adding the affiliation to the database
         if (affiliationErr || !affiliationData) {
@@ -134,6 +134,30 @@ function changeAffiliation(oldAffiliation, oldUser, callback) {
       callback(true, null);
     }
   }
+}
+
+/**
+ * Helper function to handle a change in interests
+ */
+function changeInterests(oldInterests, user, callback) {
+  // TODO
+  // const oldInterests = oldInterests.split(', ');
+  const newInterests = user.interests.split(', ');
+
+  // Created a formatted array of interests to be added to the DB
+  const interestsArr = newInterests.map(interest => ({
+    interest: interest,
+    username: user.username,
+  }));
+
+  // Put the interests in the DB
+  Interest.create(interestsArr, (err, interests) => {
+    if (err || !interests) {
+      callback(false, "Failed to add interests to database.");
+    } else {
+      callback(true, interests);
+    }
+  });
 }
 
 /**
@@ -151,8 +175,9 @@ function updateUser(updatedUser, callback) {
       // Isolate the old user object
       const oldUser = oldUserData.attrs;
 
-      // Also save the old affiliation
+      // Also save the old affiliation and interests
       const oldAffiliation = oldUser.affiliation;
+      const oldInterests = oldUser.interests;
 
       // Update the user's fields
       oldUser.name = updatedUser.name.toLowerCase();
@@ -168,12 +193,21 @@ function updateUser(updatedUser, callback) {
         if (updateErr || !updatedData) {
           callback(null, "Failed to update user");
         } else {
-          changeAffiliation(oldAffiliation, oldUser, (success, affiliationErr) => {
-            if (!success) {
+          // Handle changing affiliations in the database
+          changeAffiliation(oldAffiliation, oldUser, (affiliationSuccess, affiliationErr) => {
+            if (!affiliationSuccess) {
               callback(null, affiliationErr);
             } else {
-              // TODO HANDLE INTERESTS
-              callback(updatedData, null);
+              // Handle changing interests in the database
+              changeInterests(oldInterests, oldUser, (interestsSuccess, interestsErr) => {
+                if (!interestsSuccess) {
+                  // If there was an error adding the interests to the array
+                  callback(null, interestsErr);
+                } else {
+                  // If everything went as planned
+                  callback(updatedData, null);
+                }
+              });
             }
           });
         }
