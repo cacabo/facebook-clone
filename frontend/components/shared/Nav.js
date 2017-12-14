@@ -16,6 +16,7 @@ class Nav extends React.Component {
     // Set the state
     this.state = {
       search: "",
+      error: "",
     };
 
     // Bind this to handle logout
@@ -84,17 +85,27 @@ class Nav extends React.Component {
         if (!data.success) {
           // Purge the user's redux state
           this.props.onLogout();
+
+          // Remove any existing error
+          this.setState({
+            error: "",
+          });
         } else {
-          /**
-           * TODO handle error
-           */
+          this.setState({
+            error: "Failed to logout",
+          });
+
+          // Have the error go away after 5 seconds
+          setTimeout(() => this.setState({ error: "" }), 5000);
         }
       })
       .catch(err => {
-        /**
-         * TODO handle error
-         */
-        console.log(err);
+        this.setState({
+          error: err,
+        });
+
+        // Have the error go away after five seconds
+        setTimeout(() => this.setState({ error: "" }), 5000);
       });
   }
 
@@ -120,79 +131,87 @@ class Nav extends React.Component {
   // Render the component
   render() {
     return (
-      <nav className="navbar navbar-toggleable-md navbar-light fixed-top">
-        { this.state.redirect && (<Redirect to={ this.state.redirect } />)}
-        <button className="navbar-toggler navbar-toggler-right collapsed" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-          <span className="icon-bar top-bar" />
-          <span className="icon-bar middle-bar" />
-          <span className="icon-bar bottom-bar" />
-        </button>
-        <Link to="/" className="navbar-brand">Facebook</Link>
+      <div className="nav-wrapper">
+        <nav className="navbar navbar-toggleable-md navbar-light fixed-top">
+          { this.state.redirect && (<Redirect to={ this.state.redirect } />)}
+          <button className="navbar-toggler navbar-toggler-right collapsed" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span className="icon-bar top-bar" />
+            <span className="icon-bar middle-bar" />
+            <span className="icon-bar bottom-bar" />
+          </button>
+          <Link to="/" className="navbar-brand">Facebook</Link>
 
-        <div className="collapse navbar-collapse" id="navbarSupportedContent">
-          {
-            this.props.isLoggedIn && (
-              <form className="form-inline" onSubmit={ this.handleSubmitSearch }>
-                <input
-                  className="form-control mr-sm-2"
-                  type="text"
-                  placeholder="Search for users"
-                  value={ this.state.search }
-                  onChange={ this.handleChangeSearch }
-                />
-                {
-                  (this.state.users && this.state.users.length) ? (
-                    <div className="suggestions">
-                      { this.renderSuggestions() }
-                    </div>
-                  ) : (null)
-                }
-                <button className="btn btn-primary my-2 my-sm-0" type="submit">Search</button>
-              </form>
-            )
-          }
-          {
-            !this.props.isLoggedIn ?
-            (
-              <ul className="navbar-nav ml-auto">
-                <li className="nav-item">
-                  <Link to="/register" className="nav-link">
-                    Register
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <Link to="/login" className="nav-link">
-                    Login
-                  </Link>
-                </li>
-              </ul>
-            ) : (
-              <ul className="navbar-nav ml-auto">
-                <li className="nav-item">
-                  <Link to="/" className="nav-link">
-                    Home
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <Link to="/chats" className="nav-link">
-                    Chats
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <Link to={ "/users/" + this.props.username } className="nav-link">
-                    Profile
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <a onClick={ this.handleLogout } className="nav-link">
-                    Logout
-                  </a>
-                </li>
-              </ul>
-            )
-          }
-        </div>
-      </nav>
+          <div className="collapse navbar-collapse" id="navbarSupportedContent">
+            {
+              this.props.isLoggedIn && (
+                <form className="form-inline" onSubmit={ this.handleSubmitSearch }>
+                  <input
+                    className="form-control mr-sm-2"
+                    type="text"
+                    placeholder="Search for users"
+                    value={ this.state.search }
+                    onChange={ this.handleChangeSearch }
+                  />
+                  {
+                    (this.state.users && this.state.users.length) ? (
+                      <div className="suggestions">
+                        { this.renderSuggestions() }
+                      </div>
+                    ) : (null)
+                  }
+                  <button className="btn btn-primary my-2 my-sm-0" type="submit">Search</button>
+                </form>
+              )
+            }
+            {
+              !this.props.isLoggedIn ?
+              (
+                <ul className="navbar-nav ml-auto">
+                  <li className="nav-item">
+                    <Link to="/register" className="nav-link">
+                      Register
+                    </Link>
+                  </li>
+                  <li className="nav-item">
+                    <Link to="/login" className="nav-link">
+                      Login
+                    </Link>
+                  </li>
+                </ul>
+              ) : (
+                <ul className="navbar-nav ml-auto">
+                  <li className="nav-item">
+                    <Link to="/" className="nav-link">
+                      Home
+                    </Link>
+                  </li>
+                  <li className="nav-item">
+                    <Link to="/chats" className="nav-link">
+                      Chats
+                    </Link>
+                  </li>
+                  <li className="nav-item">
+                    <Link to={ "/users/" + this.props.username } className="nav-link">
+                      Profile
+                    </Link>
+                  </li>
+                  <li className="nav-item">
+                    <a onClick={ this.handleLogout } className="nav-link">
+                      Logout
+                    </a>
+                  </li>
+                </ul>
+              )
+            }
+          </div>
+        </nav>
+
+        { this.state.error && (
+          <div className="alert alert-danger">
+            { this.state.error }
+          </div>
+        ) }
+      </div>
     );
   }
 }

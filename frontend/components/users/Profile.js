@@ -19,7 +19,6 @@ import ErrorMessage from '../shared/ErrorMessage';
  * Information about the user (bio, interests, friend count, etc.) to left
  * List of posts and ability to write on their wall to the right / middle
  *
- * TODO render user statuses
  * TODO network visualizer
  */
 class Profile extends React.Component {

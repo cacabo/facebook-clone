@@ -281,34 +281,56 @@ router.post('/users/:username/update/', (req, res) => {
         error: "Interests can contain only letters, spaces, and commas."
       });
     } else {
-      // If there was no formatting error
-      // Update the object to contain the information we want
-      const obj = {
-        username: sessionUsername,
-        name: req.body.name,
-        affiliation: req.body.affiliation.toLowerCase(),
-        bio: req.body.bio,
-        interests: req.body.interests.toLowerCase(),
-        profilePicture: req.body.profilePicture,
-        coverPhoto: req.body.coverPhoto,
-      };
+      // Ensure that formatting is valid
+      let valid = true;
 
-      // Send the object to the database
-      db.updateUser(obj, (data, err) => {
-        if (err || !data) {
-          // If there was an error updating
-          res.send({
-            success: false,
-            error: err,
-          });
-        } else {
-          // If the update was successful
-          res.send({
-            success: true,
-            data: data,
-          });
-        }
-      });
+      if (req.body.interests) {
+        // Ensure that there are no duplicate interests
+        const interests = req.body.interests.split(', ');
+        const interestsObj = {};
+        interests.map(interest => {
+          if (valid && interestsObj[interest]) {
+            valid = false;
+            res.send({
+              success: false,
+              error: "Interests must all be unique",
+            });
+          } else {
+            interestsObj[interest] = true;
+          }
+        });
+      }
+
+      if (valid) {
+        // If there was no formatting error
+        // Update the object to contain the information we want
+        const obj = {
+          username: sessionUsername,
+          name: req.body.name,
+          affiliation: req.body.affiliation.toLowerCase(),
+          bio: req.body.bio,
+          interests: req.body.interests.toLowerCase(),
+          profilePicture: req.body.profilePicture,
+          coverPhoto: req.body.coverPhoto,
+        };
+
+        // Send the object to the database
+        db.updateUser(obj, (data, err) => {
+          if (err || !data) {
+            // If there was an error updating
+            res.send({
+              success: false,
+              error: err,
+            });
+          } else {
+            // If the update was successful
+            res.send({
+              success: true,
+              data: data,
+            });
+          }
+        });
+      }
     }
   } else {
     // If there is no username match
@@ -321,7 +343,6 @@ router.post('/users/:username/update/', (req, res) => {
 
 /**
  * Get all statuses by a particular user
- * TODO get statuses to this user
  */
 router.get('/users/:username/statuses/', (req, res) => {
   // Find the username in the URL
@@ -557,8 +578,8 @@ router.get('/users/:username/statuses/:statusID/checkLike', (req, res) => {
 });
 
 /**
- * Add like to statuses
- * TODO: checkLike, and then either go to addLike or deleteLike
+ * Either add or delete a like on a status depending on if the user has
+ * already liked the post or not.
  */
 router.get('/users/:username/statuses/:statusID/likes', (req, res) => {
   // Get the status and liker
@@ -684,10 +705,8 @@ router.post('/users/new', (req, res) => {
 });
 
 /**
- * Add like to statuses
- * TODO: first check if the like exists or not
- *       if it does exist, then delete the like
- *       if it does not exists, then add the like
+ * If the user has already liked the status, then this will delete the like,
+ * else it will add the like.
  */
 router.get('/users/:username/statuses/:statusID/likes', (req, res) => {
   // Get the status and liker
@@ -874,9 +893,37 @@ router.post('/users/:username/chats/:roomID/newUserChatRelationship', (req, res)
   });
 });
 
+/**
+ * Get recommendations for a user
+ */
+router.get("/recommendations", (req, res) => {
+  if (!req.session.username) {
+    // If the user is not logged in
+    res.send({
+      success: false,
+      error: "User must be logged in",
+    });
+  } else {
+    // Find recommendations in the database
+    db.getRecommendations(req.session.username, (data, err) => {
+      if (err || !data) {
+        res.send({
+          success: false,
+          error: err,
+        });
+      } else {
+        res.send({
+          success: true,
+          data: data,
+        });
+      }
+    });
+  }
+});
+
 
 /**
- * Handle a 404
+ * Handle a 404 (page not found) on the API side
  */
 router.get('*', (req, res) => {
   res.status(404).send("404: page not found");
