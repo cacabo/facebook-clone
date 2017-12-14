@@ -2,15 +2,12 @@ import React from 'react';
 import autosize from 'autosize';
 import PropTypes from 'prop-types';
 import axios from 'axios';
-import ErrorMessage from '../ErrorMessage';
+import ErrorMessage from '../shared/ErrorMessage';
 
 /**
  * Render the status form to appear at the top of the newsfeed and at the top
  * of a user's profile page.
- *
  * Post button only shows after the user clicks on the form.
- *
- * TODO render newly created status
  */
 class StatusForm extends React.Component {
   // Constructor method

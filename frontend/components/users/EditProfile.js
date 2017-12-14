@@ -162,18 +162,29 @@ class EditProfile extends React.Component {
       // Input data is properly formatted
       // Update the user information in the database
       axios.post("/api/users/" + this.state.username + "/update/", this.state)
-        .then(() => {
-          // Dispatch the update event to Redux
-          this.props.onUpdate(this.state.profilePicture, this.state.name);
+        .then(res => {
+          if (res.data.success) {
+            // If updating the user was successful
+            // Dispatch the update event to Redux
+            this.props.onUpdate(this.state.profilePicture, this.state.name);
 
-          // Redirect the user away from the page
-          this.setState({
-            redirect: true,
-          });
+            // Redirect the user away from the page
+            this.setState({
+              error: "",
+              redirect: true,
+            });
+          } else {
+            // If there was an error updating the user
+            this.setState({
+              error: res.data.error,
+              redirect: false,
+            });
+          }
         })
-        .catch((err) => {
+        .catch(err => {
           this.setState({
             error: err,
+            redirect: false,
           });
         });
     }
@@ -242,7 +253,7 @@ class EditProfile extends React.Component {
                 />
 
                 <label>
-                  Interests
+                  Interests (comma separated)
                 </label>
                 <textarea
                   type="text"

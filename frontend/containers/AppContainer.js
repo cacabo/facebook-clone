@@ -24,10 +24,6 @@ import Affiliation from '../components/users/Affiliation';
 
 /**
  * Component to render the app
- *
- * isLoggedIn: prop pulled from Redux state denoting the current user session
- *
- * TODO better sync user state and express session
  */
 class AppContainer extends React.Component {
   // Ensure the user is logged in on loading the app

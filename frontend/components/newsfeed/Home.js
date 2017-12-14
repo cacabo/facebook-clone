@@ -15,12 +15,11 @@ import ErrorMessage from '../shared/ErrorMessage';
  * however, a user sees 1. recommended friends (to the left), 2. their newsfeed,
  * 3. a list of friends currently online.
  *
- * TODO handle success / push notifications when the user successfully logs in,
+ * TODO handle success notifications when the user successfully logs in,
  *      creates a post, etc.
  * TODO periodically reload as things update
  * TODO README documentation
  * TODO Notifications
- * TODO export error to its own component
  */
 class Home extends React.Component {
   // Constructor method
@@ -42,7 +41,6 @@ class Home extends React.Component {
   /**
    * Pull the statuses from the database
    * TODO pull only statuses from friends
-   * TODO denote errors to the user
    */
   componentDidMount() {
     // Make the AJAX request

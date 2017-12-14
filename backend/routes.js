@@ -185,8 +185,10 @@ router.post('/users/:username/update/', (req, res) => {
 
   // Ensure that the two usernames are the same
   if (sessionUsername === reqUsername) {
-    // Regular expression for validating URL's
+    // Regular expression for validating URLs and affiliations
     const urlRegex = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
+    const affiliationRegex = /^[a-zA-Z ]*$/;
+    const interestsRegex = /^[a-zA-Z, ]*$/;
 
     // Error checking
     if (!req.body.name) {
@@ -218,6 +220,16 @@ router.post('/users/:username/update/', (req, res) => {
       res.send({
         success: false,
         error: "Cover photo must be a valid URL.",
+      });
+    } else if (!affiliationRegex.test(req.body.affiliation)) {
+      res.send({
+        success: false,
+        error: "Affiliation can contain only letters and spaces."
+      });
+    } else if (!interestsRegex.test(req.body.interests)) {
+      res.send({
+        success: false,
+        error: "Interests can contain only letters, spaces, and commas."
       });
     } else {
       // If there was no formatting error

@@ -15,9 +15,8 @@ import Loading from '../shared/Loading';
  * State handles whether comments show up or not. By default, they are hidden.
  * Toggle the comments box by clicking on the comments icon or text.
  *
- * TODO style new comments
- * TODO new friend updates (different types of statuses)
- * TODO profile updates
+ * TODO new friend updates (different type of status)
+ * TODO profile updates (different type of status)
  */
 class Status extends React.Component {
   // Constructor method
