@@ -1,5 +1,5 @@
 // Import the user table
-const { Status, User, StatusReceiver } = require('./schema.js');
+const { Status, User, StatusReceiver, Friendship } = require('./schema.js');
 const uuid = require('uuid-v4');
 const async = require('async');
 
@@ -33,6 +33,7 @@ function createStatus(content, receiver, user, callback) {
           const statusReceiver = {
             receiver: obj.receiver,
             id: data.attrs.id,
+            user: obj.user,
           };
 
           // This allows for easy lookup of statuses for which a given user
@@ -297,12 +298,191 @@ function getUserStatuses(username, callback) {
   });
 }
 
+function getUserFeed(user, callback) {
+  if (!user) {
+    callback(null, "User is null.");
+  } else {
+    User.get(user, (err1, data1) => {
+      if(err1 || !data1) {
+        callback(null, "The user does not exist.");
+      } else {
+        const statusMap = {};
+
+        // Find all of user2's statuses
+        getUserStatuses(user, (dataUser, errUser) => {
+          if (errUser || !dataUser) {
+            callback(null, "There was an error trying to find statuses.");
+          } else {
+            // Add all the users' statuses into the map
+            const userStatuses = dataUser;
+            userStatuses.forEach( (userStatus) => {
+              statusMap[userStatus.id] = userStatus;
+            });
+
+            // Find all statuses in which the receiver is the current friend
+            StatusReceiver
+              .query(user)
+              .loadAll()
+              .exec((err2, data2) => {
+                if (err2 || !data2) {
+                  callback(null, "Error finding status receiver statuses.");
+                } else {
+                  // Get the queried statuses
+                  const receivedStatuses = data2.Items.map(item => ({
+                    id: item.attrs.id,
+                    user: item.attrs.user,
+                  }));
+
+                  // Query for received statuses and push all of them into the global variable
+                  async.each(receivedStatuses, (receivedStatus, keysCallback2) => {
+                    // Querying for status
+                    Status.get(receivedStatus.user, receivedStatus.id, (err3, data3) => {
+                      if (err3) {
+                        callback(null, "There was an error finding received status: " + err3);
+                      } else if (data3.Items !== 0) {
+                        // Put found status into map
+                        statusMap[receivedStatus.id] = data3.attrs;
+                      }
+                      keysCallback2();
+                    });
+                  }, (asyncErr2) => {
+                    if (asyncErr2) {
+                      callback(null, asyncErr2);
+                    } else {
+                      // The list of statuses that we will return
+                      const statuses = [];
+
+                      // Iterate through statuses in map, and put them all into the array
+                      Object.keys(statusMap).forEach( (key) => {
+                        statuses.push(statusMap[key]);
+                      });
+
+                      // Sort the statuses
+                      statuses.sort((a, b) => {
+                        const aCreatedAt = new Date(a.createdAt);
+                        const bCreatedAt = new Date(b.createdAt);
+                        return bCreatedAt - aCreatedAt;
+                      });
+
+                      // Return the comments to the user
+                      callback(statuses, err1);
+                    }
+                  });
+                }
+              });
+          }
+        });
+      }
+    });
+  }
+}
+
+function getNewsfeedStatuses(user, callback) {
+  if (!user) {
+    callback(null, "User is null.");
+  } else {
+    // Map to store all statuses, remove duplicates
+    const statusMap = {};
+
+    // Now query for all of current user's friends, find all of their statuses
+    Friendship
+      .query(user)
+      .loadAll()
+      .exec((err, data) => {
+        // Error finding friendships
+        if (err || !data) {
+          callback(null, "There was an error finding friendships: " + err);
+        } else {
+          // Get all friendships, and clean data
+          const friends = data.Items.map(item => (item.attrs.user2));
+          // Add current user1
+          friends.push(user);
+
+          // For all friends
+          async.each(friends, (friend, keysCallback) => {
+            // Find all of user2's statuses
+            getUserStatuses(friend, (dataFriend, errFriend) => {
+              if (errFriend || !dataFriend) {
+                callback(null, "There was an error trying to find statuses.");
+              } else {
+                // Add all the users' statuses into the map
+                const userStatuses = dataFriend;
+                userStatuses.forEach( (userStatus) => {
+                  statusMap[userStatus.id] = userStatus;
+                });
+
+                // Find all statuses in which the receiver is the current friend
+                StatusReceiver
+                  .query(friend)
+                  .loadAll()
+                  .exec((err2, data2) => {
+                    if (err2 || !data2) {
+                      callback(null, "Error finding status receiver statuses.");
+                    } else {
+                      // Get the queried statuses
+                      const receivedStatuses = data2.Items.map(item => ({
+                        id: item.attrs.id,
+                        user: item.attrs.user,
+                      }));
+
+                      // Query for received statuses and push all of them into the global variable
+                      async.each(receivedStatuses, (receivedStatus, keysCallback2) => {
+                        // Querying for status
+                        Status.get(receivedStatus.user, receivedStatus.id, (err3, data3) => {
+                          if (err3) {
+                            callback(null, "There was an error finding received status: " + err3);
+                          } else if (data.Items !== 0) {
+                            // Put found status into map
+                            statusMap[receivedStatus.id] = data3.attrs;
+                            keysCallback2();
+                          }
+                        });
+                      }, (asyncErr2) => {
+                        if (asyncErr2) {
+                          callback(null, asyncErr2);
+                        }
+                        keysCallback();
+                      });
+                    }
+                  });
+              }
+            });
+          }, (asyncErr) => {
+            if (asyncErr) {
+              // If there is an error with the async operation
+              callback(null, asyncErr);
+            } else {
+              // the list of statuses that we will return
+              const statuses = [];
+
+              // iterate through statuses in map, and put them all into the array
+              Object.keys(statusMap).forEach( (key) => {
+                statuses.push(statusMap[key]);
+              });
+              // Sort the statuses
+              statuses.sort((a, b) => {
+                const aCreatedAt = new Date(a.createdAt);
+                const bCreatedAt = new Date(b.createdAt);
+                return bCreatedAt - aCreatedAt;
+              });
+
+              // Return the comments to the user
+              callback(statuses, err);
+            }
+          });
+        }
+      });
+  }
+}
+
 // Create an object to store the helper functions
 const statuses = {
   createStatus,
   getStatuses,
   getStatus,
   getUserStatuses,
+  getNewsfeedStatuses,
+  getUserFeed,
 };
 
 // Export the object
