@@ -7,8 +7,6 @@ import ErrorMessage from '../shared/ErrorMessage';
 /**
  * Component to list a user's recommended friends. This is rendered on the
  * newsfeed to the left of the statuses.
- *
- * TODO remove dummy data
  */
 class FriendRecommendations extends React.Component {
   // Constructor method
