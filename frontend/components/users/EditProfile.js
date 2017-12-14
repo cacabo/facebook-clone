@@ -14,7 +14,6 @@ import ErrorMessage from '../shared/ErrorMessage';
  * Component to render a form to edit a user's profile\
  *
  * TODO allow change password
- * TODO formatting for interests and affiliation (no duplicate interests)
  */
 class EditProfile extends React.Component {
   // Constructor method

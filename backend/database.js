@@ -9,6 +9,7 @@ const userChatRelationship = require('./userChatRelationship');
 const friendships = require('./friendships');
 const friendvisualizer = require('./friendvisualizer');
 const mapreduce = require('./mapreduce');
+const friendRecommendations = require('./friendRecommendations');
 
 // Create the database object to export
 const database = {
@@ -40,6 +41,7 @@ const database = {
   createMessage: messages.createMessage,
   getVisualizer: friendvisualizer.getVisualizer,
   getData: mapreduce.getData,
+  getRecommendations: friendRecommendations.getRecommendations,
 };
 
 module.exports = database;

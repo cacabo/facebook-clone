@@ -227,8 +227,6 @@ router.get('/newsfeed', (req, res) => {
 
 /**
  * Update a user object
- *
- * TODO ensure there are no duplicate interests
  */
 router.post('/users/:username/update/', (req, res) => {
   const sessionUsername = req.session.username;
@@ -893,6 +891,34 @@ router.post('/users/:username/chats/:roomID/newUserChatRelationship', (req, res)
       });
     }
   });
+});
+
+/**
+ * Get recommendations for a user
+ */
+router.get("/recommendations", (req, res) => {
+  if (!req.session.username) {
+    // If the user is not logged in
+    res.send({
+      success: false,
+      error: "User must be logged in",
+    });
+  } else {
+    // Find recommendations in the database
+    db.getRecommendations(req.session.username, (data, err) => {
+      if (err || !data) {
+        res.send({
+          success: false,
+          error: err,
+        });
+      } else {
+        res.send({
+          success: true,
+          data: data,
+        });
+      }
+    });
+  }
 });
 
 
