@@ -8,11 +8,13 @@ import Loading from '../shared/Loading';
 import { connect } from 'react-redux';
 import { update } from '../../actions/index';
 import axios from 'axios';
+import ErrorMessage from '../shared/ErrorMessage';
 
 /**
  * Component to render a form to edit a user's profile\
  *
  * TODO change password
+ * TODO formatting for interests and affiliation (no symbols)
  */
 class EditProfile extends React.Component {
   // Constructor method
@@ -160,18 +162,29 @@ class EditProfile extends React.Component {
       // Input data is properly formatted
       // Update the user information in the database
       axios.post("/api/users/" + this.state.username + "/update/", this.state)
-        .then(() => {
-          // Dispatch the update event to Redux
-          this.props.onUpdate(this.state.profilePicture, this.state.name);
+        .then(res => {
+          if (res.data.success) {
+            // If updating the user was successful
+            // Dispatch the update event to Redux
+            this.props.onUpdate(this.state.profilePicture, this.state.name);
 
-          // Redirect the user away from the page
-          this.setState({
-            redirect: true,
-          });
+            // Redirect the user away from the page
+            this.setState({
+              error: "",
+              redirect: true,
+            });
+          } else {
+            // If there was an error updating the user
+            this.setState({
+              error: res.data.error,
+              redirect: false,
+            });
+          }
         })
-        .catch((err) => {
+        .catch(err => {
           this.setState({
             error: err,
+            redirect: false,
           });
         });
     }
@@ -191,16 +204,7 @@ class EditProfile extends React.Component {
                 Edit profile information
               </h3>
               {
-                this.state.error ?
-                <div className="alert alert-danger error">
-                  <p className="bold marg-bot-025">
-                    There was an error:
-                  </p>
-                  <p className="marg-bot-0">
-                    { this.state.error }
-                  </p>
-                </div>
-                : ""
+                this.state.error && (<ErrorMessage text={ this.state.error } />)
               }
               <form className="line-form" onSubmit={ this.handleSubmit }>
                 <label>
@@ -249,7 +253,7 @@ class EditProfile extends React.Component {
                 />
 
                 <label>
-                  Interests
+                  Interests (comma separated)
                 </label>
                 <textarea
                   type="text"

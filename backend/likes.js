@@ -4,7 +4,6 @@ const uuid = require('uuid-v4');
 
 /**
  * Check if the user has already liked the status
- * TODO: confused how to check between like is non existent or there was an error checking database
  */
 function checkLike(liker, statusUser, statusID, callback) {
   // Check if either liker or status is null

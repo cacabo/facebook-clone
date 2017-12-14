@@ -1,10 +1,12 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import Thin from '../shared/Thin';
 import Loading from '../shared/Loading';
 import UserPreview from '../newsfeed/UserPreview';
 import PropTypes from 'prop-types';
 import axios from 'axios';
+import { connect } from 'react-redux';
+import Login from './Login';
+import ErrorMessage from '../shared/ErrorMessage';
 
 /**
  * Component rendered when the URL entered by a user is not found
@@ -17,6 +19,7 @@ class Search extends React.Component {
     // Set the state
     this.state = {
       pending: true,
+      error: "",
       users: [],
     };
   }
@@ -30,23 +33,18 @@ class Search extends React.Component {
           this.setState({
             users: res.data.data,
             pending: false,
+            error: "",
           });
         } else {
-          /**
-           * TODO handle this
-           */
-          console.log(res.data.error);
           this.setState({
+            error: "Error fetching users.",
             pending: false,
           });
         }
       })
       .catch(err => {
-        /**
-         * TODO handle this
-         */
-        console.log(err);
         this.setState({
+          error: err,
           pending: false,
         });
       });
@@ -77,12 +75,21 @@ class Search extends React.Component {
 
   // Render the component
   render() {
+    if (!this.props.username) {
+      // If the user is not logged in
+      return (<Login notice="You must be logged in to view this page." />);
+    }
+
+    // If the user is logged in
     return (
       <Thin>
         <div className="card">
           <h3 className="bold marg-bot-1">
             User search suggestions
           </h3>
+          {
+            this.state.error && (<ErrorMessage text={ this.state.error } />)
+          }
           {
             this.state.pending ? (
               <Loading />
@@ -98,6 +105,20 @@ class Search extends React.Component {
 
 Search.propTypes = {
   match: PropTypes.object,
+  username: PropTypes.string,
 };
 
-export default Search;
+const mapStateToProps = (state) => {
+  return {
+    username: state.userState.username,
+  };
+};
+
+const mapDispatchToProps = () => {
+  return {};
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Search);

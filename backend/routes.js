@@ -91,9 +91,6 @@ router.get('/users/search/:prefix/', (req, res) => {
 
 /**
  * Get all statuses
- * NOTE this likely is not userful though can be used to start off before we
- * have more targetted database methods
- * TODO test that this works
  */
 router.get('/statuses', (req, res) => {
   // Find all statuses in the database
@@ -216,10 +213,12 @@ router.post('/users/:username/update/', (req, res) => {
   const sessionUsername = req.session.username;
   const reqUsername = req.params.username;
 
-  // Ensure that the two uesernames are the same
+  // Ensure that the two usernames are the same
   if (sessionUsername === reqUsername) {
-    // Regular expression for validating URL's
+    // Regular expression for validating URLs and affiliations
     const urlRegex = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
+    const affiliationRegex = /^[a-zA-Z ]*$/;
+    const interestsRegex = /^[a-zA-Z, ]*$/;
 
     // Error checking
     if (!req.body.name) {
@@ -252,35 +251,46 @@ router.post('/users/:username/update/', (req, res) => {
         success: false,
         error: "Cover photo must be a valid URL.",
       });
+    } else if (!affiliationRegex.test(req.body.affiliation)) {
+      res.send({
+        success: false,
+        error: "Affiliation can contain only letters and spaces."
+      });
+    } else if (!interestsRegex.test(req.body.interests)) {
+      res.send({
+        success: false,
+        error: "Interests can contain only letters, spaces, and commas."
+      });
+    } else {
+      // If there was no formatting error
+      // Update the object to contain the information we want
+      const obj = {
+        username: sessionUsername,
+        name: req.body.name,
+        affiliation: req.body.affiliation.toLowerCase(),
+        bio: req.body.bio,
+        interests: req.body.interests.toLowerCase(),
+        profilePicture: req.body.profilePicture,
+        coverPhoto: req.body.coverPhoto,
+      };
+
+      // Send the object to the database
+      db.updateUser(obj, (data, err) => {
+        if (err || !data) {
+          // If there was an error updating
+          res.send({
+            success: false,
+            error: err,
+          });
+        } else {
+          // If the update was successful
+          res.send({
+            success: true,
+            data: data,
+          });
+        }
+      });
     }
-
-    // Update the object to contain the information we want
-    const obj = {
-      username: sessionUsername,
-      name: req.body.name,
-      affiliation: req.body.affiliation.toLowerCase(),
-      bio: req.body.bio,
-      interests: req.body.interests.toLowerCase(),
-      profilePicture: req.body.profilePicture,
-      coverPhoto: req.body.coverPhoto,
-    };
-
-    // Send the object to the database
-    db.updateUser(obj, (data, err) => {
-      if (err || !data) {
-        // If there was an error updating
-        res.send({
-          success: false,
-          error: err,
-        });
-      } else {
-        // If the update was successful
-        res.send({
-          success: true,
-          data: data,
-        });
-      }
-    });
   } else {
     // If there is no username match
     res.send({

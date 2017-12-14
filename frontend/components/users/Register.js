@@ -5,6 +5,7 @@ import axios from 'axios';
 import { login } from '../../actions/index';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import ErrorMessage from '../shared/ErrorMessage';
 
 /**
  * Component to render a form to register a user
@@ -208,16 +209,7 @@ class Register extends React.Component {
             Register
           </h3>
           {
-            this.state.error ?
-            <div className="alert alert-danger error">
-              <p className="bold marg-bot-025">
-                There was an error:
-              </p>
-              <p className="marg-bot-0">
-                { this.state.error }
-              </p>
-            </div>
-            : ""
+            this.state.error && (<ErrorMessage text={ this.state.error } />)
           }
           <form className="line-form" onSubmit={ this.handleSubmit }>
             <label>

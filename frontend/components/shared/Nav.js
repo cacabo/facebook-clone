@@ -7,8 +7,6 @@ import axios from 'axios';
 
 /**
  * Renders the navbar at the top of the screen on all pages.
- *
- * TODO fix bugs with clicking on stuff
  */
 class Nav extends React.Component {
   // Constructor method

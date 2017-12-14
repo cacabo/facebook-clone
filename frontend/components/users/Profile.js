@@ -10,6 +10,7 @@ import NotFound from '../NotFound';
 import Login from '../users/Login';
 import UserPreview from '../newsfeed/UserPreview';
 import moment from 'moment';
+import ErrorMessage from '../shared/ErrorMessage';
 
 /**
  * Render's a user's profile
@@ -18,10 +19,7 @@ import moment from 'moment';
  * Information about the user (bio, interests, friend count, etc.) to left
  * List of posts and ability to write on their wall to the right / middle
  *
- * TODO handle errors
  * TODO render user statuses
- * TODO birthday
- * TODO link to users with same affiliation
  * TODO network visualizer
  */
 class Profile extends React.Component {
@@ -60,6 +58,7 @@ class Profile extends React.Component {
     this.renderButton = this.renderButton.bind(this);
     this.handleAddFriend = this.handleAddFriend.bind(this);
     this.renderBirthday = this.renderBirthday.bind(this);
+    this.renderInterests = this.renderInterests.bind(this);
   }
 
   // Set the state upon load
@@ -213,10 +212,10 @@ class Profile extends React.Component {
         });
       })
       .catch(err => {
-        /**
-         * TODO
-         */
-        console.log(err);
+        // If there was an error pulling the new status
+        this.setState({
+          statusError: err,
+        });
       });
   }
 
@@ -362,6 +361,26 @@ class Profile extends React.Component {
     return m.format("MMMM Do, YYYY");
   }
 
+  // Render a user's interests
+  renderInterests() {
+    // Find the comma separated interests
+    const interests = this.state.interests.split(', ');
+
+    // Return the formatted interests
+    const interestsObj = interests.map(interest => (
+      <span className="interest" key={ interest }>
+        { interest }
+      </span>
+    ));
+
+    // Return the array wrapped in a div
+    return (
+      <div className="interests">
+        { interestsObj }
+      </div>
+    );
+  }
+
   // Render the component
   render() {
     // Render login if the user is not logged in
@@ -431,9 +450,7 @@ class Profile extends React.Component {
                       <p className="bold marg-bot-025">
                         Interests 💭
                       </p>
-                      <p>
-                        { this.state.interests }
-                      </p>
+                      { this.renderInterests() }
                     </div>
                   ) }
                   <div className="about-section">
@@ -445,19 +462,11 @@ class Profile extends React.Component {
                     </p>
                   </div>
                   {
-                    this.state.friendError && (
-                      <div className="alert alert-danger error">
-                        <p className="marg-bot-05 bold">
-                          There was an error:
-                        </p>
-                        <p className="marg-bot-0">
-                          { this.state.friendError }
-                        </p>
-                      </div>
-                    )
+                    this.state.friendError && (<ErrorMessage text={ this.state.friendError } />)
                   }
                   <div className="space-1" />
                   { this.renderButton() }
+                  <div className="space-2" />
                 </div>
                 <div className="col-12 col-md-8 col-lg-7">
                   <div className="toggle-wrapper">
@@ -483,16 +492,7 @@ class Profile extends React.Component {
                           callback={ this.newStatusCallback }
                         />
                         {
-                          this.state.statusesError && (
-                            <div className="alert alert-danger error">
-                              <p className="bold marg-bot-025">
-                                There was an error:
-                              </p>
-                              <p className="marg-bot-0">
-                                { this.state.statusesError }
-                              </p>
-                            </div>
-                          )
+                          this.state.statusesError && (<ErrorMessage text={ this.state.statusesError } />)
                         }
                         { !this.state.statusesPending ? (this.renderStatuses()) : (<Loading />) }
                         { !this.state.statusesPending && (
@@ -509,16 +509,7 @@ class Profile extends React.Component {
                           Listing all friends
                         </h3>
                         {
-                          this.state.friendsError && (
-                            <div className="alert alert-danger error">
-                              <p className="marg-bot-05 bold">
-                                There was an error:
-                              </p>
-                              <p className="marg-bot-0">
-                                { this.state.friendsError }
-                              </p>
-                            </div>
-                          )
+                          this.state.friendsError && (<ErrorMessage text={ this.state.friendsError } />)
                         }
                         { !this.state.friendsPending ? (this.renderFriends()) : (<Loading />)}
                       </div>

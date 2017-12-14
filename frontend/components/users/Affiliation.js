@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import axios from 'axios';
 import { connect } from 'react-redux';
 import Login from './Login';
+import ErrorMessage from '../shared/ErrorMessage';
 
 /**
  * Component rendered when the URL entered by a user is not found
@@ -19,6 +20,7 @@ class Affiliation extends React.Component {
     this.state = {
       pending: true,
       users: [],
+      error: "",
     };
   }
 
@@ -33,21 +35,15 @@ class Affiliation extends React.Component {
             pending: false,
           });
         } else {
-          /**
-           * TODO handle this
-           */
-          console.log(res.data.error);
           this.setState({
+            error: res.data.error,
             pending: false,
           });
         }
       })
       .catch(err => {
-        /**
-         * TODO handle this
-         */
-        console.log(err);
         this.setState({
+          error: err,
           pending: false,
         });
       });
@@ -90,6 +86,9 @@ class Affiliation extends React.Component {
           <h3 className="bold marg-bot-1">
             Users with the affiliation "{ this.props.match.params.affiliation }"
           </h3>
+          {
+            this.state.error && (<ErrorMessage text={ this.state.error } />)
+          }
           {
             this.state.pending ? (
               <Loading />

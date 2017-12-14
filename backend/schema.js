@@ -75,6 +75,17 @@ const Affiliation = vogels.define("Affiliation", {
   }
 });
 
+// Define a schema for interests
+const Interest = vogels.define("Interest", {
+  hashKey: "interest",
+  rangeKey: "username",
+  timestamps: false,
+  schema: {
+    interest: Joi.string(),
+    username: Joi.string(),
+  }
+});
+
 // Define a schema for statuses
 const Status = vogels.define("Status", {
   hashKey: "user",
@@ -158,6 +169,7 @@ vogels.createTables((err) => {
 const tables = {
   User,
   Affiliation,
+  Interest,
   Status,
   Like,
   Comment,
