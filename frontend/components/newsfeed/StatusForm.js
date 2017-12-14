@@ -2,6 +2,7 @@ import React from 'react';
 import autosize from 'autosize';
 import PropTypes from 'prop-types';
 import axios from 'axios';
+import ErrorMessage from '../ErrorMessage';
 
 /**
  * Render the status form to appear at the top of the newsfeed and at the top
@@ -105,16 +106,7 @@ class StatusForm extends React.Component {
     return (
       <div>
         {
-          this.state.error ?
-          <div className="alert alert-danger error marg-bot-1">
-            <p className="bold marg-bot-025">
-              There was an error:
-            </p>
-            <p className="marg-bot-0">
-              { this.state.error }
-            </p>
-          </div>
-          : ""
+          this.state.error && (<ErrorMessage text={ this.state.error } />)
         }
         <div className="status-form marg-bot-1">
           <form onClick={ this.handleClick } onSubmit={ this.handleSubmit }>

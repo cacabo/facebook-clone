@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import axios from 'axios';
 import { connect } from 'react-redux';
 import Login from './Login';
+import ErrorMessage from '../shared/ErrorMessage';
 
 /**
  * Component rendered when the URL entered by a user is not found
@@ -87,16 +88,7 @@ class Search extends React.Component {
             User search suggestions
           </h3>
           {
-            this.state.error && (
-              <div className="alert alert-danger error">
-                <p className="strong marg-bot-1">
-                  There was an error:
-                </p>
-                <p className="marg-bot-0">
-                  { this.state.error }
-                </p>
-              </div>
-            )
+            this.state.error && (<ErrorMessage text={ this.state.error } />)
           }
           {
             this.state.pending ? (

@@ -10,6 +10,7 @@ import NotFound from '../NotFound';
 import Login from '../users/Login';
 import UserPreview from '../newsfeed/UserPreview';
 import moment from 'moment';
+import ErrorMessage from '../shared/ErrorMessage';
 
 /**
  * Render's a user's profile
@@ -461,16 +462,7 @@ class Profile extends React.Component {
                     </p>
                   </div>
                   {
-                    this.state.friendError && (
-                      <div className="alert alert-danger error">
-                        <p className="marg-bot-05 bold">
-                          There was an error:
-                        </p>
-                        <p className="marg-bot-0">
-                          { this.state.friendError }
-                        </p>
-                      </div>
-                    )
+                    this.state.friendError && (<ErrorMessage text={ this.state.friendError } />)
                   }
                   <div className="space-1" />
                   { this.renderButton() }
@@ -500,16 +492,7 @@ class Profile extends React.Component {
                           callback={ this.newStatusCallback }
                         />
                         {
-                          this.state.statusesError && (
-                            <div className="alert alert-danger error">
-                              <p className="bold marg-bot-025">
-                                There was an error:
-                              </p>
-                              <p className="marg-bot-0">
-                                { this.state.statusesError }
-                              </p>
-                            </div>
-                          )
+                          this.state.statusesError && (<ErrorMessage text={ this.state.statusesError } />)
                         }
                         { !this.state.statusesPending ? (this.renderStatuses()) : (<Loading />) }
                         { !this.state.statusesPending && (
@@ -526,16 +509,7 @@ class Profile extends React.Component {
                           Listing all friends
                         </h3>
                         {
-                          this.state.friendsError && (
-                            <div className="alert alert-danger error">
-                              <p className="marg-bot-05 bold">
-                                There was an error:
-                              </p>
-                              <p className="marg-bot-0">
-                                { this.state.friendsError }
-                              </p>
-                            </div>
-                          )
+                          this.state.friendsError && (<ErrorMessage text={ this.state.friendsError } />)
                         }
                         { !this.state.friendsPending ? (this.renderFriends()) : (<Loading />)}
                       </div>

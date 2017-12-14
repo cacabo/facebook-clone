@@ -8,6 +8,7 @@ import Loading from '../shared/Loading';
 import { connect } from 'react-redux';
 import { update } from '../../actions/index';
 import axios from 'axios';
+import ErrorMessage from '../shared/ErrorMessage';
 
 /**
  * Component to render a form to edit a user's profile\
@@ -192,16 +193,7 @@ class EditProfile extends React.Component {
                 Edit profile information
               </h3>
               {
-                this.state.error ?
-                <div className="alert alert-danger error">
-                  <p className="bold marg-bot-025">
-                    There was an error:
-                  </p>
-                  <p className="marg-bot-0">
-                    { this.state.error }
-                  </p>
-                </div>
-                : ""
+                this.state.error && (<ErrorMessage text={ this.state.error } />)
               }
               <form className="line-form" onSubmit={ this.handleSubmit }>
                 <label>

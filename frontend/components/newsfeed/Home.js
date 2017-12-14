@@ -6,6 +6,7 @@ import OnlineNow from './OnlineNow';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import Loading from '../shared/Loading';
+import ErrorMessage from '../shared/ErrorMessage';
 
 /**
  * Component to render a user's newsfeed.
@@ -147,14 +148,7 @@ class Home extends React.Component {
               callback={ this.newStatusCallback }
             />
             { this.state.error && (
-              <div className="alert alert-danger error">
-                <p className="strong marg-bot-05">
-                  There was an error
-                </p>
-                <p className="marg-bot-1">
-                  { this.state.error }
-                </p>
-              </div>
+              <ErrorMessage text={ this.state.error } />
             ) }
             { (this.state.pending && !this.state.error) ? (<Loading />) : (this.renderStatuses()) }
             { !this.state.pending && (
