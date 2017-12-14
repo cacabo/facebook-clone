@@ -5,8 +5,8 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const api = require('./backend/routes');
 const bodyParser = require('body-parser');
-const socket = require('socket.io')();
-socket.listen(8000);
+const io = require('socket.io')();
+io.listen(8000);
 
 // Express sessions configuration
 app.set('trust proxy', 1);
@@ -36,9 +36,9 @@ app.listen(PORT, error => {
 });
 
 // The event will be called when a client is connected. Right when the app opens
-socket.on('connection', (socket) => {
+io.on('connection', (socket) => {
 	console.log('A client just joined on', socket.id);
-	
+
 	socket.on('disconnect', function(){
 	  /*
 	  * TODO remove user from the currentlyOnline table
@@ -61,7 +61,12 @@ socket.on('connection', (socket) => {
 		console.log("Room to receive: " + rooms.roomToReceive);
 		console.log(data);
 
-		socket.broadcast.to(rooms.roomToReceive).emit('invite', data);
+		if (rooms.autoJoin) {
+			console.log("YAYAYAYAYAY");
+			io.in(rooms.roomToReceive).emit('invite', data);
+		} else {
+			socket.broadcast.to(rooms.roomToReceive).emit('invite', data);
+		}
 	});
 
 	// Joins a room

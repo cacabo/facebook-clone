@@ -37,54 +37,76 @@ function sendMessage(message, cb) {
 }
 
 // Invites a user to a room
-function invite(room, chatTitle, username, inviter, cb) {
+function invite(room, roomToReceive, chatTitle, username, inviter, autoJoin, cb) {
 	const params = {
-		autoJoin: false,
+		autoJoin: autoJoin,
 		sender: inviter,
-		roomToReceive: username + 'inviteRoom',
+		roomToReceive: roomToReceive,
 		roomToJoin: room,
 		chatTitle: chatTitle,
 		users: [],
 	};
 
 	socket.emit('invite', JSON.stringify(params));
-	cb(true);
+	cb();
 }
 
 // Joins a room
 function joinRoom(room, cb) {
-	axios.get('/api/chat/' + room )
-	.then(checkData => {
-		console.log("Reached joinRoom socketrouter.js");
-        // If success is true, user has invited already
-        if(checkData.data.success === true) {
-        	// console.log("sdfsdffdssdf " + checkData.data.data.numUsers);
 
-        	// if (checkData.data.data.numUsers >= 3) {
-        	// 	console.log("Successss");
+	socket.emit('joinRoom', room);
 
-        	// 	const params = {
-        	// 		autoJoin: true,
-        	// 		roomToReceive: room,
-        	// 		roomToJoin: uuid(),
-        	// 		chatTitle: checkData.data.data.chatTitle + " (" + checkData.data.data.numUsers + ")",
-        	// 	};
 
-        	// 	console.log("PARAMS ");
-        	// 	console.log(params);
 
-        	// 	socket.emit('invite', JSON.stringify(params));
 
-        	// } else {
-        		socket.emit('joinRoom', room);
-        	// }
-        } else {
-        	console.log("Failed to get chat");
-        }
-    })
-	.catch(err => {
-		console.log(err);
-	});
+	// axios.get('/api/chat/' + room )
+	// .then(checkData => {
+	// 	console.log("Reached joinRoom socketrouter.js");
+ //        // If success is true, user has invited already
+ //        if(checkData.data.success === true) {
+ //        	console.log("sdfsdffdssdf " + checkData.data.data.numUsers);
+
+ //        	// automatically creates new chat for 3 people when 1 join 2
+ //        	if (autoJoin && checkData.data.data.numUsers == 3) {
+ //        		console.log("Successss");
+
+ //        		const newRoomID = uuid();
+ //        		const params = {
+ //        			autoJoin: true,
+ //        			roomToReceive: room,
+ //        			roomToJoin: newRoomID,
+ //        			chatTitle: checkData.data.data.chatTitle + " (" + checkData.data.data.numUsers + ")",
+ //        		};
+
+ //        		console.log("PARAMS ");
+ //        		console.log(params);
+
+
+ //        		// Creates and puts a new chat in the database
+	// 		    axios.post('/api/chat/' + newRoomID + '/title/' + params.chatTitle + '/new')
+	// 		    .then((chatData) => {
+	// 		      if (chatData.data.success) {
+	// 		        console.log("Successfully created chat object: " + params.chatTitle);
+	// 		        socket.emit('invite', JSON.stringify(params));
+	// 		      } else {
+	// 		          // There was an error creating a new message
+	// 		          console.log(chatData.data.err);
+	// 		        }
+	// 		      })
+	// 		    .catch(chatErr => {
+	// 		      console.log(chatErr);
+	// 		    });
+
+ //        	} else {
+ //        		socket.emit('joinRoom', room);
+ //        	}
+ //        } else {
+ //        	console.log("Failed to get chat");
+ //        }
+ //    })
+	// .catch(err => {
+	// 	console.log(err);
+	// });
 }
 
 

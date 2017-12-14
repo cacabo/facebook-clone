@@ -156,7 +156,7 @@ class Chat extends React.Component {
             // TODO will need to check if person you are inviting is a friend first
             // Parameters: chat id, user we want to invite, current user, cb
             // Does the invite over socket
-            invite(this.props.match.params.id, this.props.match.params.chatTitle, this.state.currentInvite, this.state.currentUser, () => {
+            invite(this.props.match.params.id, this.state.currentInvite + 'inviteRoom', this.props.match.params.chatTitle, this.state.currentInvite, this.state.currentUser, false, () => {
                 console.log("Invite successful");
             });
           } else {
