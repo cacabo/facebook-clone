@@ -18,10 +18,7 @@ import moment from 'moment';
  * Information about the user (bio, interests, friend count, etc.) to left
  * List of posts and ability to write on their wall to the right / middle
  *
- * TODO handle errors
  * TODO render user statuses
- * TODO birthday
- * TODO link to users with same affiliation
  * TODO network visualizer
  */
 class Profile extends React.Component {
@@ -214,10 +211,10 @@ class Profile extends React.Component {
         });
       })
       .catch(err => {
-        /**
-         * TODO
-         */
-        console.log(err);
+        // If there was an error pulling the new status
+        this.setState({
+          statusError: err,
+        });
       });
   }
 

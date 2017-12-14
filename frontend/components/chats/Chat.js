@@ -2,17 +2,15 @@ import React from 'react';
 import autosize from 'autosize';
 import Chats from './Chats';
 import uuid from 'uuid-v4';
-import SocketIOClient from 'socket.io-client';
 import { subscribeToMessages } from './socketrouter';
 import { sendMessage } from './socketrouter';
 import { invite } from './socketrouter';
 import { connect } from 'react-redux';
 import { joinRoom } from './socketrouter';
+import PropTypes from 'prop-types';
 
 /**
  * Component to render one of a user's group chats.
- *
- * TODO replace dummy data
  * TODO pass down ID of the current user
  */
 class Chat extends React.Component {
@@ -26,11 +24,12 @@ class Chat extends React.Component {
       currentUser: this.props.username,
       messages: [],
       users: [],
-    } 
+    };
 
     console.log("Current User " + this.state.currentUser);
+
     // Everyone is part of a room for receving invitations
-    joinRoom(this.state.currentUser + 'inviteRoom', function(success) {})
+    joinRoom(this.state.currentUser + 'inviteRoom', () => {});
 
     // Bind this to helper methods
     this.handleChangeMessage = this.handleChangeMessage.bind(this);
@@ -40,19 +39,22 @@ class Chat extends React.Component {
 
   // Autosize the text area to fit the text that's pasted into it
   componentDidMount() {
-    autosize(document.querySelectorAll('textarea')); 
+    autosize(document.querySelectorAll('textarea'));
 
     // Listens for new messages received
-    subscribeToMessages((message) => this.setState((prevState, props) => {
-        console.log("received message: " + message)
-        const messageInfo = JSON.parse(message);
+    subscribeToMessages((message) => this.setState(() => {
+      console.log("received message: " + message);
+      const messageInfo = JSON.parse(message);
 
-        if (messageInfo.room == this.props.match.params.id) {
-          let oldMessage = this.state.messages;
-          oldMessage.push(messageInfo);
-          return {messages: oldMessage}
-        }
-    }));   
+      if (messageInfo.room === this.props.match.params.id) {
+        const oldMessage = this.state.messages;
+        oldMessage.push(messageInfo);
+        return { messages: oldMessage };
+      }
+
+      // If nothing was returned yet
+      return null;
+    }));
   }
 
   // Helper method to handle a change to state
@@ -62,9 +64,13 @@ class Chat extends React.Component {
     });
   }
 
-  // Does socket sending here. Append this to own message list. 
+  // Does socket sending here. Append this to own message list.
   handleSubmit(event) {
-    const messageToSend = this.state.message; //have to do this.state not this alone
+    // Prevent the default action
+    event.preventDefault();
+
+    // Find the value of the message to be sent
+    const messageToSend = this.state.message;
 
     console.log("Current Room from send: " + this.props.match.params.id);
     console.log("Chat ID: " + this.props.match.params.id);
@@ -78,13 +84,13 @@ class Chat extends React.Component {
 
     sendMessage(JSON.stringify(messageParams), (success) => {
       if (success) {
-        this.setState((prevState, props) => {
-          let oldMessage = this.state.messages;
+        this.setState(() => {
+          const oldMessage = this.state.messages;
           oldMessage.push(messageParams);
           return {
             messages: oldMessage,
-            message: ""
-          }
+            message: "",
+          };
         });
       } else {
         /**
@@ -94,11 +100,11 @@ class Chat extends React.Component {
     });
   }
 
-  handleInvite(event) {
+  handleInvite() {
     // TODO will need to check if person you are inviting is a friend first
     // Parameters: chat id, user we want to invite, current user, cb
     invite(this.props.match.params.id, 'victor', this.state.currentUser, () => {
-        console.log("Invite successful");
+      console.log("Invite successful");
     });
   }
 
@@ -157,13 +163,18 @@ class Chat extends React.Component {
           />
         </form>
         <button className="btn btn-gray"
-            onClick={ this.handleInvite } >
-            Invite
+          onClick={ this.handleInvite } >
+          Invite
         </button>
       </Chats>
     );
   }
 }
+
+Chat.propTypes = {
+  username: PropTypes.string,
+  match: PropTypes.obj,
+};
 
 const mapStateToProps = (state) => {
   return {

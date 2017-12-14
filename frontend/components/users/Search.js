@@ -18,6 +18,7 @@ class Search extends React.Component {
     // Set the state
     this.state = {
       pending: true,
+      error: "",
       users: [],
     };
   }
@@ -31,23 +32,18 @@ class Search extends React.Component {
           this.setState({
             users: res.data.data,
             pending: false,
+            error: "",
           });
         } else {
-          /**
-           * TODO handle this
-           */
-          console.log(res.data.error);
           this.setState({
+            error: "Error fetching users.",
             pending: false,
           });
         }
       })
       .catch(err => {
-        /**
-         * TODO handle this
-         */
-        console.log(err);
         this.setState({
+          error: err,
           pending: false,
         });
       });
@@ -90,6 +86,18 @@ class Search extends React.Component {
           <h3 className="bold marg-bot-1">
             User search suggestions
           </h3>
+          {
+            this.state.error && (
+              <div className="alert alert-danger error">
+                <p className="strong marg-bot-1">
+                  There was an error:
+                </p>
+                <p className="marg-bot-0">
+                  { this.state.error }
+                </p>
+              </div>
+            )
+          }
           {
             this.state.pending ? (
               <Loading />

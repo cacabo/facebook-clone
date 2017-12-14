@@ -91,9 +91,6 @@ router.get('/users/search/:prefix/', (req, res) => {
 
 /**
  * Get all statuses
- * NOTE this likely is not userful though can be used to start off before we
- * have more targetted database methods
- * TODO test that this works
  */
 router.get('/statuses', (req, res) => {
   // Find all statuses in the database
