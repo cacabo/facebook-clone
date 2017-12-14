@@ -680,8 +680,8 @@ router.post('/users/:inviter/chats/:roomID/invite/:receiver', (req, res) => {
   const sender = req.params.inviter;
   const receiver = req.params.receiver;
   const room = req.params.roomID;
-  
-  // Create an invite with sender, receiver, and room        
+
+  // Create an invite with sender, receiver, and room
   db.createInvite(sender, receiver, room, (data, err) => {
     if (err) {
       res.send({

@@ -36,6 +36,12 @@
         }
       }
 
+      .about {
+        color: $gray;
+        font-weight: normal;
+        text-transform: lowercase !important;
+      }
+
       .timestamp {
         margin-top: 0rem;
         font-weight: normal;
@@ -43,6 +49,10 @@
         text-align: left;
       }
     }
+  }
+
+  .friendship {
+    padding: 0rem 30%;
   }
 
   .text {

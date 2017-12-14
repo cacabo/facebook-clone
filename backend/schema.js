@@ -94,7 +94,7 @@ const Status = vogels.define("Status", {
   schema: {
     id: Joi.string(),
     image: Joi.string().allow(null).allow("").optional(),
-    content: Joi.string(),
+    content: Joi.string().allow(null).allow("").optional(),
     user: Joi.string(),
     receiver: Joi.string().allow(null).allow("").optional(),
     likesCount: Joi.number(),
