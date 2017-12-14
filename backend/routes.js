@@ -9,6 +9,25 @@ const db = require('./database.js');
  */
 
 /**
+ * Render mapreduce data
+ */
+router.get('/mapreduce', (req, res) => {
+  db.getData((data, err) => {
+    if (err || !data) {
+      res.send({
+        success: false,
+        error: err,
+      });
+    } else {
+      res.send({
+        success: true,
+        data: data,
+      });
+    }
+  });
+});
+
+/**
  * Denote that the API is up and running
  */
 router.get('/', (req, res) => {
