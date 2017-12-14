@@ -237,6 +237,8 @@ function getUserStatuses(username, callback) {
     delete userObj.interests;
     delete userObj.bio;
     delete userObj.coverPhoto;
+    delete userObj.birthday;
+    delete userObj.createdAt;
 
     // Else, query for the statuses
     Status
@@ -253,15 +255,20 @@ function getUserStatuses(username, callback) {
             return status;
           });
 
+          console.log('ALL STATUSES');
+          console.log(statuses);
+
           // Get the recipient name
           async.each(statuses, (status, keysCallback) => {
             if (status.receiver) {
+              console.log("HAS RECEIVER");
+              console.log(status);
               User.get(status.receiver, (receiverErr, receiverData) => {
                 if (receiverErr || !receiverData) {
                   callback(receiverErr, null);
                 } else {
                   // Find the user object
-                  const receiverObj = userData.attrs;
+                  const receiverObj = receiverData.attrs;
 
                   // Delete unneeded info
                   delete receiverObj.password;
@@ -269,6 +276,8 @@ function getUserStatuses(username, callback) {
                   delete receiverObj.interests;
                   delete receiverObj.bio;
                   delete receiverObj.coverPhoto;
+                  delete receiverObj.birthday;
+                  delete receiverObj.createdAt;
 
                   // Update the status object
                   status.receiverData = receiverObj;
