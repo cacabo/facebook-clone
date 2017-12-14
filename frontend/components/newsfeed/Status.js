@@ -35,6 +35,7 @@ class Status extends React.Component {
       comment: "",
       commentError: "",
       isNew: this.props.isNew,
+      type: this.props.type,
     };
 
     // Bind this to helper functions
@@ -291,7 +292,16 @@ class Status extends React.Component {
               <Link to={ "/users/" + this.props.user }>
                 { this.props.userData.name }
               </Link>
-              { this.props.receiver && (<i className="fa fa-caret-right" />) }
+              {
+                (this.props.receiver && this.props.type === "STATUS") &&
+                (<i className="fa fa-caret-right" />)
+              }
+              {
+                (this.props.type === "FRIENDSHIP") &&
+                <span className="about">
+                  &nbsp;became friends with&nbsp;
+                </span>
+              }
               { this.props.receiver && (
                 <Link to={ "/users/" + this.props.receiver }>
                   { this.props.receiverData.name }
@@ -304,9 +314,14 @@ class Status extends React.Component {
             </p>
           </div>
         </div>
-        <p className="marg-bot-0 text">
-          { this.props.content }
-        </p>
+        {
+          this.props.content && (<p className="marg-bot-0 text">
+            { this.props.content }
+          </p>)
+        }
+        {
+          (this.props.type === "FRIENDSHIP") && (<img alt="friendship" className="friendship img-fluid" src="https://s3.amazonaws.com/nets-final-project-assets/fitsbump.svg" />)
+        }
         { this.props.image ? <img alt={ this.props.content } src={ this.props.image } className="img-fluid image" /> : "" }
         <div className="interact">
           <div className="like" onClick={ this.likeOnClick }>
@@ -372,6 +387,7 @@ Status.propTypes = {
   receiverData: PropTypes.object,
   id: PropTypes.string,
   isNew: PropTypes.bool,
+  type: PropTypes.string,
 };
 
 const mapStateToProps = (state) => {
