@@ -1,6 +1,7 @@
 // Import the user table
-const { User, Affiliation, Interest } = require('./schema.js');
+const { User, Affiliation, Interest, Status } = require('./schema.js');
 const async = require('async');
+const uuid = require('uuid');
 
 /**
  * Get a user with the specified username
@@ -203,9 +204,12 @@ function updateUser(updatedUser, callback) {
       // Isolate the old user object
       const oldUser = oldUserData.attrs;
 
-      // Also save the old affiliation and interests
+      // Also save the old information
       const oldAffiliation = oldUser.affiliation;
       const oldInterests = oldUser.interests;
+      const oldProfilePicture = oldUser.profilePicture;
+      const oldCoverPhoto = oldUser.coverPhoto;
+      const oldBio = oldUser.bio;
 
       // Update the user's fields
       oldUser.name = updatedUser.name.toLowerCase();
@@ -232,8 +236,63 @@ function updateUser(updatedUser, callback) {
                   // If there was an error adding the interests to the array
                   callback(null, interestsErr);
                 } else {
-                  // If everything went as planned
-                  callback(updatedData, null);
+                  // Object for statuses to be added
+                  const statuses = [];
+
+                  // Compare changes in profile picture
+                  if (oldUser.profilePicture !== oldProfilePicture && oldUser.profilePicture) {
+                    const status = {
+                      id: uuid(),
+                      image: oldUser.profilePicture,
+                      content: "",
+                      user: oldUser.username,
+                      receiver: null,
+                      likesCount: 0,
+                      commentsCount: 0,
+                      type: "UPDATE_PROFILE_PICTURE",
+                    };
+                    statuses.push(status);
+                  }
+
+                  // Compare changes in cover photo
+                  if (oldUser.coverPhoto !== oldCoverPhoto && oldUser.coverPhoto) {
+                    const status = {
+                      id: uuid(),
+                      image: oldUser.coverPhoto,
+                      content: "",
+                      user: oldUser.username,
+                      receiver: null,
+                      likesCount: 0,
+                      commentsCount: 0,
+                      type: "UPDATE_COVER_PHOTO",
+                    };
+                    statuses.push(status);
+                  }
+
+                  // Compare changes in bio
+                  if (oldUser.bio !== oldBio) {
+                    const status = {
+                      id: uuid(),
+                      image: "",
+                      content: oldUser.bio,
+                      user: oldUser.username,
+                      receiver: null,
+                      likesCount: 0,
+                      commentsCount: 0,
+                      type: "UPDATE_BIO",
+                    };
+                    statuses.push(status);
+                  }
+
+                  // Create the statuses in the database
+                  Status.create(statuses, (statusErr, statusData) => {
+                    if (statusErr || !statusData) {
+                      callback(null, "Failed to post related statuses.");
+                    } else {
+                      // If everything went as planned
+                      callback(updatedData, null);
+                    }
+                  });
                 }
               });
             }

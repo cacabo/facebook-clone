@@ -297,10 +297,32 @@ class Status extends React.Component {
                 (<i className="fa fa-caret-right" />)
               }
               {
-                (this.props.type === "FRIENDSHIP") &&
-                <span className="about">
-                  &nbsp;became friends with&nbsp;
-                </span>
+                (this.props.type === "UPDATE_PROFILE_PICTURE") && (
+                  <span className="about">
+                    &nbsp;updated their profile picture.
+                  </span>
+                )
+              }
+              {
+                (this.props.type === "UPDATE_COVER_PHOTO") && (
+                  <span className="about">
+                    &nbsp;updated their cover photo.
+                  </span>
+                )
+              }
+              {
+                (this.props.type === "UPDATE_BIO") && (
+                  <span className="about">
+                    &nbsp;updated their bio.
+                  </span>
+                )
+              }
+              {
+                (this.props.type === "FRIENDSHIP") && (
+                  <span className="about">
+                    &nbsp;became friends with&nbsp;
+                  </span>
+                )
               }
               { this.props.receiver && (
                 <Link to={ "/users/" + this.props.receiver }>
@@ -315,9 +337,11 @@ class Status extends React.Component {
           </div>
         </div>
         {
-          this.props.content && (<p className="marg-bot-0 text">
-            { this.props.content }
-          </p>)
+          this.props.content && (
+            <p className={ this.props.type === "UPDATE_BIO" ? ("marg-bot-0 text bio") : ("marg-bot-0 text") }>
+              { this.props.content }
+            </p>
+          )
         }
         {
           (this.props.type === "FRIENDSHIP") && (<img alt="friendship" className="friendship img-fluid" src="https://s3.amazonaws.com/nets-final-project-assets/fitsbump.svg" />)

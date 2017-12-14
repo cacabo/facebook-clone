@@ -298,6 +298,9 @@ function getUserStatuses(username, callback) {
   });
 }
 
+/**
+ * Get all statuses relating to a specific user
+ */
 function getUserFeed(user, callback) {
   if (!user) {
     callback(null, "User is null.");
