@@ -46,7 +46,34 @@ function getAffiliations(callback) {
     if (err) {
       callback(null, err.message);
     } else {
-      callback(data.Items, null);
+      const affiliationGroups = {};
+      data.Items.map(item => {
+        const existing = affiliationGroups[item.attrs.affiliation];
+        if (!existing) {
+          affiliationGroups[item.attrs.affiliation] = [item.attrs.username];
+        } else {
+          affiliationGroups[item.attrs.affiliation].push(item.attrs.username);
+        }
+      });
+      const affiliations = Object.keys(affiliationGroups);
+      const userMap = {};
+      affiliations.map(affiliation => {
+        const users = affiliationGroups[affiliation];
+        if (users.length > 1) {
+          users.map(user1 => {
+            users.map(user2 => {
+              if (user1 !== user2) {
+                if (user1 < user2) {
+                  userMap[user1 + "," + user2] = true;
+                } else {
+                  userMap[user2 + "," + user1] = true;
+                }
+              }
+            });
+          });
+        }
+      });
+      callback(userMap, null);
     }
   });
 }

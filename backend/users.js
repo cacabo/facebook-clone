@@ -270,7 +270,7 @@ function updateUser(updatedUser, callback) {
                   }
 
                   // Compare changes in bio
-                  if (oldUser.bio !== oldBio) {
+                  if (oldUser.bio !== oldBio && oldUser.bio) {
                     const status = {
                       id: uuid(),
                       image: "",
