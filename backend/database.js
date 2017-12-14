@@ -7,6 +7,7 @@ const invites = require('./invites');
 const messages = require('./messages');
 const userChatRelationship = require('./userChatRelationship');
 const friendships = require('./friendships');
+const friendvisualizer = require('./friendvisualizer');
 
 // Create the database object to export
 const database = {
@@ -36,6 +37,7 @@ const database = {
   createUserChatRelationship: userChatRelationship.createUserChatRelationship,
   getMessages: messages.getMessages,
   createMessage: messages.createMessage,
+  getVisualizer: friendvisualizer.getVisualizer,
 };
 
 module.exports = database;
