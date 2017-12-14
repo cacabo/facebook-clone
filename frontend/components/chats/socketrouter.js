@@ -2,7 +2,7 @@
 import axios from 'axios';
 import openSocket from 'socket.io-client';
 const  socket = openSocket('http://localhost:8000');
-
+const uuid = require('uuid-v4');
 
 
 // Listens to messages
@@ -17,6 +17,9 @@ function subscribeToMessages(cb) {
 function subscribeToInvitations(username, cb) {
 	// User is part of a specialized room for receving invitations
 	socket.emit('joinRoom', username + 'inviteRoom');
+
+
+	console.log("Received Invite");
 
 	socket.on('invite', (data) => {
 		cb(data);
@@ -36,6 +39,7 @@ function sendMessage(message, cb) {
 // Invites a user to a room
 function invite(room, chatTitle, username, inviter, cb) {
 	const params = {
+		autoJoin: false,
 		sender: inviter,
 		roomToReceive: username + 'inviteRoom',
 		roomToJoin: room,
@@ -51,31 +55,33 @@ function invite(room, chatTitle, username, inviter, cb) {
 function joinRoom(room, cb) {
 	axios.get('/api/chat/' + room )
 	.then(checkData => {
+		console.log("Reached joinRoom socketrouter.js");
         // If success is true, user has invited already
         if(checkData.data.success === true) {
-        	if (checkData.data.numUsers == 2) {
-        		console.log("SUCCCEEEEEE");
-				/**
-				 * TODO create new room and invite users to join. Must also join yourself
-				 * Special invites where they automatically join
-				 */
-				 const params = {
-				 	sender: inviter,
-				 	roomToReceive: username + 'inviteRoom',
-				 	roomToJoin: room,
-				 	chatTitle: chatTitle,
-				 	users: [],
-				 };
+        	// console.log("sdfsdffdssdf " + checkData.data.data.numUsers);
 
-				 socket.emit('invite', JSON.stringify(params));
+        	// if (checkData.data.data.numUsers >= 3) {
+        	// 	console.log("Successss");
 
-				} else {
-					socket.emit('joinRoom', room);
-				}
-			} else {
-				console.log("Failed to get chat");
-			}
-		})
+        	// 	const params = {
+        	// 		autoJoin: true,
+        	// 		roomToReceive: room,
+        	// 		roomToJoin: uuid(),
+        	// 		chatTitle: checkData.data.data.chatTitle + " (" + checkData.data.data.numUsers + ")",
+        	// 	};
+
+        	// 	console.log("PARAMS ");
+        	// 	console.log(params);
+
+        	// 	socket.emit('invite', JSON.stringify(params));
+
+        	// } else {
+        		socket.emit('joinRoom', room);
+        	// }
+        } else {
+        	console.log("Failed to get chat");
+        }
+    })
 	.catch(err => {
 		console.log(err);
 	});

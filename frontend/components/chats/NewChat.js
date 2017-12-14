@@ -57,12 +57,12 @@ class NewChat extends React.Component {
 
     const roomID = uuid();
 
-    // Creates and puts a new user chat realtionship in the database
+    // Creates and puts a new user chat relationship in the database
     axios.post('/api/users/' + this.props.username + '/chats/' + roomID +'/newUserChatRelationship/' + this.state.chatTitle)
     .then((chatData) => {
       if (chatData.data.success) {
         console.log("Successfully created chat: " + this.state.chatTitle);
-        joinRoom(this.state.currentInvitation.roomToJoin, [], () => {});
+        joinRoom(roomID, [], () => {});
       } else {
           // There was an error creating a new message
           console.log(chatData.data.err);

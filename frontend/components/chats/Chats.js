@@ -22,11 +22,14 @@ import { joinRoom } from './socketrouter';
     this.state = {
        currentInvitation: '',
        chats: [],
+       loaded: false,
     };
 
+    this.handleInvite = this.handleInvite.bind(this);
     this.confirmInvite = this.confirmInvite.bind(this);
     this.getInvites = this.getInvites.bind(this);
     this.getChats = this.getChats.bind(this);
+    this.checkIfChatExists = this.checkIfChatExists.bind(this);
   }
 
   componentDidMount() {
@@ -35,20 +38,43 @@ import { joinRoom } from './socketrouter';
     subscribeToInvitations(this.props.username, (data) => {
       const invitationData = JSON.parse(data);
       console.log("invited to join " + invitationData.roomToJoin);
-      this.setState({
-        currentInvitation: invitationData
-      })
-      console.log("received invitation!!!");
+
+      //if have not been invited yet
+      if (!this.checkIfChatExists(invitationData.roomToJoin)) {
+        this.setState({
+          currentInvitation: invitationData
+        })
+
+        if (this.state.currentInvitation.autoJoin === true) {
+          console.log("AUTO JOIN");
+          confirmInvite();
+        }      
+        console.log("received invitation!!!");
+      }
     });
 
     // Render chats
-    // This should be called whenever we receive a new socket room invitation so we can reload
-    // Only call this when accept an invite.
     this.getChats();
   }
 
+  // Handles button acceptance
+  handleInvite(event) {
+    this.confirmInvite(this.state.currentInvitation.roomToJoin);
+  }
+
+  // Prevents joining multiple times
+  checkIfChatExists(roomToCheck) {
+    var proceedWithConfirmation = false;
+    for (var i = 0; i < this.state.chats.length; i++) {
+      if (this.state.chats[i].room == roomToCheck) {
+        proceedWithConfirmation = true;
+      }
+    }
+    return proceedWithConfirmation;
+  }
+
   // Accepts an invitation when invitation received
-  confirmInvite(event) {
+  confirmInvite() {
     if (this.state.currentInvitation) {
       // Creates a new user chat realtionship
       if (this.state.currentInvitation.roomToJoin) {    
@@ -56,11 +82,25 @@ import { joinRoom } from './socketrouter';
           + '/newUserChatRelationship/' + this.state.currentInvitation.chatTitle)
         .then((chatData) => {
           if (chatData.data.success) {
-            console.log("joined roommm " + this.state.currentInvitation.chatTitle);
-            joinRoom(this.state.currentInvitation.roomToJoin, [], () => {});
 
-            // Reloads chats
-            this.getChats();
+             // Increments the user count of chat in table
+            axios.post('/api/chat/' + this.state.currentInvitation.roomToJoin + '/updateCount/' + 1)
+            .then(checkData => {
+                // If success is true, user has incremented chat user count already
+                if(checkData.data.success === true) {
+                  console.log("joined roommm " + this.state.currentInvitation.chatTitle);
+                  joinRoom(this.state.currentInvitation.roomToJoin, [], () => {});
+                  // Reloads chats
+                  this.getChats();
+                  console.log("Successefully incremented chat user count");
+                } else {
+                  console.log("Failed to increment user count");
+                }
+              })
+            .catch(err => {
+              console.log(err);
+            });
+            
           } else {
               // There was an error creating a new chat relationship
               console.log(chatData.data.err);
@@ -70,22 +110,6 @@ import { joinRoom } from './socketrouter';
           console.log(chatErr);
         });
       }
-
-      // Increments the user count of chat in table
-      axios.post('/api/chat/' + this.state.currentInvitation.roomToJoin + '/updateCount/' + 1)
-      .then(checkData => {
-        console.log("Here");
-
-          // If success is true, user has incremented chat user count already
-          if(checkData.data.success === true) {
-            console.log("Successefully incremented chat user count");
-          } else {
-            console.log("Failed to increment user count");
-          }
-        })
-      .catch(err => {
-        console.log(err);
-      });
 
       // Deletes the invite from the table once user accepts it
       axios.post('/api/users/' + this.props.username + '/chats/' + this.state.currentInvitation.roomToJoin + '/deleteInvite')
@@ -136,6 +160,20 @@ import { joinRoom } from './socketrouter';
           this.setState({
             chats: checkData.data.data
           });
+
+          console.log(this.state.chats);
+
+          //Joins all of users chats - run this once when loading
+          if (!this.state.loaded) {
+            for (var i = 0; i < this.state.chats.length; i++) {
+              const tempChat = this.state.chats[i];
+              joinRoom(tempChat.room, [], () => {});
+            }
+
+            this.setState({
+              loaded: true
+            })
+          }
         } else {
           console.log("Failed to get chats");
         }
@@ -175,7 +213,7 @@ import { joinRoom } from './socketrouter';
       { this.props.children }
       </div>
       <button className="btn btn-gray"
-      onClick={ this.confirmInvite }> 
+      onClick={ this.handleInvite }> 
       Accept 
       </button>
       <div> invited to join: { this.state.currentInvitation.chatTitle } </div>

@@ -62,12 +62,10 @@ function getChat(room, callback) {
 }
 
 /**
- * Update a user based on the passed in information
- * TODO error checking
+ * Update a chat based on the passed in information
  */
 function updateChat(updatedChat, callback) {
   // Find the room from the updated chat object
-  // const room = updatedChat.room;
   // Put the updated user into the database
   Chat.update(updatedChat, (updateErr, updatedData) => {
     if (updateErr || !updatedData) {

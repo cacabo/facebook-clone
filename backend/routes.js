@@ -804,8 +804,8 @@ router.post('/chat/:room/updateCount/:incrementor', (req, res) => {
   const incrementor = req.params.incrementor;
 
   // Get all chats of a user using username
-  db.getChat(room, (chataData, err) => {
-    if (err || !chataData) {
+  db.getChat(room, (chatData, err) => {
+    if (err || !chatData) {
       res.send({
         success: false,
         err: err,
@@ -813,9 +813,9 @@ router.post('/chat/:room/updateCount/:incrementor', (req, res) => {
     } else {
       // Update the chat to contain the information we want
       const newChat = {
-        chatTitle: chataData.attrs.chatTitle,
+        chatTitle: chatData.attrs.chatTitle,
         room: room,
-        numUsers: chataData.attrs.numUsers + incrementor,
+        numUsers: Number(chatData.attrs.numUsers) + Number(incrementor),
       };
 
       // Send the object to the database

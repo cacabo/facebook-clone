@@ -38,9 +38,12 @@ app.listen(PORT, error => {
 // The event will be called when a client is connected. Right when the app opens
 socket.on('connection', (socket) => {
 	console.log('A client just joined on', socket.id);
-	/**
-	 * TODO pull from database all chats pertaining to user and connect to them here
-	 */
+	
+	socket.on('disconnect', function(){
+	  /*
+	  * TODO remove user from the currentlyOnline table
+	  */	  
+	});
 
 	// Listens for new messages
 	socket.on('message', (message) => {
@@ -71,12 +74,5 @@ socket.on('connection', (socket) => {
 	socket.on('leaveRoom', (room) => {
 		socket.broadcast.to(room).emit('message', "left room");
 		socket.leave(room);
-	});
-
-	// For creating a new room when third person joins
-	socket.on('autoJoin', (currentRoom, newRoom) => {
-		socket.join(room);
-		socket.in(currentRoom).emit('autoJoin', newRoom);
-		console.log("auto joined room " + room);
 	});
 });

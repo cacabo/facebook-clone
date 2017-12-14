@@ -56,6 +56,7 @@ class Chat extends React.Component {
           this.setState({
             messages: checkData.data.data
           });
+          console.log(this.state.messages);
         } else {
             console.log("Failed to get messages");
         }
@@ -111,7 +112,7 @@ class Chat extends React.Component {
           console.log("Successfully created a new message: " + messageToSend);
 
           const messageParams = {
-            user: this.state.currentUser,
+            username: this.state.currentUser,
             body: messageToSend,
             room: this.props.match.params.id
           };
@@ -177,7 +178,7 @@ class Chat extends React.Component {
   renderMessages() {
     return this.state.messages.map(m => {
       // If the message belongs to the logged in user
-      if (this.state.currentUser === m.user) {
+      if (this.state.currentUser === m.username) {
         return (
           <div className="message-wrapper current-user" key={ uuid() }>
             <div className="message">
