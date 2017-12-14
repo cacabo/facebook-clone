@@ -255,14 +255,9 @@ function getUserStatuses(username, callback) {
             return status;
           });
 
-          console.log('ALL STATUSES');
-          console.log(statuses);
-
           // Get the recipient name
           async.each(statuses, (status, keysCallback) => {
             if (status.receiver) {
-              console.log("HAS RECEIVER");
-              console.log(status);
               User.get(status.receiver, (receiverErr, receiverData) => {
                 if (receiverErr || !receiverData) {
                   callback(null, receiverErr.message);

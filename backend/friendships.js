@@ -149,7 +149,6 @@ function getFriendships(user, callback) {
                 (a && a.name) ? (a.name.localeCompare(b.name)) : (-1)
               ));
 
-              console.log(friendships);
               // Return the friends to the user
               callback(friendships, err);
             }
