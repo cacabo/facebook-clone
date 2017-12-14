@@ -6,6 +6,7 @@ const comments = require('./comments');
 const invites = require('./invites');
 const messages = require('./messages');
 const userChatRelationship = require('./userChatRelationship');
+const chats = require('./chats');
 const friendships = require('./friendships');
 
 // Create the database object to export
@@ -30,6 +31,9 @@ const database = {
   createInvite: invites.createInvite,
   getInvites: invites.getInvites,
   deleteInvite: invites.deleteInvite,
+  createChat: chats.createChat,
+  getChat: chats.getChat,
+  updateChat: chats.updateChat,
   getChats: userChatRelationship.getChats,
   createUserChatRelationship : userChatRelationship.createUserChatRelationship,
   getMessages: messages.getMessages,

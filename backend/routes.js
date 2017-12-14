@@ -750,6 +750,95 @@ router.post('/users/:username/chats/:roomID/newMessage/:message', (req, res) => 
 });
 
 /**
+ * Gets a chat associated with a room
+ */
+router.get('/chat/:room', (req, res) => {
+  const room = req.params.room;
+
+  // Get all chats of a user using username
+  db.getChat(room, (data, err) => {
+    if (err || !data) {
+      res.send({
+        success: false,
+        err: err,
+      });
+    } else {
+      res.send({
+        success: true,
+        data: data
+      });
+    }
+  });
+});
+
+/**
+ * Creates a chat
+ */
+router.post('/chat/:room/title/:chatTitle/new', (req, res) => {
+  console.log("HEYYYY");
+  const room = req.params.room;
+  const title = req.params.chatTitle;
+
+  console.log("THE TITLE" + title);
+
+  // Creates a user chat relationship
+  db.createChat(title, room, (success, err) => {
+    if (err || !success) {
+      res.send({
+        success: false,
+        err: err,
+      });
+    } else {
+      res.send({
+        success: true,
+      });
+    }
+  });
+});
+
+/**
+ * Update chat user count
+ */
+router.post('/chat/:room/updateCount/:incrementor', (req, res) => {
+  const room = req.params.room;
+  const incrementor = req.params.incrementor;
+
+  // Get all chats of a user using username
+  db.getChat(room, (chataData, err) => {
+    if (err || !chataData) {
+      res.send({
+        success: false,
+        err: err,
+      });
+    } else {
+      // Update the chat to contain the information we want
+      const newChat = {
+        chatTitle: chataData.attrs.chatTitle,
+        room: room,
+        numUsers: chataData.attrs.numUsers + incrementor,
+      };
+
+      // Send the object to the database
+      db.updateChat(newChat, (data, err) => {
+        if (err) {
+          // If there was an error updating
+          res.send({
+            success: false,
+            error: err,
+          });
+        } else {
+          // If the update was successful
+          res.send({
+            success: true,
+            data: data,
+          });
+        }
+      });
+    }
+  });
+});
+
+/**
  * Gets all chats for a user
  */
 router.get('/users/:username/chats', (req, res) => {

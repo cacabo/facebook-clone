@@ -55,11 +55,9 @@ socket.on('connection', (socket) => {
 	socket.on('invite', (data) => {
 		const rooms = JSON.parse(data);
 
-		// Below is temporary for testing purposes since will have to already be part of a room to invite someone.
-		socket.join(rooms.roomToJoin);
-
 		console.log("Room to receive: " + rooms.roomToReceive);
 		console.log(data);
+
 		socket.broadcast.to(rooms.roomToReceive).emit('invite', data);
 	});
 
@@ -76,9 +74,9 @@ socket.on('connection', (socket) => {
 	});
 
 	// For creating a new room when third person joins
-	socket.on('autoJoin', (data) => {
-		const rooms = JSON.parse(data);
+	socket.on('autoJoin', (currentRoom, newRoom) => {
 		socket.join(room);
+		socket.in(currentRoom).emit('autoJoin', newRoom);
 		console.log("auto joined room " + room);
 	});
 });

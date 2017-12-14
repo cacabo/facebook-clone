@@ -49,38 +49,58 @@ import { joinRoom } from './socketrouter';
 
   // Accepts an invitation when invitation received
   confirmInvite(event) {
-    // Creates a new user chat realtionship
-    if (this.state.currentInvitation.roomToJoin) {    
-      axios.post('/api/users/' + this.props.username + '/chats/' + this.state.currentInvitation.roomToJoin 
-        + '/newUserChatRelationship/' + this.state.currentInvitation.chatTitle)
-      .then((chatData) => {
-        if (chatData.data.success) {
-          console.log("joined room " + this.state.chatTitle);
-          joinRoom(this.state.currentInvitation.roomToJoin, [], function(success) {})
-        } else {
-            // There was an error creating a new chat relationship
-            console.log(chatData.data.err);
+    if (this.state.currentInvitation) {
+      // Creates a new user chat realtionship
+      if (this.state.currentInvitation.roomToJoin) {    
+        axios.post('/api/users/' + this.props.username + '/chats/' + this.state.currentInvitation.roomToJoin 
+          + '/newUserChatRelationship/' + this.state.currentInvitation.chatTitle)
+        .then((chatData) => {
+          if (chatData.data.success) {
+            console.log("joined roommm " + this.state.currentInvitation.chatTitle);
+            joinRoom(this.state.currentInvitation.roomToJoin, [], () => {});
+
+            // Reloads chats
+            this.getChats();
+          } else {
+              // There was an error creating a new chat relationship
+              console.log(chatData.data.err);
+            }
+          })
+        .catch(chatErr => {
+          console.log(chatErr);
+        });
+      }
+
+      // Increments the user count of chat in table
+      axios.post('/api/chat/' + this.state.currentInvitation.roomToJoin + '/updateCount/' + 1)
+      .then(checkData => {
+        console.log("Here");
+
+          // If success is true, user has incremented chat user count already
+          if(checkData.data.success === true) {
+            console.log("Successefully incremented chat user count");
+          } else {
+            console.log("Failed to increment user count");
           }
         })
-      .catch(chatErr => {
-        console.log(chatErr);
+      .catch(err => {
+        console.log(err);
+      });
+
+      // Deletes the invite from the table once user accepts it
+      axios.post('/api/users/' + this.props.username + '/chats/' + this.state.currentInvitation.roomToJoin + '/deleteInvite')
+      .then(checkData => {
+          // If success is true, user has deleted invite already
+          if(checkData.data.success === true) {
+            console.log("Successefully deleted invite");
+          } else {
+            console.log("Failed to delete invite");
+          }
+        })
+      .catch(err => {
+        console.log(err);
       });
     }
-
-    // Deletes the invite from the table once user accepts it
-    axios.post('/api/users/' + this.props.username + '/chats/' + this.state.currentInvitation.roomToJoin + '/deleteInvite')
-    .then(checkData => {
-        // If success is true, user has deleted invite already
-        if(checkData.data.success === true) {
-          console.log("Successefully deleted invite");
-          this.getChats();
-        } else {
-          console.log("Failed to delete invite");
-        }
-      })
-    .catch(err => {
-      console.log(err);
-    });
   }
 
   // Gets a list of invites pertaining to the current user

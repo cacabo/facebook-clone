@@ -1,6 +1,8 @@
 
+import axios from 'axios';
 import openSocket from 'socket.io-client';
 const  socket = openSocket('http://localhost:8000');
+
 
 
 // Listens to messages
@@ -46,16 +48,40 @@ function invite(room, chatTitle, username, inviter, cb) {
 }
 
 // Joins a room
-function joinRoom(room, users, cb) {
-	if (users.length == 2) {
-		/**
-		 * TODO create new room and invite users to join. Must also join yourself
-		 * Special invites where they automatically join
-		 */
-		} else {
-			socket.emit('joinRoom', room);
-		}
-	}
+function joinRoom(room, cb) {
+	axios.get('/api/chat/' + room )
+	.then(checkData => {
+        // If success is true, user has invited already
+        if(checkData.data.success === true) {
+        	if (checkData.data.numUsers == 2) {
+        		console.log("SUCCCEEEEEE");
+				/**
+				 * TODO create new room and invite users to join. Must also join yourself
+				 * Special invites where they automatically join
+				 */
+				 const params = {
+				 	sender: inviter,
+				 	roomToReceive: username + 'inviteRoom',
+				 	roomToJoin: room,
+				 	chatTitle: chatTitle,
+				 	users: [],
+				 };
+
+				 socket.emit('invite', JSON.stringify(params));
+
+				} else {
+					socket.emit('joinRoom', room);
+				}
+			} else {
+				console.log("Failed to get chat");
+			}
+		})
+	.catch(err => {
+		console.log(err);
+	});
+}
+
+
 
 // Leaves a room
 function leaveRoom(room, cb) {

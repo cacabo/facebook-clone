@@ -4,6 +4,7 @@ import autosize from 'autosize';
 const uuid = require('uuid-v4');
 import axios from 'axios';
 import { connect } from 'react-redux';
+import { joinRoom } from './socketrouter';
 
 /**
  * Component to render one of a user's group chats.
@@ -56,19 +57,26 @@ class NewChat extends React.Component {
 
     const roomID = uuid();
 
-    // Creates a new chat in the database
+    // Creates and puts a new user chat realtionship in the database
     axios.post('/api/users/' + this.props.username + '/chats/' + roomID +'/newUserChatRelationship/' + this.state.chatTitle)
     .then((chatData) => {
       if (chatData.data.success) {
-        // const chatParams = {
-        //   username: this.state.currentUser,
-        //   chatTitle: this.state.chatTitle,
-        //   room: roomID
-        // };
+        console.log("Successfully created chat: " + this.state.chatTitle);
+        joinRoom(this.state.currentInvitation.roomToJoin, [], () => {});
+      } else {
+          // There was an error creating a new message
+          console.log(chatData.data.err);
+        }
+      })
+    .catch(chatErr => {
+      console.log(chatErr);
+    });
 
-        /*
-        * TODO Must reload list of chats in Chats parent
-        */
+    // Creates and puts a new chat in the database
+    axios.post('/api/chat/' + roomID + '/title/' + this.state.chatTitle + '/new')
+    .then((chatData) => {
+      if (chatData.data.success) {
+        console.log("Successfully created chat object: " + this.state.chatTitle);
       } else {
           // There was an error creating a new message
           console.log(chatData.data.err);
