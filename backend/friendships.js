@@ -1,5 +1,5 @@
 // Import the friends table
-const { User, Friendship, Status } = require('./schema.js');
+const { User, Friendship, Status, StatusReceiver } = require('./schema.js');
 const async = require('async');
 const uuid = require('uuid');
 
@@ -72,7 +72,17 @@ function addFriendship(friend1, friend2, callback) {
                     if (statusErr || !statusData) {
                       callback(null, "Failed to create status");
                     } else {
-                      callback({ success: true, data: data1}, null);
+                      StatusReceiver.create({
+                        user: statusObj.user,
+                        receiver: statusObj.receiver,
+                        id: statusObj.id,
+                      }, (receiverErr, receiverData) => {
+                        if (receiverErr || !receiverData) {
+                          callback(null, "Failed to create receiver entry for status.");
+                        } else {
+                          callback({ success: true, data: data1}, null);
+                        }
+                      });
                     }
                   });
                 }
