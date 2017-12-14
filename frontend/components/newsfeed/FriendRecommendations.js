@@ -1,5 +1,8 @@
 import React from 'react';
 import UserPreview from './UserPreview';
+import Loading from '../shared/Loading';
+import axios from 'axios';
+import ErrorMessage from '../shared/ErrorMessage';
 
 /**
  * Component to list a user's recommended friends. This is rendered on the
@@ -12,22 +15,36 @@ class FriendRecommendations extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      friendRecommendations: [
-        {
-          name: "Terry Jo",
-          username: "teajoes",
-          profilePicture: "https://scontent-lga3-1.xx.fbcdn.net/v/t31.0-8/15585239_1133593586737791_6146771975815537560_o.jpg?oh=1f5bfe8e714b99b823263e2db7fa3329&oe=5A88DA92",
-        },
-        {
-          name: "Victor Chien",
-          username: "victor",
-        },
-        {
-          name: "Cameron Cabo",
-          username: "ccabo",
-        }
-      ],
+      friendRecommendations: [],
+      pending: true,
+      error: "",
     };
+  }
+
+  // Pull recommendations from the database
+  componentDidMount() {
+    axios.get("/api/recommendations")
+      .then(res => {
+        if (res.data.success) {
+          this.setState({
+            pending: false,
+            friendRecommendations: res.data.data,
+          });
+        } else {
+          // Render the error
+          this.setState({
+            error: res.data.error,
+            pending: false,
+          });
+        }
+      })
+      .catch(err => {
+        // Render the error
+        this.setState({
+          error: err,
+          pending: false,
+        });
+      });
   }
 
   // Helper method to return the friend recommendations based on the state
@@ -35,9 +52,9 @@ class FriendRecommendations extends React.Component {
     return this.state.friendRecommendations.map(rec => {
       return (
         <UserPreview
-          name={ rec.name }
-          username={ rec.username }
-          profilePicture={ rec.profilePicture }
+          name={ rec.userData.name }
+          username={ rec.userData.username }
+          profilePicture={ rec.userData.profilePicture }
           key={ rec.username }
         />
       );
@@ -51,7 +68,10 @@ class FriendRecommendations extends React.Component {
         <strong className="marg-bot-05">
           Find new friends
         </strong>
-        { this.renderFriendRecs() }
+        {
+          this.state.error && <ErrorMessage text={ this.state.error } />
+        }
+        { this.state.pending ? <Loading /> : this.renderFriendRecs() }
       </div>
     );
   }
