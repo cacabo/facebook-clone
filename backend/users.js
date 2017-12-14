@@ -146,7 +146,7 @@ function changeInterests(oldInterests, user, callback) {
     callback(true, null);
   } else {
     // Parse the old interests
-    const oldInterestsStrings = oldInterests.split(', ');
+    const oldInterestsStrings = oldInterests ? oldInterests.split(', ') : [];
 
     // Created a formatted array of interests to be removed from the DB
     const oldInterestsArr = oldInterestsStrings.map(interest => ({
@@ -168,7 +168,7 @@ function changeInterests(oldInterests, user, callback) {
         callback(false, asyncErr);
       } else {
         // Find the new interests
-        const newInterestsStrings = user.interests.split(', ');
+        const newInterestsStrings = user.interests ? user.interests.split(', ') : [];
 
         // Created a formatted array of interests to be added to the DB
         const interestsArr = newInterestsStrings.map(interest => ({

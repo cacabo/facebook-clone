@@ -42,12 +42,18 @@ function getFriends(callback) {
  * Function to get all affiliation pairs
  */
 function getAffiliations(callback) {
-  callback("yay", null);
+  Affiliation.scan().loadAll().exec((err, data) => {
+    if (err) {
+      callback(null, err.message);
+    } else {
+      callback(data.Items, null);
+    }
+  });
 }
 
 // Create an object to store the helper functions
 const mapreduce = {
-  getData: getFriends,
+  getData: getAffiliations,
 };
 
 // Export the object
