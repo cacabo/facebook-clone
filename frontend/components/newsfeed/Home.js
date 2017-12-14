@@ -40,11 +40,10 @@ class Home extends React.Component {
 
   /**
    * Pull the statuses from the database
-   * TODO pull only statuses from friends
    */
   componentDidMount() {
     // Make the AJAX request
-    axios.get('/api/statuses')
+    axios.get('/api/newsfeed')
       .then(res => {
         // Check if the response was successful
         if (res.data.success) {

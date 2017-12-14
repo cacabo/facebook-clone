@@ -14,9 +14,6 @@ import Loading from '../shared/Loading';
  *
  * State handles whether comments show up or not. By default, they are hidden.
  * Toggle the comments box by clicking on the comments icon or text.
- *
- * TODO new friend updates (different type of status)
- * TODO profile updates (different type of status)
  */
 class Status extends React.Component {
   // Constructor method
@@ -51,7 +48,7 @@ class Status extends React.Component {
     autosize(document.querySelectorAll('textarea'));
 
     /**
-     * TODO make a request to check if the user has liked the status or not
+     * Make a request to check if the user has liked the status or not
      * and set the state accordingly
      */
     axios.get('/api/users/' + this.props.user + '/statuses/' + this.props.id + '/checkLike')
