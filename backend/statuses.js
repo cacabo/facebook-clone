@@ -244,7 +244,7 @@ function getUserStatuses(username, callback) {
       .loadAll()
       .exec((err, data) => {
         if (err || !data) {
-          callback(null, err);
+          callback(null, err.message);
         } else {
           // Prune out the status data
           const statuses = data.Items.map(item => {
@@ -258,7 +258,7 @@ function getUserStatuses(username, callback) {
             if (status.receiver) {
               User.get(status.receiver, (receiverErr, receiverData) => {
                 if (receiverErr || !receiverData) {
-                  callback(receiverErr, null);
+                  callback(null, receiverErr.message);
                 } else {
                   // Find the user object
                   const receiverObj = userData.attrs;
@@ -280,7 +280,7 @@ function getUserStatuses(username, callback) {
             }
           }, (asyncErr) => {
             if (asyncErr) {
-              callback(asyncErr, null);
+              callback(null, asyncErr);
             }
 
             // Sort the statuses

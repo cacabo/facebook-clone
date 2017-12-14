@@ -73,6 +73,30 @@ class Profile extends React.Component {
             profilePending: false,
           });
 
+          // Get the user's statuses
+          axios.get('/api/users/' + this.props.match.params.username + '/statuses')
+            .then(statuses => {
+              console.log("STATUSES");
+              console.log(statuses);
+              if (statuses.data.success) {
+                this.setState({
+                  statuses: statuses.data.data,
+                  statusesPending: false,
+                });
+              } else {
+                this.setState({
+                  statusesErr: statuses.data.error,
+                  statusesPending: false,
+                });
+              }
+            })
+            .catch(err => {
+              this.setState({
+                statusesPending: false,
+                statusesError: err,
+              });
+            });
+
           // If the current user and profile's user are different
           if (this.state.username !== this.props.username) {
             // Get the status of the user's friendship
@@ -98,28 +122,6 @@ class Profile extends React.Component {
                 });
               });
           }
-
-          // Get the user's statuses
-          axios.get('/api/users/' + this.props.match.params.username + '/statuses')
-            .then(statuses => {
-              if (statuses.data.success) {
-                this.setState({
-                  statuses: statuses.data.data,
-                  statusesPending: false,
-                });
-              } else {
-                this.setState({
-                  statusesErr: statuses.data.error,
-                  statusesPending: false,
-                });
-              }
-            })
-            .catch(err => {
-              this.setState({
-                statusesPending: false,
-                statusesError: err,
-              });
-            });
         } else {
           this.setState({
             userError: "User with specified username not found. Check the URL and try again.",
@@ -288,23 +290,28 @@ class Profile extends React.Component {
 
   // Helper function to render the statuses
   renderStatuses() {
-    return this.state.statuses.map(status => (
-      <Status
-        content={ status.content }
-        createdAt={ status.createdAt }
-        likesCount={ status.likesCount }
-        commentsCount={ status.commentsCount }
-        type={ status.type }
-        image={ status.image }
-        user={ status.user }
-        userData={ status.userData }
-        receiverData={ status.receiverData }
-        receiver={ status.receiver }
-        isNew={ status.isNew ? status.isNew : false }
-        key={ status.id }
-        id={ status.id }
-      />
-    ));
+    if (this.state.statuses) {
+      return this.state.statuses.map(status => (
+        <Status
+          content={ status.content }
+          createdAt={ status.createdAt }
+          likesCount={ status.likesCount }
+          commentsCount={ status.commentsCount }
+          type={ status.type }
+          image={ status.image }
+          user={ status.user }
+          userData={ status.userData }
+          receiverData={ status.receiverData }
+          receiver={ status.receiver }
+          isNew={ status.isNew ? status.isNew : false }
+          key={ status.id }
+          id={ status.id }
+        />
+      ));
+    }
+
+    // If there are no statuses
+    return null;
   }
 
   // Helper function to render profile buttons
