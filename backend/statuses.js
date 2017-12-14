@@ -319,7 +319,7 @@ function getUserFeed(user, callback) {
               statusMap[userStatus.id] = userStatus;
             });
 
-            // Find all statuses in which the receiver is the current friend
+            // Find all statuses in which the receiver is the current user
             StatusReceiver
               .query(user)
               .loadAll()
@@ -340,10 +340,57 @@ function getUserFeed(user, callback) {
                       if (err3) {
                         callback(null, "There was an error finding received status: " + err3);
                       } else if (data3.Items !== 0) {
-                        // Put found status into map
-                        statusMap[receivedStatus.id] = data3.attrs;
+                        const statusObj = data3.attrs;
+                        if (statusObj.receiver) {
+                          // Query User database for receiver
+                          User.get(statusObj.receiver, (receiverErr, receiverData) => {
+                            if (receiverErr || !receiverData) {
+                              callback(receiverErr, null);
+                            } else {
+                              // Find the user object
+                              const receiverObj = receiverData.attrs;
+
+                              // Delete unneeded info
+                              delete receiverObj.password;
+                              delete receiverObj.affiliation;
+                              delete receiverObj.interests;
+                              delete receiverObj.bio;
+                              delete receiverObj.coverPhoto;
+                              delete receiverObj.birthday;
+                              delete receiverObj.createdAt;
+
+                              // Update the status object
+                              statusObj.receiverData = receiverObj;
+
+                              // Query database for sender's data
+                              User.get(data3.attrs.user, (userErr, userData) => {
+                                if (userErr || !userData) {
+                                  callback(userErr, null);
+                                } else {
+                                  // Find the user object
+                                  const userObj = userData.attrs;
+
+                                  // Delete unneeded info
+                                  delete userObj.password;
+                                  delete userObj.affiliation;
+                                  delete userObj.interests;
+                                  delete userObj.bio;
+                                  delete userObj.coverPhoto;
+                                  delete userObj.birthday;
+                                  delete userObj.createdAt;
+
+                                  // Update the status object
+                                  statusObj.userData = userObj;
+
+                                  // Put found status into map
+                                  statusMap[receivedStatus.id] = statusObj;
+                                  keysCallback2();
+                                }
+                              });
+                            }
+                          });
+                        }
                       }
-                      keysCallback2();
                     });
                   }, (asyncErr2) => {
                     if (asyncErr2) {
@@ -432,9 +479,56 @@ function getNewsfeedStatuses(user, callback) {
                           if (err3) {
                             callback(null, "There was an error finding received status: " + err3);
                           } else if (data.Items !== 0) {
-                            // Put found status into map
-                            statusMap[receivedStatus.id] = data3.attrs;
-                            keysCallback2();
+                            const statusObj = data3.attrs;
+                            if (statusObj.receiver) {
+                              // Query User database for receiver
+                              User.get(statusObj.receiver, (receiverErr, receiverData) => {
+                                if (receiverErr || !receiverData) {
+                                  callback(receiverErr, null);
+                                } else {
+                                  // Find the user object
+                                  const receiverObj = receiverData.attrs;
+
+                                  // Delete unneeded info
+                                  delete receiverObj.password;
+                                  delete receiverObj.affiliation;
+                                  delete receiverObj.interests;
+                                  delete receiverObj.bio;
+                                  delete receiverObj.coverPhoto;
+                                  delete receiverObj.birthday;
+                                  delete receiverObj.createdAt;
+
+                                  // Update the status object
+                                  statusObj.receiverData = receiverObj;
+
+                                  // Query database for sender's data
+                                  User.get(data3.attrs.user, (userErr, userData) => {
+                                    if (userErr || !userData) {
+                                      callback(userErr, null);
+                                    } else {
+                                      // Find the user object
+                                      const userObj = userData.attrs;
+
+                                      // Delete unneeded info
+                                      delete userObj.password;
+                                      delete userObj.affiliation;
+                                      delete userObj.interests;
+                                      delete userObj.bio;
+                                      delete userObj.coverPhoto;
+                                      delete userObj.birthday;
+                                      delete userObj.createdAt;
+
+                                      // Update the status object
+                                      statusObj.userData = userObj;
+
+                                      // Put found status into map
+                                      statusMap[receivedStatus.id] = statusObj;
+                                      keysCallback2();
+                                    }
+                                  });
+                                }
+                              });
+                            }
                           }
                         });
                       }, (asyncErr2) => {
