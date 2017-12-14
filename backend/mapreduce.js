@@ -1,0 +1,54 @@
+// Import the comments table
+const { Friendship, Affiliation, Interest } = require('./schema.js');
+
+/**
+ * Reducer helper function
+ */
+function format(acc, item) {
+  return acc + item + "\n";
+}
+
+/**
+ * Function to get all user pairs from friendships
+ */
+function getFriends(callback) {
+  Friendship.scan().loadAll().exec((err, data) => {
+    if (err) {
+      callback(null, err.message);
+    } else {
+      // Construct a map to remove duplicates in the data
+      const friendMap = {};
+      data.Items.map(item => {
+        // Isolate the two friends from the object
+        const friend1 = item.attrs.user1;
+        const friend2 = item.attrs.user2;
+
+        // Place them in the object in alphabetical order
+        if (friend1 < friend2) {
+          friendMap[friend1 + "\t" + friend2] = true;
+        } else {
+          friendMap[friend2 + "\t" + friend1] = true;
+        }
+      });
+
+      // Format the data for mapreduce in a string
+      const string = Object.keys(friendMap).reduce(format, "");
+      callback(string, null);
+    }
+  });
+}
+
+/**
+ * Function to get all affiliation pairs
+ */
+function getAffiliations(callback) {
+  callback("yay", null);
+}
+
+// Create an object to store the helper functions
+const mapreduce = {
+  getData: getFriends,
+};
+
+// Export the object
+module.exports = mapreduce;
