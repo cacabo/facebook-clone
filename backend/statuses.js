@@ -213,8 +213,7 @@ function getStatus(username, id, callback) {
 }
 
 /**
- * Get all statuses by a user
- * TODO perform a range query for the specific statuses we want
+ * Get all statuses relating to the passed in user
  */
 function getUserStatuses(username, callback) {
   // Error checking on the username

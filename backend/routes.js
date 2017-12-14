@@ -321,7 +321,6 @@ router.post('/users/:username/update/', (req, res) => {
 
 /**
  * Get all statuses by a particular user
- * TODO get statuses to this user
  */
 router.get('/users/:username/statuses/', (req, res) => {
   // Find the username in the URL
@@ -537,8 +536,8 @@ router.get('/users/:username/statuses/:statusID/checkLike', (req, res) => {
 });
 
 /**
- * Add like to statuses
- * TODO: checkLike, and then either go to addLike or deleteLike
+ * Either add or delete a like on a status depending on if the user has
+ * already liked the post or not.
  */
 router.get('/users/:username/statuses/:statusID/likes', (req, res) => {
   // Get the status and liker
@@ -664,10 +663,8 @@ router.post('/users/new', (req, res) => {
 });
 
 /**
- * Add like to statuses
- * TODO: first check if the like exists or not
- *       if it does exist, then delete the like
- *       if it does not exists, then add the like
+ * If the user has already liked the status, then this will delete the like,
+ * else it will add the like.
  */
 router.get('/users/:username/statuses/:statusID/likes', (req, res) => {
   // Get the status and liker
@@ -856,7 +853,7 @@ router.post('/users/:username/chats/:roomID/newUserChatRelationship', (req, res)
 
 
 /**
- * Handle a 404
+ * Handle a 404 (page not found) on the API side
  */
 router.get('*', (req, res) => {
   res.status(404).send("404: page not found");
