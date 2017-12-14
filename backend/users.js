@@ -140,24 +140,52 @@ function changeAffiliation(oldAffiliation, user, callback) {
  * Helper function to handle a change in interests
  */
 function changeInterests(oldInterests, user, callback) {
-  // TODO
-  // const oldInterests = oldInterests.split(', ');
-  const newInterests = user.interests.split(', ');
+  if (oldInterests === user.interests) {
+    // If there are no changes, then there are no updates in the DB to make
+    callback(true, null);
+  } else {
+    // Parse the old interests
+    const oldInterestsStrings = oldInterests.split(', ');
 
-  // Created a formatted array of interests to be added to the DB
-  const interestsArr = newInterests.map(interest => ({
-    interest: interest,
-    username: user.username,
-  }));
+    // Created a formatted array of interests to be removed from the DB
+    const oldInterestsArr = oldInterestsStrings.map(interest => ({
+      interest: interest,
+      username: user.username,
+    }));
 
-  // Put the interests in the DB
-  Interest.create(interestsArr, (err, interests) => {
-    if (err || !interests) {
-      callback(false, "Failed to add interests to database.");
-    } else {
-      callback(true, interests);
-    }
-  });
+    // Destroy the old interests from the database
+    async.each(oldInterestsArr, (interest, keysCallback) => {
+      Interest.destroy(interest, (destroyErr) => {
+        if (destroyErr) {
+          callback(false, destroyErr.message);
+          return;
+        }
+        keysCallback();
+      });
+    }, asyncErr => {
+      if (asyncErr) {
+        callback(false, asyncErr);
+      } else {
+        // Find the new interests
+        const newInterestsStrings = user.interests.split(', ');
+
+        // Created a formatted array of interests to be added to the DB
+        const interestsArr = newInterestsStrings.map(interest => ({
+          interest: interest,
+          username: user.username,
+        }));
+
+        // Put the interests in the DB
+        Interest.create(interestsArr, (err, interests) => {
+          if (err || !interests) {
+            callback(false, "Failed to add interests to database.");
+          } else {
+            callback(true, interests);
+          }
+        });
+      }
+    });
+  }
 }
 
 /**
