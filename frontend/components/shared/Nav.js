@@ -196,6 +196,11 @@ class Nav extends React.Component {
                     </Link>
                   </li>
                   <li className="nav-item">
+                    <Link to={ "/visualizer" } className="nav-link">
+                      Visualizer
+                    </Link>
+                  </li>
+                  <li className="nav-item">
                     <a onClick={ this.handleLogout } className="nav-link">
                       Logout
                     </a>
