@@ -1,6 +1,6 @@
 // Import the comments table
-const { Friendship, Affiliation, Interest } = require('./schema.js');
-
+const { Friendship, FriendRecommendation, Affiliation, Interest } = require('./schema.js');
+const friendRec = require('./friendRecommendations.js');
 /**
  * Reducer helper function
  */
@@ -141,9 +141,49 @@ function aggregate(callback) {
   });
 }
 
+// Reads input from map reduce into the database
+function readInput(input, callback) {
+  // tempInput = {
+  //   inputString: 
+  //   "Adam\tVictor,Terry,Cam,Sean,Bob,Jimmy,Adam\nBob\tVictor,Terry,Sean,Cam,Adam,Bob,Jimmy\nCam\tSean,Adam,Terry,Jimmy,Bob,Victor,Cam\nJimmy\tVictor,Terry,Sean,Cam,Adam,Bob,Jimmy\nSean\tBob,Jimmy,Cam,Adam,Victor,Terry,Sean\nTerry\tJimmy,Bob,Adam,Cam,Sean,Terry,Victor\nVictor\tAdam,Jimmy,Bob,Sean,Cam,Terry,Victor"
+  // };
+
+  // const inputData = tempInput.inputString;
+  // const userRecommendationList = inputData.split("\n");
+
+  // const allRecommendations = [];
+
+  // for (var i = 0; i < userRecommendationList.length; i++) {
+  //   const dataList = userRecommendationList[i].split("\t");
+  //   console.log("DATA LIST");
+  //   console.log(dataList);
+  //   const recommendationList = dataList[1].split(",");
+  //   const userName = dataList[0];
+  //   for (var j = 0; j < recommendationList.length; j++) {
+  //      const recommendationObj = {
+  //       user: userName,
+  //       newFriend: recommendationList[j],
+  //       rank: j,
+  //      };
+  //      console.log("RECOMMENDATION OBJECT");
+  //      console.log(recommendationObj);
+  //      allRecommendations.push(recommendationObj);
+  //   }
+  // }
+
+  // FriendRecommendation.create(allRecommendations, (err, data) => {
+  //   if (err || !data) {
+  //     callback(null, "There was an error adding recommendations to database: " + err.message);
+  //   } else {
+  //     callback({success: true}, null);
+  //   }
+  // });
+}
+
 // Create an object to store the helper functions
 const mapreduce = {
   getData: aggregate,
+  readInput: readInput,
 };
 
 // Export the object
