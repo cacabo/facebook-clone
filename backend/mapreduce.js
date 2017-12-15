@@ -141,10 +141,13 @@ function aggregate(callback) {
   });
 }
 
-// Reads input from map reduce into the database
+/**
+ * Reads input from map reduce and adds the input data into the database
+ * NOTE this is commented out because it is only used in isolated instances
+ */
 function readInput(input, callback) {
   // tempInput = {
-  //   inputString: 
+  //   inputString:
   //   "Adam\tVictor,Terry,Cam,Sean,Bob,Jimmy,Adam\nBob\tVictor,Terry,Sean,Cam,Adam,Bob,Jimmy\nCam\tSean,Adam,Terry,Jimmy,Bob,Victor,Cam\nJimmy\tVictor,Terry,Sean,Cam,Adam,Bob,Jimmy\nSean\tBob,Jimmy,Cam,Adam,Victor,Terry,Sean\nTerry\tJimmy,Bob,Adam,Cam,Sean,Terry,Victor\nVictor\tAdam,Jimmy,Bob,Sean,Cam,Terry,Victor"
   // };
 
@@ -155,8 +158,6 @@ function readInput(input, callback) {
 
   // for (var i = 0; i < userRecommendationList.length; i++) {
   //   const dataList = userRecommendationList[i].split("\t");
-  //   console.log("DATA LIST");
-  //   console.log(dataList);
   //   const recommendationList = dataList[1].split(",");
   //   const userName = dataList[0];
   //   for (var j = 0; j < recommendationList.length; j++) {
@@ -165,8 +166,6 @@ function readInput(input, callback) {
   //       newFriend: recommendationList[j],
   //       rank: j,
   //      };
-  //      console.log("RECOMMENDATION OBJECT");
-  //      console.log(recommendationObj);
   //      allRecommendations.push(recommendationObj);
   //   }
   // }

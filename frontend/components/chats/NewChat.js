@@ -36,13 +36,7 @@ class NewChat extends React.Component {
 
   // Handle when the new chat form is submitted
   handleSubmit(event) {
-    console.log("New chat for submitted " + this.state.chatTitle + " " + this.state.members);
     event.preventDefault();
-
-    /*
-    * TODO Use async to send invites to everyone
-    */
-
     const roomID = uuid();
 
     // Creates and puts a new user chat relationship in the database
@@ -52,7 +46,7 @@ class NewChat extends React.Component {
           this.setState({
             chatTitle: "",
           });
-          console.log("Successfully created chat: " + this.state.chatTitle);
+
           joinRoom(roomID, () => {});
           reloadChatList(() => {});
         } else {

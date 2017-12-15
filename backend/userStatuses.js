@@ -40,7 +40,6 @@ function getAllUserStatus(callback) {
     }
     // Find the list of usernames
     const onlineUsers = data.Items.map(item => ({ username: item.attrs.username }));
-    console.log(onlineUsers);
 
     // Asyncronously pull user data for each
     async.each(onlineUsers, (user, keysCallback) => {

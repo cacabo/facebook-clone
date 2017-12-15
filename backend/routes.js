@@ -1025,7 +1025,6 @@ router.post('/users/:username/chats/:roomID/delete', (req, res) => {
                   error: deleteErr,
                 });
               } else {
-                console.log("Reached re.sed error");
                 // If the update was successful
                 res.send({
                   success: true,
