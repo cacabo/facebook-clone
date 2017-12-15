@@ -432,7 +432,7 @@ function getUserFeed(user, callback) {
 
 function getNewsfeedStatuses(user, callback) {
   if (!user) {
-    callback(null, "User is null.");
+    callback(null, "User must be logged in.");
   } else {
     // Map to store all statuses, remove duplicates
     const statusMap = {};

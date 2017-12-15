@@ -3,6 +3,35 @@ const { FriendRecommendation, User } = require('./schema.js');
 const async = require('async');
 
 /**
+ * Add a friend recommendation to the database
+ */
+function addRecommendation(username, newFriend, rank, callback) {
+  if (!username) {
+    callback(null, "Username must be populated");
+  } else if (!newFriend) {
+    callback(null, "New friend must be populated");
+  } else if (!rank) {
+    callback(null, "Rank must be populated");
+  } else {
+    // Create invite object
+    const recommendationObject = {
+      user: username,
+      newFriend: newFriend,
+      rank: rank,
+    };
+
+    // Put the invite in to the database
+    FriendRecommendation.create(recommendationObject, (err, data) => {
+      if (err || !data) {
+        callback(null, "Failed to put invite in database.");
+      } else {
+        callback(data, null);
+      }
+    });
+  }
+}
+
+/**
  * Get recommendations for the passed in user
  */
 function getRecommendations(username, callback) {
@@ -57,6 +86,7 @@ function getRecommendations(username, callback) {
 // Create an object to store the helper functions
 const friendRecommendations = {
   getRecommendations,
+  addRecommendation,
 };
 
 // Export the object

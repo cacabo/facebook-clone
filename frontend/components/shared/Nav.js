@@ -80,7 +80,7 @@ class Nav extends React.Component {
   // Handle signout
   handleLogout() {
     // Sign the user out
-    axios.get('/api/logout/' + this.props.username)
+    axios.get('/api/logout')
       .then(data => {
         if (!data.success) {
           // Purge the user's redux state
@@ -193,6 +193,11 @@ class Nav extends React.Component {
                   <li className="nav-item">
                     <Link to={ "/users/" + this.props.username } className="nav-link">
                       Profile
+                    </Link>
+                  </li>
+                  <li className="nav-item">
+                    <Link to={ "/visualizer" } className="nav-link">
+                      Visualizer
                     </Link>
                   </li>
                   <li className="nav-item">
