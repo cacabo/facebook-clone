@@ -54,6 +54,7 @@ class OnlineNow extends React.Component {
           username={ rec.userData.username }
           profilePicture={ rec.userData.profilePicture }
           key={ rec.userData.username }
+          isOnline
         />
       );
     });

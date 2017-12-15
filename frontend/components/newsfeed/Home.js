@@ -129,43 +129,41 @@ class Home extends React.Component {
   render() {
     return (
       <div className="container-fluid marg-top-1">
-        { !this.props.isLoggedIn ? <Redirect to="/login" /> : (
-          <div className="row">
-            <div className="col-lg-3 hidden-md-down">
-              <FriendRecommendations />
-            </div>
-            <div className="col-12 col-md-8 offset-md-2 col-lg-6 offset-lg-0 col-xl-5 no-pad-wide">
-              {
-                this.props.success ? (
-                  <div className="alert alert-success">
-                    { this.props.success }
-                  </div>
-                ) : (
-                  ""
-                )
-              }
-              <StatusForm
-                placeholder="What's on your mind?"
-                callback={ this.newStatusCallback }
-              />
-              { this.state.error && (
-                <ErrorMessage text={ this.state.error } />
-              ) }
-              { (this.state.pending && !this.state.error) ? (<Loading />) : (this.renderStatuses()) }
-              { !this.state.pending && (
-                <div className="card">
-                  <p className="marg-bot-0">
-                    There are no more statuses to show. Add more friends or wait and refresh your page for more content.
-                  </p>
-                </div>
-              ) }
-              <div className="space-4" />
-            </div>
-            <div className="col-md-3 col-xl-4 hidden-md-down">
-              <OnlineNow />
-            </div>
+        <div className="row">
+          <div className="col-lg-3 hidden-md-down">
+            <FriendRecommendations />
           </div>
-        ) }
+          <div className="col-12 col-md-8 offset-md-2 col-lg-6 offset-lg-0 col-xl-5 no-pad-wide">
+            {
+              this.props.success ? (
+                <div className="alert alert-success">
+                  { this.props.success }
+                </div>
+              ) : (
+                ""
+              )
+            }
+            <StatusForm
+              placeholder="What's on your mind?"
+              callback={ this.newStatusCallback }
+            />
+            { this.state.error && (
+              <ErrorMessage text={ this.state.error } />
+            ) }
+            { (this.state.pending && !this.state.error) ? (<Loading />) : (this.renderStatuses()) }
+            { !this.state.pending && (
+              <div className="card">
+                <p className="marg-bot-0">
+                  There are no more statuses to show. Add more friends or wait and refresh your page for more content.
+                </p>
+              </div>
+            ) }
+            <div className="space-4" />
+          </div>
+          <div className="col-md-3 col-xl-4 hidden-md-down">
+            <OnlineNow />
+          </div>
+        </div>
       </div>
     );
   }
