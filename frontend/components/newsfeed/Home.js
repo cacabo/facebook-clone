@@ -7,6 +7,8 @@ import PropTypes from 'prop-types';
 import axios from 'axios';
 import Loading from '../shared/Loading';
 import ErrorMessage from '../shared/ErrorMessage';
+import { connect } from 'react-redux';
+import { Redirect } from 'react-router-dom';
 
 /**
  * Component to render a user's newsfeed.
@@ -42,30 +44,32 @@ class Home extends React.Component {
    * Pull the statuses from the database
    */
   componentDidMount() {
-    // Make the AJAX request
-    axios.get('/api/newsfeed')
-      .then(res => {
-        // Check if the response was successful
-        if (res.data.success) {
+    if (this.props.isLoggedIn) {
+      // Make the AJAX request
+      axios.get('/api/newsfeed')
+        .then(res => {
+          // Check if the response was successful
+          if (res.data.success) {
+            this.setState({
+              pending: false,
+              statuses: res.data.data,
+              error: "",
+            });
+          } else {
+            this.setState({
+              pending: false,
+              error: "There was an error pulling information from the database."
+            });
+          }
+        })
+        .catch(err => {
+          // Update the state to have an error
           this.setState({
             pending: false,
-            statuses: res.data.data,
-            error: "",
+            error: err,
           });
-        } else {
-          this.setState({
-            pending: false,
-            error: "There was an error pulling information from the database."
-          });
-        }
-      })
-      .catch(err => {
-        // Update the state to have an error
-        this.setState({
-          pending: false,
-          error: err,
         });
-      });
+    }
   }
 
   // Helper method to render a newly created status
@@ -167,6 +171,20 @@ class Home extends React.Component {
 
 Home.propTypes = {
   success: PropTypes.string,
+  isLoggedIn: PropTypes.bool,
 };
 
-export default Home;
+const mapStateToProps = (state) => {
+  return {
+    isLoggedIn: state.userState.isLoggedIn,
+  };
+};
+
+const mapDispatchToProps = (/* dispatch */) => {
+  return {};
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Home);

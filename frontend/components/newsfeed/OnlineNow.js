@@ -1,6 +1,8 @@
 import React from 'react';
 import UserPreview from './UserPreview';
-import uuid from 'uuid-v4';
+import Loading from '../shared/Loading';
+import ErrorMessage from '../shared/ErrorMessage';
+import axios from 'axios';
 
 /**
  * Component to render which of your friends are currently online.
@@ -12,22 +14,35 @@ class OnlineNow extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      onlineNow: [
-        {
-          name: "Terry Jo",
-          id: 153,
-          img: "https://scontent-lga3-1.xx.fbcdn.net/v/t31.0-8/15585239_1133593586737791_6146771975815537560_o.jpg?oh=1f5bfe8e714b99b823263e2db7fa3329&oe=5A88DA92",
-        },
-        {
-          name: "Victor Chien",
-          id: 12,
-        },
-        {
-          name: "Cameron Cabo",
-          id: 21,
-        }
-      ],
+      error: "",
+      onlineNow: [],
+      pending: true,
     };
+  }
+
+  // Pull in the data from the database
+  componentDidMount() {
+    axios.get("/api/online")
+      .then(res => {
+        if (res.data.success) {
+          this.setState({
+            pending: false,
+            error: "",
+            onlineNow: res.data.data,
+          });
+        } else {
+          this.setState({
+            pending: false,
+            error: res.data.error,
+          });
+        }
+      })
+      .catch(err => {
+        this.setState({
+          error: err,
+          pending: false,
+        });
+      });
   }
 
   // Helper function to return which friends are online as based on state
@@ -35,11 +50,11 @@ class OnlineNow extends React.Component {
     return this.state.onlineNow.map(rec => {
       return (
         <UserPreview
-          name={ rec.name }
-          id={ rec.id }
-          img={ rec.img }
+          name={ rec.userData.name }
+          username={ rec.userData.username }
+          profilePicture={ rec.userData.profilePicture }
+          key={ rec.userData.username }
           isOnline
-          key={ uuid() }
         />
       );
     });
@@ -52,7 +67,10 @@ class OnlineNow extends React.Component {
         <strong className="marg-bot-05">
           Online now
         </strong>
-        { this.renderOnlineNow() }
+        {
+          this.state.error && <ErrorMessage text={ this.state.error } />
+        }
+        { this.state.pending ? <Loading /> : this.renderOnlineNow() }
       </div>
     );
   }

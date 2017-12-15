@@ -53,7 +53,7 @@ class FriendRecommendations extends React.Component {
           name={ rec.userData.name }
           username={ rec.userData.username }
           profilePicture={ rec.userData.profilePicture }
-          key={ rec.username }
+          key={ rec.userData.username }
         />
       );
     });
