@@ -510,8 +510,11 @@ router.get('/users/:username/friends', (req, res) => {
  * Get the friend visualizer
  */
 router.get('/visualizer', (req, res) => {
+  // Get the username of the user
   // const user = req.session.username;
   const user = "ccabo";
+
+  // Get the visualizer data from the database
   db.getVisualizer(user, (data, err) => {
     if (err || !data) {
       res.send({
@@ -526,6 +529,7 @@ router.get('/visualizer', (req, res) => {
     }
   });
 });
+
 /**
  * Get specific friend
  */
@@ -855,8 +859,6 @@ router.get('/users/:username/chats', (req, res) => {
 
   // Get all chats of a user using username
   db.getChats(username, (data, err) => {
-    console.log("Data");
-    console.log(data);
     if (err || !data) {
       res.send({
         success: false,

@@ -14,9 +14,6 @@ import Loading from '../shared/Loading';
  *
  * State handles whether comments show up or not. By default, they are hidden.
  * Toggle the comments box by clicking on the comments icon or text.
- *
- * TODO new friend updates (different type of status)
- * TODO profile updates (different type of status)
  */
 class Status extends React.Component {
   // Constructor method
@@ -36,6 +33,7 @@ class Status extends React.Component {
       commentError: "",
       isNew: this.props.isNew,
       type: this.props.type,
+      error: "",
     };
 
     // Bind this to helper functions
@@ -50,7 +48,7 @@ class Status extends React.Component {
     autosize(document.querySelectorAll('textarea'));
 
     /**
-     * TODO make a request to check if the user has liked the status or not
+     * Make a request to check if the user has liked the status or not
      * and set the state accordingly
      */
     axios.get('/api/users/' + this.props.user + '/statuses/' + this.props.id + '/checkLike')
@@ -69,10 +67,9 @@ class Status extends React.Component {
         }
       })
       .catch(err => {
-        /**
-         * TODO Figure out what to do if there is an error with axios get request
-         */
-        console.log(err);
+        this.setState({
+          error: err,
+        });
       });
 
     // Set a timeout for removing isNew after 5 seconds
@@ -104,11 +101,8 @@ class Status extends React.Component {
           });
         })
         .catch(err => {
-          /**
-           * TODO handle the error
-           */
-          console.log(err);
           this.setState({
+            error: err,
             commentsPending: false,
             comments: [],
           });
@@ -121,8 +115,7 @@ class Status extends React.Component {
    *
    * Make a request to like or unlike the status
    * if successful, update the state
-   * if there is an error console.log it and we can figure out what to do
-   * with that error later
+   *
    * Also update likes count if successful
    */
   likeOnClick() {
@@ -336,6 +329,13 @@ class Status extends React.Component {
             </p>
           </div>
         </div>
+        {
+          this.state.error && (
+            <div className="alert alert-danger error">
+              { this.state.error }
+            </div>
+          )
+        }
         {
           this.props.content && (
             <p className={ this.props.type === "UPDATE_BIO" ? ("marg-bot-0 text bio") : ("marg-bot-0 text") }>

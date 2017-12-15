@@ -18,8 +18,6 @@ import ErrorMessage from '../shared/ErrorMessage';
  * Cover photo and profile picture at the top
  * Information about the user (bio, interests, friend count, etc.) to left
  * List of posts and ability to write on their wall to the right / middle
- *
- * TODO network visualizer
  */
 class Profile extends React.Component {
   // Constructor method
@@ -75,8 +73,6 @@ class Profile extends React.Component {
           // Get the user's statuses
           axios.get('/api/users/' + this.props.match.params.username + '/statuses')
             .then(statuses => {
-              console.log("STATUSES");
-              console.log(statuses);
               if (statuses.data.success) {
                 this.setState({
                   statuses: statuses.data.data,

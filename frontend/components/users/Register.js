@@ -85,8 +85,6 @@ class Register extends React.Component {
     // Prevent the default submit action
     event.preventDefault();
 
-    console.log(this.state);
-
     // Keep track of if the registration is valid or not
     let isValid = true;
 

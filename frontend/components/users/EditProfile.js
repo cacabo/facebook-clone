@@ -11,7 +11,7 @@ import axios from 'axios';
 import ErrorMessage from '../shared/ErrorMessage';
 
 /**
- * Component to render a form to edit a user's profile\
+ * Component to render a form to edit a user's profile
  *
  * TODO allow change password
  */

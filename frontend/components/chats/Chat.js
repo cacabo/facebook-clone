@@ -28,8 +28,6 @@ class Chat extends React.Component {
       messages: [],
       users: [],
     };
-    
-    console.log("Current User " + this.state.currentUser);
 
     // Everyone is part of a room for receving invitations
     joinRoom(this.state.currentUser + 'inviteRoom', () => {});
@@ -81,10 +79,10 @@ class Chat extends React.Component {
         oldMessage.push(messageInfo);
         return {messages: oldMessage}
       }
-  
+
       // If nothing was returned yet
       return {};
-    })); 
+    }));
 
     // Load current messages
     this.reloadMessages();
