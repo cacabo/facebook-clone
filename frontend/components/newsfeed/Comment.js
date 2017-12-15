@@ -5,8 +5,6 @@ import moment from 'moment';
 
 /**
  * Component to render an individual comment.
- *
- * TODO add user information
  */
 class Comment extends React.Component {
   // Constructor method

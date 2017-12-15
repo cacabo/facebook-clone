@@ -12,18 +12,9 @@ There's information about the boilerplate below, but for our general workflow:
 * Always run `git pull` before starting or committing anything.
 * Always work in a separate branch and create a pull request for everyone else to approve before merging into master.
   * This will become increasingly important as the project gets more complex.
-* Update the todo list below and document everything your write with comments.
-
-### Todo
-
-__Frontend__
-- [ ] Timestamp on statuses
-
-__Backend__
-- [ ] A lot of stuff
+* Update the feature list and document everything your write with comments.
 
 # React + Node Starter
-_for [Heroku](https://www.heroku.com/) deployment_
 
 ## Overview
 

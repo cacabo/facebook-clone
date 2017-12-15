@@ -21,13 +21,10 @@ import Nav from '../components/shared/Nav';
 import LoggedInAuth from '../components/users/LoggedInAuth';
 import Search from '../components/users/Search';
 import Affiliation from '../components/users/Affiliation';
+import Visualizer from '../components/users/Visualizer';
 
 /**
  * Component to render the app
- *
- * isLoggedIn: prop pulled from Redux state denoting the current user session
- *
- * TODO better sync user state and express session
  */
 class AppContainer extends React.Component {
   // Ensure the user is logged in on loading the app
@@ -117,6 +114,11 @@ class AppContainer extends React.Component {
       )} />
     );
 
+    // Handle visualzier route
+    const visualizerRoute = (
+      <Route exact path="/visualizer" component={Visualizer} />
+    );
+
     // Handle not found router
     const notFoundRoute = (
       <Route path="*" component={NotFound} />
@@ -140,6 +142,7 @@ class AppContainer extends React.Component {
               { newChatRoute }
               { chatRoute }
               { chatsRoute }
+              { visualizerRoute }
               { notFoundRoute }
             </Switch>
             <div className="space-2" />

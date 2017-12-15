@@ -9,6 +9,9 @@ const messages = require('./messages');
 const userChatRelationship = require('./userChatRelationship');
 const chats = require('./chats');
 const friendships = require('./friendships');
+const friendvisualizer = require('./friendvisualizer');
+const mapreduce = require('./mapreduce');
+const friendRecommendations = require('./friendRecommendations');
 
 // Create the database object to export
 const database = {
@@ -24,6 +27,8 @@ const database = {
   getStatuses: statuses.getStatuses,
   getStatus: statuses.getStatus,
   getUserStatuses: statuses.getUserStatuses,
+  getNewsfeedStatuses: statuses.getNewsfeedStatuses,
+  getUserFeed: statuses.getUserFeed,
   addLike: likes.addLike,
   deleteLike: likes.deleteLike,
   checkLike: likes.checkLike,
@@ -40,13 +45,13 @@ const database = {
   getChat: chats.getChat,
   updateChat: chats.updateChat,
   getChats: userChatRelationship.getChats,
-  createUserChatRelationship : userChatRelationship.createUserChatRelationship,
+  createUserChatRelationship: userChatRelationship.createUserChatRelationship,
   deleteUserChatRelationship: userChatRelationship.deleteUserChatRelationship,
   getMessages: messages.getMessages,
   createMessage: messages.createMessage,
-  addFriendship: friendships.addFriendship,
-  getFriendships: friendships.getFriendships,
-  getFriend: friendships.getFriend,
+  getVisualizer: friendvisualizer.getVisualizer,
+  getData: mapreduce.getData,
+  getRecommendations: friendRecommendations.getRecommendations,
 };
 
 module.exports = database;

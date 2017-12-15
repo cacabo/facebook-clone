@@ -14,10 +14,6 @@ import Loading from '../shared/Loading';
  *
  * State handles whether comments show up or not. By default, they are hidden.
  * Toggle the comments box by clicking on the comments icon or text.
- *
- * TODO style new comments
- * TODO new friend updates (different types of statuses)
- * TODO profile updates
  */
 class Status extends React.Component {
   // Constructor method
@@ -36,6 +32,8 @@ class Status extends React.Component {
       comment: "",
       commentError: "",
       isNew: this.props.isNew,
+      type: this.props.type,
+      error: "",
     };
 
     // Bind this to helper functions
@@ -50,7 +48,7 @@ class Status extends React.Component {
     autosize(document.querySelectorAll('textarea'));
 
     /**
-     * TODO make a request to check if the user has liked the status or not
+     * Make a request to check if the user has liked the status or not
      * and set the state accordingly
      */
     axios.get('/api/users/' + this.props.user + '/statuses/' + this.props.id + '/checkLike')
@@ -69,10 +67,9 @@ class Status extends React.Component {
         }
       })
       .catch(err => {
-        /**
-         * TODO Figure out what to do if there is an error with axios get request
-         */
-        console.log(err);
+        this.setState({
+          error: err,
+        });
       });
 
     // Set a timeout for removing isNew after 5 seconds
@@ -104,11 +101,8 @@ class Status extends React.Component {
           });
         })
         .catch(err => {
-          /**
-           * TODO handle the error
-           */
-          console.log(err);
           this.setState({
+            error: err,
             commentsPending: false,
             comments: [],
           });
@@ -121,8 +115,7 @@ class Status extends React.Component {
    *
    * Make a request to like or unlike the status
    * if successful, update the state
-   * if there is an error console.log it and we can figure out what to do
-   * with that error later
+   *
    * Also update likes count if successful
    */
   likeOnClick() {
@@ -222,7 +215,7 @@ class Status extends React.Component {
 
             // Denote that the comment is new
             comment.isNew = true;
-            comment.comment = comment.content;
+            comment.comment = this.state.comment;
 
             // Update the state
             this.setState({
@@ -292,7 +285,38 @@ class Status extends React.Component {
               <Link to={ "/users/" + this.props.user }>
                 { this.props.userData.name }
               </Link>
-              { this.props.receiver && (<i className="fa fa-caret-right" />) }
+              {
+                (this.props.receiver && this.props.type === "STATUS") &&
+                (<i className="fa fa-caret-right" />)
+              }
+              {
+                (this.props.type === "UPDATE_PROFILE_PICTURE") && (
+                  <span className="about">
+                    &nbsp;updated their profile picture.
+                  </span>
+                )
+              }
+              {
+                (this.props.type === "UPDATE_COVER_PHOTO") && (
+                  <span className="about">
+                    &nbsp;updated their cover photo.
+                  </span>
+                )
+              }
+              {
+                (this.props.type === "UPDATE_BIO") && (
+                  <span className="about">
+                    &nbsp;updated their bio.
+                  </span>
+                )
+              }
+              {
+                (this.props.type === "FRIENDSHIP") && (
+                  <span className="about">
+                    &nbsp;became friends with&nbsp;
+                  </span>
+                )
+              }
               { this.props.receiver && (
                 <Link to={ "/users/" + this.props.receiver }>
                   { this.props.receiverData.name }
@@ -305,9 +329,23 @@ class Status extends React.Component {
             </p>
           </div>
         </div>
-        <p className="marg-bot-0 text">
-          { this.props.content }
-        </p>
+        {
+          this.state.error && (
+            <div className="alert alert-danger error">
+              { this.state.error }
+            </div>
+          )
+        }
+        {
+          this.props.content && (
+            <p className={ this.props.type === "UPDATE_BIO" ? ("marg-bot-0 text bio") : ("marg-bot-0 text") }>
+              { this.props.content }
+            </p>
+          )
+        }
+        {
+          (this.props.type === "FRIENDSHIP") && (<img alt="friendship" className="friendship img-fluid" src="https://s3.amazonaws.com/nets-final-project-assets/fitsbump.svg" />)
+        }
         { this.props.image ? <img alt={ this.props.content } src={ this.props.image } className="img-fluid image" /> : "" }
         <div className="interact">
           <div className="like" onClick={ this.likeOnClick }>
@@ -373,6 +411,7 @@ Status.propTypes = {
   receiverData: PropTypes.object,
   id: PropTypes.string,
   isNew: PropTypes.bool,
+  type: PropTypes.string,
 };
 
 const mapStateToProps = (state) => {

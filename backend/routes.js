@@ -9,6 +9,25 @@ const db = require('./database.js');
  */
 
 /**
+ * Render mapreduce data
+ */
+router.get('/mapreduce', (req, res) => {
+  db.getData((data, err) => {
+    if (err || !data) {
+      res.send({
+        success: false,
+        error: err,
+      });
+    } else {
+      res.send({
+        success: true,
+        data: data,
+      });
+    }
+  });
+});
+
+/**
  * Denote that the API is up and running
  */
 router.get('/', (req, res) => {
@@ -102,9 +121,6 @@ router.get('/users/search/:prefix/', (req, res) => {
 
 /**
  * Get all statuses
- * NOTE this likely is not userful though can be used to start off before we
- * have more targetted database methods
- * TODO test that this works
  */
 router.get('/statuses', (req, res) => {
   // Find all statuses in the database
@@ -191,16 +207,48 @@ router.post('/statuses/new', (req, res) => {
 });
 
 /**
+ * Get newsfeed statuses of the user that is logged in (friends as well as his/her own)
+ */
+router.get('/newsfeed', (req, res) => {
+  if (!req.session.username) {
+    // If the current user is not logged in
+    res.send({
+      success: false,
+      error: "User must be logged in.",
+    });
+  }
+
+  const user = req.session.username;
+
+  // Get newsfeed statuses of the user that is logged in
+  db.getNewsfeedStatuses(user, (data, err) => {
+    if (err || !data) {
+      res.send({
+        success: false,
+        error: err,
+      });
+    } else {
+      res.send({
+        success: true,
+        data: data,
+      });
+    }
+  });
+});
+
+/**
  * Update a user object
  */
 router.post('/users/:username/update/', (req, res) => {
   const sessionUsername = req.session.username;
   const reqUsername = req.params.username;
 
-  // Ensure that the two uesernames are the same
+  // Ensure that the two usernames are the same
   if (sessionUsername === reqUsername) {
-    // Regular expression for validating URL's
+    // Regular expression for validating URLs and affiliations
     const urlRegex = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
+    const affiliationRegex = /^[a-zA-Z ]*$/;
+    const interestsRegex = /^[a-zA-Z, ]*$/;
 
     // Error checking
     if (!req.body.name) {
@@ -233,35 +281,68 @@ router.post('/users/:username/update/', (req, res) => {
         success: false,
         error: "Cover photo must be a valid URL.",
       });
-    }
+    } else if (!affiliationRegex.test(req.body.affiliation)) {
+      res.send({
+        success: false,
+        error: "Affiliation can contain only letters and spaces."
+      });
+    } else if (!interestsRegex.test(req.body.interests)) {
+      res.send({
+        success: false,
+        error: "Interests can contain only letters, spaces, and commas."
+      });
+    } else {
+      // Ensure that formatting is valid
+      let valid = true;
 
-    // Update the object to contain the information we want
-    const obj = {
-      username: sessionUsername,
-      name: req.body.name,
-      affiliation: req.body.affiliation.toLowerCase(),
-      bio: req.body.bio,
-      interests: req.body.interests.toLowerCase(),
-      profilePicture: req.body.profilePicture,
-      coverPhoto: req.body.coverPhoto,
-    };
-
-    // Send the object to the database
-    db.updateUser(obj, (data, err) => {
-      if (err || !data) {
-        // If there was an error updating
-        res.send({
-          success: false,
-          error: err,
-        });
-      } else {
-        // If the update was successful
-        res.send({
-          success: true,
-          data: data,
+      if (req.body.interests) {
+        // Ensure that there are no duplicate interests
+        const interests = req.body.interests.split(', ');
+        const interestsObj = {};
+        interests.map(interest => {
+          if (valid && interestsObj[interest]) {
+            valid = false;
+            res.send({
+              success: false,
+              error: "Interests must all be unique",
+            });
+          } else {
+            interestsObj[interest] = true;
+          }
         });
       }
-    });
+
+      if (valid) {
+        // If there was no formatting error
+        // Update the object to contain the information we want
+        const obj = {
+          username: sessionUsername,
+          name: req.body.name,
+          affiliation: req.body.affiliation.toLowerCase(),
+          bio: req.body.bio,
+          interests: req.body.interests.toLowerCase(),
+          profilePicture: req.body.profilePicture,
+          coverPhoto: req.body.coverPhoto,
+        };
+
+        // Send the object to the database
+        db.updateUser(obj, (data, err) => {
+          if (err || !data) {
+            // If there was an error updating
+            res.send({
+              success: false,
+              error: err,
+            });
+          } else {
+            // If the update was successful
+            res.send({
+              success: true,
+              data: data,
+            });
+          }
+        });
+      }
+    }
   } else {
     // If there is no username match
     res.send({
@@ -273,14 +354,13 @@ router.post('/users/:username/update/', (req, res) => {
 
 /**
  * Get all statuses by a particular user
- * TODO get statuses to this user
  */
 router.get('/users/:username/statuses/', (req, res) => {
   // Find the username in the URL
   const username = req.params.username;
 
   // Get the statuses from the database
-  db.getUserStatuses(username, (data, err) => {
+  db.getUserFeed(username, (data, err) => {
     if (err) {
       // If there is an error or no data is sent
       res.send({
@@ -447,6 +527,29 @@ router.get('/users/:username/friends', (req, res) => {
 });
 
 /**
+ * Get the friend visualizer
+ */
+router.get('/visualizer', (req, res) => {
+  // Get the username of the user
+  const user = req.session.username;
+
+  // Get the visualizer data from the database
+  db.getVisualizer(user, (data, err) => {
+    if (err || !data) {
+      res.send({
+        success: false,
+        error: err,
+      });
+    } else {
+      res.send({
+        success: true,
+        data: data
+      });
+    }
+  });
+});
+
+/**
  * Get specific friend
  */
 router.get('/users/:username/friends/:friendUsername', (req, res) => {
@@ -498,8 +601,8 @@ router.get('/users/:username/statuses/:statusID/checkLike', (req, res) => {
 });
 
 /**
- * Add like to statuses
- * TODO: checkLike, and then either go to addLike or deleteLike
+ * Either add or delete a like on a status depending on if the user has
+ * already liked the post or not.
  */
 router.get('/users/:username/statuses/:statusID/likes', (req, res) => {
   // Get the status and liker
@@ -625,10 +728,8 @@ router.post('/users/new', (req, res) => {
 });
 
 /**
- * Add like to statuses
- * TODO: first check if the like exists or not
- *       if it does exist, then delete the like
- *       if it does not exists, then add the like
+ * If the user has already liked the status, then this will delete the like,
+ * else it will add the like.
  */
 router.get('/users/:username/statuses/:statusID/likes', (req, res) => {
   // Get the status and liker
@@ -660,8 +761,8 @@ router.post('/users/:inviter/chats/:roomID/invite/:receiver', (req, res) => {
   const sender = req.params.inviter;
   const receiver = req.params.receiver;
   const room = req.params.roomID;
-  
-  // Create an invite with sender, receiver, and room        
+
+  // Create an invite with sender, receiver, and room
   db.createInvite(sender, receiver, room, (data, err) => {
     if (err) {
       res.send({
@@ -979,9 +1080,37 @@ router.get('/online', (req, res) => {
   });
 });
 
+/**
+ * Get recommendations for a user
+ */
+router.get("/recommendations", (req, res) => {
+  if (!req.session.username) {
+    // If the user is not logged in
+    res.send({
+      success: false,
+      error: "User must be logged in",
+    });
+  } else {
+    // Find recommendations in the database
+    db.getRecommendations(req.session.username, (data, err) => {
+      if (err || !data) {
+        res.send({
+          success: false,
+          error: err,
+        });
+      } else {
+        res.send({
+          success: true,
+          data: data,
+        });
+      }
+    });
+  }
+});
+
 
 /**
- * Handle a 404
+ * Handle a 404 (page not found) on the API side
  */
 router.get('*', (req, res) => {
   res.status(404).send("404: page not found");
