@@ -60,16 +60,13 @@ import { invite } from './socketrouter';
     this.getChats();
   }
 
-  // Handles acceptance
+  // Handles approval of new invites
   handleInvite(event) {
     axios.get('/api/chat/' + this.state.currentInvitation.roomToJoin)
     .then(checkData => {
         // If success is true, user has invited already
         if(checkData.data.success === true) {
           // automatically creates new chat for 3 people when 1 join 2
-
-          console.log("Num users: ");
-          console.log(checkData.data.data.numUsers);
           if (checkData.data.data.numUsers == 2) {
             const newRoomID = uuid();
             const chatTitle = checkData.data.data.chatTitle + " (Group)";
@@ -79,7 +76,7 @@ import { invite } from './socketrouter';
             .then((chatData) => {
               if (chatData.data.success) {
                 console.log("Successfully created chat object: " + chatTitle);
-                invite(newRoomID, this.state.currentInvitation.roomToJoin, chatTitle, "everyone" ,this.props.username, true, () => {});
+                invite(newRoomID, this.state.currentInvitation.roomToJoin, chatTitle, "everyone", this.props.username, true, () => {});
                 this.setState({
                   currentInvitation: newRoomID
                 })
@@ -132,7 +129,9 @@ import { invite } from './socketrouter';
                   // If success is true, user has incremented chat user count already
                   if(checkData.data.success === true) {
                     console.log("joined roommm " + this.state.currentInvitation.chatTitle);
-
+                    this.setState({
+                      currentInvitation: ""
+                    })
                     // Reloads chats
                     this.getChats();
                     console.log("Successefully incremented chat user count");
@@ -143,7 +142,7 @@ import { invite } from './socketrouter';
                .catch(err => {
                 console.log(err);
               });
-             } else {
+              } else {
                 // There was an error creating a new chat relationship
                 console.log(chatData.data.err);
               }
@@ -258,6 +257,7 @@ render() {
     onClick={ this.handleInvite }> 
     Accept 
     </button>
+    <br></br>
     <div> invited to join: { this.state.currentInvitation.chatTitle } </div>
     </div>
     );

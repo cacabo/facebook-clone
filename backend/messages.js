@@ -8,7 +8,7 @@ const async = require('async');
  * Create a message
  */
  function createMessage(username, body, room, callback) {
-   if (!username) {
+  if (!username) {
     callback(null, "Username must be populated");
   } else if (!body) {
     callback(null, "Body must be populated");

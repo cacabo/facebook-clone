@@ -39,18 +39,10 @@ app.listen(PORT, error => {
 io.on('connection', (socket) => {
 	console.log('A client just joined on', socket.id);
 
-	socket.on('disconnect', function(){
-	  /*
-	  * TODO remove user from the currentlyOnline table
-	  */	  
-	});
-
 	// Listens for new messages
 	socket.on('message', (message) => {
 		const messageData = JSON.parse(message);
 		const room = messageData.room;
-
-		console.log("Broadcast reached " + message.body + " " + room);
 		socket.broadcast.to(room).emit('message', message);
 	});
 
@@ -62,8 +54,8 @@ io.on('connection', (socket) => {
 		console.log(data);
 
 		if (rooms.autoJoin) {
-			console.log("YAYAYAYAYAY");
-			io.in(rooms.roomToReceive).emit('invite', data);
+			socket.emit('invite', data);
+			socket.broadcast.to(rooms.roomToReceive).emit('invite', data);
 		} else {
 			socket.broadcast.to(rooms.roomToReceive).emit('invite', data);
 		}

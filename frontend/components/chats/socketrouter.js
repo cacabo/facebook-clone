@@ -53,70 +53,15 @@ function invite(room, roomToReceive, chatTitle, username, inviter, autoJoin, cb)
 
 // Joins a room
 function joinRoom(room, cb) {
-
 	socket.emit('joinRoom', room);
-
-
-
-
-	// axios.get('/api/chat/' + room )
-	// .then(checkData => {
-	// 	console.log("Reached joinRoom socketrouter.js");
- //        // If success is true, user has invited already
- //        if(checkData.data.success === true) {
- //        	console.log("sdfsdffdssdf " + checkData.data.data.numUsers);
-
- //        	// automatically creates new chat for 3 people when 1 join 2
- //        	if (autoJoin && checkData.data.data.numUsers == 3) {
- //        		console.log("Successss");
-
- //        		const newRoomID = uuid();
- //        		const params = {
- //        			autoJoin: true,
- //        			roomToReceive: room,
- //        			roomToJoin: newRoomID,
- //        			chatTitle: checkData.data.data.chatTitle + " (" + checkData.data.data.numUsers + ")",
- //        		};
-
- //        		console.log("PARAMS ");
- //        		console.log(params);
-
-
- //        		// Creates and puts a new chat in the database
-	// 		    axios.post('/api/chat/' + newRoomID + '/title/' + params.chatTitle + '/new')
-	// 		    .then((chatData) => {
-	// 		      if (chatData.data.success) {
-	// 		        console.log("Successfully created chat object: " + params.chatTitle);
-	// 		        socket.emit('invite', JSON.stringify(params));
-	// 		      } else {
-	// 		          // There was an error creating a new message
-	// 		          console.log(chatData.data.err);
-	// 		        }
-	// 		      })
-	// 		    .catch(chatErr => {
-	// 		      console.log(chatErr);
-	// 		    });
-
- //        	} else {
- //        		socket.emit('joinRoom', room);
- //        	}
- //        } else {
- //        	console.log("Failed to get chat");
- //        }
- //    })
-	// .catch(err => {
-	// 	console.log(err);
-	// });
+	cb();
 }
-
-
 
 // Leaves a room
 function leaveRoom(room, cb) {
 	socket.emit('leaveRoom', room);
 	cb(true);
 }
-
 
 export { 
 	subscribeToMessages,

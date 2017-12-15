@@ -49,12 +49,10 @@ function getChat(room, callback) {
 
   // Find the user in the database
   Chat.get(room, (err, data) => {
-  	console.log("getChat reached chat.js")
     if (err || !data) {
       // If there was an issue getting the data
       callback(null, "Chat with room " + room + " not found.");
     } else {
-      console.log("ehhhhhh");
       // Return the value without error
       callback(data, null);
     }

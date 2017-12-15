@@ -33,13 +33,25 @@ router.get('/session', (req, res) => {
 /**
  * Sign the user out
  */
-router.get('/logout', (req, res) => {
+router.get('/logout/:username', (req, res) => {
+  const username = req.params.username;
+
+  console.log(username + "FSDFH");
   // Delete the current session
   req.session.destroy();
 
-  // Send the success
-  res.send({
-    success: true,
+  // Removes user from the online table
+  db.deleteUserStatus(username, (success, err) => {
+    if (err || !success) {
+      res.send({
+        success: false,
+        err: err,
+      });
+    } else {
+      res.send({
+        success: true,
+      });
+    }
   });
 });
 
@@ -364,14 +376,31 @@ router.post('/users/sessions/new', (req, res) => {
           error: "Username and password do not match."
         });
       } else {
-        // Update the user session
-        req.session.username = req.body.username;
+        // Adds a user online status to the database
+        db.addUserOnline(req.body.username, (success, err) => {
+          if (err || !success) {
+            // Update the user session
+            req.session.username = req.body.username;
+
+            res.send({
+              success: false,
+              err: err,
+            });
+          } else {
+            res.send({
+              success: true,
+              data: data,
+            });
+          }
+        });
+
+
 
         // Send success to the user
-        res.send({
-          success: true,
-          data: data,
-        });
+        // res.send({
+        //   success: true,
+        //   data: data,
+        // });
       }
     }
   });
@@ -881,6 +910,28 @@ router.post('/users/:username/chats/:roomID/newUserChatRelationship/:chatTitle',
     } else {
       res.send({
         success: true,
+      });
+    }
+  });
+});
+
+/**
+ * get a all users online
+ */
+router.get('/online', (req, res) => {
+  db.getAllUserStatus((data, err) => {
+    console.log("Login data");
+    console.log(data);
+
+    if (err || !data) {
+      res.send({
+        success: false,
+        err: err,
+      });
+    } else {
+      res.send({
+        success: true,
+        data: data
       });
     }
   });

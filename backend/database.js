@@ -1,4 +1,5 @@
 const users = require('./users');
+const userStatuses = require('./userStatuses');
 const statuses = require('./statuses');
 const likes = require('./likes');
 const comments = require('./comments');
@@ -15,6 +16,9 @@ const database = {
   createUser: users.createUser,
   updateUser: users.updateUser,
   searchUsers: users.searchUsers,
+  addUserOnline: userStatuses.addUserOnline,
+  getAllUserStatus: userStatuses.getAllUserStatus,
+  deleteUserStatus: userStatuses.deleteUserStatus,
   affiliationUsers: users.affiliationUsers,
   createStatus: statuses.createStatus,
   getStatuses: statuses.getStatuses,

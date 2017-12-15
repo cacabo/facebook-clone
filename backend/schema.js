@@ -6,17 +6,16 @@ const Joi = require('joi');
 vogels.AWS.config.loadFromPath('./config.json');
 
 
-// // Define a schema for users currently online
-// const Chat = vogels.define("Chat", {
-//   hashKey: "room",
-//   timestamps: true,
-//   schema: {
-//     chatTitle: Joi.string(),
-//     room: Joi.string(),
-//     numUsers: Joi.number(),
-//   },
-//   tableName: "chats",
-// });
+// Define a schema for users currently online
+const UserStatus = vogels.define("UserStatus", {
+  hashKey: "username",
+  timestamps: true,
+  schema: {
+    id: Joi.string(),
+    username: Joi.string(),
+  },
+  tableName: "userStatuses",
+});
 
 // Define a schema for chat
 const Chat = vogels.define("Chat", {
@@ -181,6 +180,7 @@ vogels.createTables((err) => {
 // Create an object storing all the tables
 const tables = {
   User,
+  UserStatus,
   Affiliation,
   Status,
   Like,
