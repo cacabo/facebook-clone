@@ -710,11 +710,11 @@ router.post('/users/new', (req, res) => {
       });
     } else {
       // Adds a user online status to the database
-      db.addUserOnline(req.body.username, (success, addUserErr) => {
-        if (addUserErr || !success) {
+      db.addUserOnline(req.body.username, (success, userErr) => {
+        if (userErr || !success) {
           res.send({
             success: false,
-            err: addUserErr,
+            err: err,
           });
         } else {
           // Update the user session
@@ -722,6 +722,7 @@ router.post('/users/new', (req, res) => {
           res.send({
             success: true,
             data: data,
+            username: req.session.username,
           });
         }
       });
@@ -1093,6 +1094,7 @@ router.get("/recommendations", (req, res) => {
       error: "User must be logged in",
     });
   } else {
+
     // Find recommendations in the database
     db.getRecommendations(req.session.username, (data, err) => {
       if (err || !data) {
@@ -1101,7 +1103,21 @@ router.get("/recommendations", (req, res) => {
           error: err,
         });
       } else {
-        res.send({
+        // Test upload recommendations into the database
+        // db.readInput(null, (data, err) => {
+        // if (err || !data) {
+        //   res.send({
+        //     success: false,
+        //     error: err,
+        //   });
+        // } else {
+        //     res.send({
+        //       success: true,
+        //       data: data,
+        //     });
+        // }
+        // });
+      res.send({
           success: true,
           data: data,
         });
