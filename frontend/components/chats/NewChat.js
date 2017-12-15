@@ -77,25 +77,25 @@ class NewChat extends React.Component {
   render() {
     return (
       <Chats>
-      <form className="message-form" onSubmit={ this.handleSubmit }>
-      <textarea
-        name="members"
-        value={ this.state.chatTitle }
-        onChange={ this.handleChangeTitle }
-        rows="1"
-        className="form-control"
-      />
-      <input
-        type="submit"
-        className={
-          this.state.chatTitle ?
-          "btn btn-gray" :
-          "btn btn-gray disabled"
-        }
-        value="Create chat"
-      />
-      </form>
-      <div className="space-1"/>
+        <form className="message-form" onSubmit={ this.handleSubmit }>
+          <textarea
+            name="members"
+            value={ this.state.chatTitle }
+            onChange={ this.handleChangeTitle }
+            rows="1"
+            className="form-control"
+          />
+          <input
+            type="submit"
+            className={
+              this.state.chatTitle ?
+              "btn btn-gray" :
+              "btn btn-gray disabled"
+            }
+            value="Create chat"
+          />
+        </form>
+        <div className="space-1"/>
       </Chats>
     );
   }
