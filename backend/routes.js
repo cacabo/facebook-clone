@@ -456,11 +456,11 @@ router.post('/users/sessions/new', (req, res) => {
         });
       } else {
         // Adds a user online status to the database
-        db.addUserOnline(req.body.username, (success, err) => {
-          if (err || !success) {
+        db.addUserOnline(req.body.username, (success, addUserErr) => {
+          if (addUserErr || !success) {
             res.send({
               success: false,
-              err: err,
+              err: addUserErr,
             });
           } else {
             // Update the user session
@@ -952,11 +952,11 @@ router.post('/users/:username/chats/:roomID/newUserChatRelationship/:chatTitle',
       });
     } else {
       // Increments count of the chat
-      db.getChat(roomID, (chatData, err) => {
+      db.getChat(roomID, (chatData, chatErr) => {
         if (err || !chatData) {
           res.send({
             success: false,
-            err: err,
+            err: chatErr,
           });
         } else {
           // Update the chat to increment num users
@@ -967,12 +967,12 @@ router.post('/users/:username/chats/:roomID/newUserChatRelationship/:chatTitle',
           };
 
           // Send the object to the database
-          db.updateChat(newChat, (data, err) => {
-            if (err) {
+          db.updateChat(newChat, (data, newChatErr) => {
+            if (newChatErr) {
               // If there was an error updating
               res.send({
                 success: false,
-                error: err,
+                error: newChatErr,
               });
             } else {
               // If the update was successful
@@ -1003,22 +1003,22 @@ router.post('/users/:username/chats/:roomID/delete', (req, res) => {
       });
     } else {
       // Decrements count of the chat
-      db.getChat(room, (chatData, err) => {
-        if (err || !chatData) {
+      db.getChat(room, (chatData, chatErr) => {
+        if (chatErr || !chatData) {
           res.send({
             success: false,
-            err: err,
+            err: chatErr,
           });
         } else {
           // Removes chat object if there is no one left in the chat
           if (Number(chatData.attrs.numUsers) - Number(1) <= 0) {
             // Deletes chat is no one left in it
-            db.deleteChat(room, (deleteData, err) => {
-              if (err) {
+            db.deleteChat(room, (deleteData, deleteErr) => {
+              if (deleteErr) {
                 // If there was an error updating
                 res.send({
                   success: false,
-                  error: err,
+                  error: deleteErr,
                 });
               } else {
                 console.log("Reached re.sed error");
@@ -1038,12 +1038,12 @@ router.post('/users/:username/chats/:roomID/delete', (req, res) => {
             };
 
             // Send the object to the database
-            db.updateChat(newChat, (data, err) => {
-              if (err) {
+            db.updateChat(newChat, (data, updateErr) => {
+              if (updateErr) {
                 // If there was an error updating
                 res.send({
                   success: false,
-                  error: err,
+                  error: updateErr,
                 });
               } else {
                 // If the update was successful
@@ -1053,7 +1053,7 @@ router.post('/users/:username/chats/:roomID/delete', (req, res) => {
                 });
               }
             });
-          } 
+          }
         }
       });
     }

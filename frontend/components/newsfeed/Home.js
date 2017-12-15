@@ -127,9 +127,9 @@ class Home extends React.Component {
 
   // Render the component
   render() {
-    if (this.props.isLoggedIn) {
-      return (
-        <div className="container-fluid marg-top-1">
+    return (
+      <div className="container-fluid marg-top-1">
+        { !this.props.isLoggedIn ? <Redirect to="/login" /> : (
           <div className="row">
             <div className="col-lg-3 hidden-md-down">
               <FriendRecommendations />
@@ -165,10 +165,9 @@ class Home extends React.Component {
               <OnlineNow />
             </div>
           </div>
-        </div>
-      );
-    }
-    return (<Redirect to="/login" />);
+        ) }
+      </div>
+    );
   }
 }
 
