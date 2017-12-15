@@ -61,6 +61,11 @@ io.on('connection', (socket) => {
 		}
 	});
 
+	// Prompts the client to reload chats list
+	socket.on('reloadChat', (reload) => {
+		socket.emit('reloadChat', (reload));
+	});
+
 	// Joins a room
 	socket.on('joinRoom', (room) => {
 		console.log("joined room " + room);

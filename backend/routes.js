@@ -36,7 +36,6 @@ router.get('/session', (req, res) => {
 router.get('/logout/:username', (req, res) => {
   const username = req.params.username;
 
-  console.log(username + "FSDFH");
   // Delete the current session
   req.session.destroy();
 
@@ -779,7 +778,7 @@ router.post('/users/:username/chats/:roomID/newMessage/:message', (req, res) => 
 });
 
 /**
- * Gets a chat associated with a room
+ * Gets a chat object associated with a room
  */
 router.get('/chat/:room', (req, res) => {
   const room = req.params.room;
@@ -801,16 +800,13 @@ router.get('/chat/:room', (req, res) => {
 });
 
 /**
- * Creates a chat
+ * Creates a chat object
  */
 router.post('/chat/:room/title/:chatTitle/new', (req, res) => {
-  console.log("HEYYYY");
   const room = req.params.room;
   const title = req.params.chatTitle;
 
-  console.log("THE TITLE" + title);
-
-  // Creates a user chat relationship
+  // Creates a chat object
   db.createChat(title, room, (success, err) => {
     if (err || !success) {
       res.send({
@@ -826,48 +822,6 @@ router.post('/chat/:room/title/:chatTitle/new', (req, res) => {
 });
 
 /**
- * Update chat user count
- */
-router.post('/chat/:room/updateCount/:incrementor', (req, res) => {
-  const room = req.params.room;
-  const incrementor = req.params.incrementor;
-
-  // Get all chats of a user using username
-  db.getChat(room, (chatData, err) => {
-    if (err || !chatData) {
-      res.send({
-        success: false,
-        err: err,
-      });
-    } else {
-      // Update the chat to contain the information we want
-      const newChat = {
-        chatTitle: chatData.attrs.chatTitle,
-        room: room,
-        numUsers: Number(chatData.attrs.numUsers) + Number(incrementor),
-      };
-
-      // Send the object to the database
-      db.updateChat(newChat, (data, err) => {
-        if (err) {
-          // If there was an error updating
-          res.send({
-            success: false,
-            error: err,
-          });
-        } else {
-          // If the update was successful
-          res.send({
-            success: true,
-            data: data,
-          });
-        }
-      });
-    }
-  });
-});
-
-/**
  * Gets all chats for a user
  */
 router.get('/users/:username/chats', (req, res) => {
@@ -875,9 +829,6 @@ router.get('/users/:username/chats', (req, res) => {
 
   // Get all chats of a user using username
   db.getChats(username, (data, err) => {
-    console.log("Data");
-    console.log(data);
-
     if (err || !data) {
       res.send({
         success: false,
@@ -908,8 +859,110 @@ router.post('/users/:username/chats/:roomID/newUserChatRelationship/:chatTitle',
         err: err,
       });
     } else {
+      // Increments count of the chat
+      db.getChat(roomID, (chatData, err) => {
+        if (err || !chatData) {
+          res.send({
+            success: false,
+            err: err,
+          });
+        } else {
+          // Update the chat to increment num users
+          const newChat = {
+            chatTitle: title,
+            room: roomID,
+            numUsers: Number(chatData.attrs.numUsers) + Number(1),
+          };
+
+          // Send the object to the database
+          db.updateChat(newChat, (data, err) => {
+            if (err) {
+              // If there was an error updating
+              res.send({
+                success: false,
+                error: err,
+              });
+            } else {
+              // If the update was successful
+              res.send({
+                success: true,
+                data: data,
+              });
+            }
+          });
+        }
+      });
+    }
+  });
+});
+
+/**
+ * Deletes a user chat relationship
+ */
+router.post('/users/:username/chats/:roomID/delete', (req, res) => {
+  const username = req.params.username;
+  const room = req.params.roomID;
+
+  db.deleteUserChatRelationship(username, room, (success, err) => {
+    if (err || !success) {
       res.send({
-        success: true,
+        success: false,
+        err: err,
+      });
+    } else {
+      // Decrements count of the chat
+      db.getChat(room, (chatData, err) => {
+        if (err || !chatData) {
+          res.send({
+            success: false,
+            err: err,
+          });
+        } else {
+          // Removes chat object if there is no one left in the chat
+          if (Number(chatData.attrs.numUsers) - Number(1) <= 0) {
+            // Deletes chat is no one left in it
+            db.deleteChat(room, (deleteData, err) => {
+              if (err) {
+                // If there was an error updating
+                res.send({
+                  success: false,
+                  error: err,
+                });
+              } else {
+                console.log("Reached re.sed error");
+                // If the update was successful
+                res.send({
+                  success: true,
+                  data: deleteData,
+                });
+              }
+            });
+          } else {
+            // Update the chat to decrement num users
+            const newChat = {
+              chatTitle: chatData.attrs.chatTitle,
+              room: chatData.attrs.room,
+              numUsers: Number(chatData.attrs.numUsers) - Number(1),
+            };
+
+            // Send the object to the database
+            db.updateChat(newChat, (data, err) => {
+              if (err) {
+                // If there was an error updating
+                res.send({
+                  success: false,
+                  error: err,
+                });
+              } else {
+                // If the update was successful
+                res.send({
+                  success: true,
+                  data: data,
+                });
+              }
+            });
+          } 
+        }
       });
     }
   });
@@ -920,9 +973,6 @@ router.post('/users/:username/chats/:roomID/newUserChatRelationship/:chatTitle',
  */
 router.get('/online', (req, res) => {
   db.getAllUserStatus((data, err) => {
-    console.log("Login data");
-    console.log(data);
-
     if (err || !data) {
       res.send({
         success: false,

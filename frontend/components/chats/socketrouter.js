@@ -16,14 +16,25 @@ function subscribeToMessages(cb) {
 // Listens for invitations
 function subscribeToInvitations(username, cb) {
 	// User is part of a specialized room for receving invitations
-	socket.emit('joinRoom', username + 'inviteRoom');
-
-
 	console.log("Received Invite");
-
+	socket.emit('joinRoom', username + 'inviteRoom');
 	socket.on('invite', (data) => {
 		cb(data);
 	});
+}
+
+// Listens for when to reload list of chats on client side
+function subscribeToReloadChats(cb) {
+	socket.on('reloadChat', (reload) => {
+		cb(reload);
+	});
+}
+
+// Reloads chat list
+function reloadChatList(cb) {
+	console.log("Reload client function reached");
+	socket.emit('reloadChat', true);
+	cb();
 }
 
 // Sends a message
@@ -70,4 +81,6 @@ export {
 	invite,
 	joinRoom,
 	leaveRoom,
+	subscribeToReloadChats,
+	reloadChatList,
 };

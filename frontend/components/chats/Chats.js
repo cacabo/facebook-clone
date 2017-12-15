@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { subscribeToInvitations } from './socketrouter';
+import { subscribeToReloadChats } from './socketrouter';
 import { joinRoom } from './socketrouter';
 import { invite } from './socketrouter';
 
@@ -28,14 +29,15 @@ import { invite } from './socketrouter';
    };
 
    this.handleInvite = this.handleInvite.bind(this);
+   this.handleLeave = this.handleLeave.bind(this);
    this.updateChatRoom = this.updateChatRoom.bind(this);
    this.getInvites = this.getInvites.bind(this);
-   this.getChats = this.getChats.bind(this);
+   this.reloadChats = this.reloadChats.bind(this);
    this.checkIfChatExists = this.checkIfChatExists.bind(this);
  }
 
- componentDidMount() {
-    // Listening for new invitations to join chats
+  // Listening for new invitations to join chats
+  componentDidMount() {
     // Data has room, sender, and users in the room
     subscribeToInvitations(this.props.username, (data) => {
       const invitationData = JSON.parse(data);
@@ -56,8 +58,36 @@ import { invite } from './socketrouter';
       }
     });
 
+    // Listens for when to reload chat list from children components
+    subscribeToReloadChats((reload) => {
+      if (reload) {
+        this.reloadChats();
+      }
+    })
+
     // Render chats
-    this.getChats();
+    this.reloadChats();
+  }
+
+  // Handles removing user from chat room
+  handleLeave(event) {
+    // axios.post('/api/chat/' + newRoomID + '/updateCount/' + -1)
+    // .then((chatData) => {
+    //   if (chatData.data.success) {
+    //     console.log("Successfully created chat object: " + chatTitle);
+    //     invite(newRoomID, this.state.currentInvitation.roomToJoin, chatTitle, "everyone", this.props.username, true, () => {});
+    //     this.setState({
+    //       currentInvitation: newRoomID
+    //     })
+    //     this.updateChatRoom();
+    //   } else {
+    //       // There was an error creating a new message
+    //       console.log(chatData.data.err);
+    //     }
+    //   })
+    // .catch(chatErr => {
+    //   console.log(chatErr);
+    // });
   }
 
   // Handles approval of new invites
@@ -66,7 +96,7 @@ import { invite } from './socketrouter';
     .then(checkData => {
         // If success is true, user has invited already
         if(checkData.data.success === true) {
-          // automatically creates new chat for 3 people when 1 join 2
+          // Creates new chat for 3 people when 1 join 2
           if (checkData.data.data.numUsers == 2) {
             const newRoomID = uuid();
             const chatTitle = checkData.data.data.chatTitle + " (Group)";
@@ -122,26 +152,8 @@ import { invite } from './socketrouter';
             + '/newUserChatRelationship/' + this.state.currentInvitation.chatTitle)
           .then((chatData) => {
             if (chatData.data.success) {
-
-               // Increments the user count of chat in table
-               axios.post('/api/chat/' + this.state.currentInvitation.roomToJoin + '/updateCount/' + 1)
-               .then(checkData => {
-                  // If success is true, user has incremented chat user count already
-                  if(checkData.data.success === true) {
-                    console.log("joined roommm " + this.state.currentInvitation.chatTitle);
-                    this.setState({
-                      currentInvitation: ""
-                    })
-                    // Reloads chats
-                    this.getChats();
-                    console.log("Successefully incremented chat user count");
-                  } else {
-                    console.log("Failed to increment user count");
-                  }
-                })
-               .catch(err => {
-                console.log(err);
-              });
+                // Reloads chats
+                this.reloadChats();
               } else {
                 // There was an error creating a new chat relationship
                 console.log(chatData.data.err);
@@ -193,7 +205,7 @@ import { invite } from './socketrouter';
   }
 
   // Gets all chats associated with this user
-  getChats() {
+  reloadChats() {
     axios.get('/api/users/' + this.props.username + '/chats')
     .then(checkData => {
         // If success is true, user has invited already
@@ -254,10 +266,13 @@ render() {
     { this.props.children }
     </div>
     <button className="btn btn-gray"
+    onClick={ this.handleLeave }> 
+    Leave Chat 
+    </button>
+    <button className="btn btn-gray"
     onClick={ this.handleInvite }> 
     Accept 
     </button>
-    <br></br>
     <div> invited to join: { this.state.currentInvitation.chatTitle } </div>
     </div>
     );

@@ -19,7 +19,7 @@ function createChat(title, room, callback) {
 		const chatObject = {
 			chatTitle: title,
 			room: room,
-			numUsers: 1,
+			numUsers: 0,
 		};
 
 		//Put the chat in to the database
@@ -33,11 +33,6 @@ function createChat(title, room, callback) {
 	}
 }
 
-/*
-* TODO create function to add UserChatRel
-* Must call this for the creator automatically and anyone in the future added to the chat
-*/
-
 /**
  * Get a user with the specified room
  */
@@ -47,7 +42,7 @@ function getChat(room, callback) {
     callback(null, "Room must be well-defined.");
   }
 
-  // Find the user in the database
+  // Find the chat in the database
   Chat.get(room, (err, data) => {
     if (err || !data) {
       // If there was an issue getting the data
@@ -74,13 +69,29 @@ function updateChat(updatedChat, callback) {
   });
 }
 
+/**
+ * Delete a chat
+ */
+function deleteChat(room, callback) {
+  // Deletes the chat
+  Chat
+  .destroy(room, (deleteErr) => {
+    if (deleteErr) {
+      callback(false, "Error trying to delete chat: " + deleteErr.message);
+    } else {
+      callback(true, null);
+    }
+  });
+}
+
 
 // Create an object to store the helper functions
-const invites = {
+const chats = {
   createChat,
+  deleteChat,
   getChat,
   updateChat,
 };
 
 // Export the object
-module.exports = invites;
+module.exports = chats;

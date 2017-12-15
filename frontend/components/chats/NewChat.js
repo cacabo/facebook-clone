@@ -5,6 +5,7 @@ const uuid = require('uuid-v4');
 import axios from 'axios';
 import { connect } from 'react-redux';
 import { joinRoom } from './socketrouter';
+import { reloadChatList } from './socketrouter';
 
 /**
  * Component to render one of a user's group chats.
@@ -13,7 +14,6 @@ import { joinRoom } from './socketrouter';
 /*
 * TODO Put in database and then simply reload it 
 */
-
 class NewChat extends React.Component {
   // Constructor method
   constructor(props) {
@@ -62,7 +62,8 @@ class NewChat extends React.Component {
     .then((chatData) => {
       if (chatData.data.success) {
         console.log("Successfully created chat: " + this.state.chatTitle);
-        joinRoom(roomID, [], () => {});
+        joinRoom(roomID, () => {});
+        reloadChatList(() => {});
       } else {
           // There was an error creating a new message
           console.log(chatData.data.err);

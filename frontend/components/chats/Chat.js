@@ -9,6 +9,8 @@ import { sendMessage } from './socketrouter';
 import { invite } from './socketrouter';
 import { connect } from 'react-redux';
 import { joinRoom } from './socketrouter';
+import { leaveRoom } from './socketrouter';
+import { reloadChatList } from './socketrouter';
 
 /**
  * Component to render one of a user's group chats.
@@ -36,6 +38,7 @@ class Chat extends React.Component {
     this.handleChangeMessage = this.handleChangeMessage.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleInvite = this.handleInvite.bind(this);
+    this.handleLeave = this.handleLeave.bind(this);
     this.reloadMessages = this.reloadMessages.bind(this);
     this.handleChangeInvite = this.handleChangeInvite.bind(this);
   }
@@ -66,7 +69,7 @@ class Chat extends React.Component {
       });
   }
 
-  //Prepares component to listen to new messages
+  // Prepares component to listen to new messages
   componentDidMount() {
     autosize(document.querySelectorAll('textarea')); 
 
@@ -170,6 +173,27 @@ class Chat extends React.Component {
     }
   }
 
+  // Handles removing user from chat room
+  handleLeave(event) {
+    axios.post('/api/users/' + this.state.currentUser + '/chats/' + this.props.match.params.id + '/delete')
+    .then((deleteData) => {
+      if (deleteData.data.success) {
+        reloadChatList(() => {});
+
+        // Leave room on socket
+        leaveRoom(this.props.match.params.id, (success) => {
+          console.log("Successfully removed user from room");
+        });
+      } else {
+          // There was an error creating a new message
+          console.log(deleteData.data.err);
+        }
+      })
+    .catch(chatErr => {
+      console.log(chatErr);
+    });
+  }
+
   /**
    * Helper function to render messages
    *
@@ -243,6 +267,11 @@ class Chat extends React.Component {
             value="Invite"
           />
         </form>
+
+        <button className="btn btn-gray"
+        onClick={ this.handleLeave }> 
+        Leave Chat 
+        </button>
       </Chats>
     );
   }

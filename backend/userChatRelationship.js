@@ -87,25 +87,17 @@ function getChats(username, callback) {
 }
 
 /**
- * Deletes Chat object from the chats table
- * To be used when a user leaves a chat
+ * Deletes User Chat Relationship object from the table
  */
 function deleteUserChatRelationship(username, room, callback) {
-  // Check that the user exists
-  User.get(username, (userErr, userData) => {
-    if (userErr || !userData) {
-      callback(null, "User not found.");
-    }
-
-    // Deletes the realtionship associated with user and the room
-    UserChatRelationship
-      .destroy(username, room, (deleteErr) => {
-        if (deleteErr) {
-          callback(false, "Error trying to delete user chat relationship: " + deleteErr.message);
-        } else {
-          callback(true, null);
-        }
-    });
+  // Deletes the realtionship associated with user and the room
+  UserChatRelationship
+    .destroy(username, room, (deleteErr) => {
+      if (deleteErr) {
+        callback(false, "Error trying to delete user chat relationship: " + deleteErr.message);
+      } else {
+        callback(true, null);
+      }
   });
 }
 
