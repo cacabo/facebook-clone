@@ -67,6 +67,9 @@ import { invite } from './socketrouter';
         // If success is true, user has invited already
         if(checkData.data.success === true) {
           // automatically creates new chat for 3 people when 1 join 2
+
+          console.log("Num users: ");
+          console.log(checkData.data.data.numUsers);
           if (checkData.data.data.numUsers == 2) {
             const newRoomID = uuid();
             const chatTitle = checkData.data.data.chatTitle + " (Group)";
