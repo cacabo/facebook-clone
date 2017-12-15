@@ -5,16 +5,18 @@ const async = require('async');
 /**
  * Create a UserChatRelationship
  */
-function createUserChatRelationship(username, room, callback) {
+function createUserChatRelationship(username, title, room, callback) {
 	if (!username) {
 		callback(null, "Username must be populated");
+	} else if (!title) {
+		callback(null, "Title must be populated");
 	} else if (!room) {
-		callback(null, "Room must be populated");
-	} else {
-    // Create relsationship object
+    callback(null, "Room must be populated");
+  } else {
+    // Create relationship object
 		const relObject = {
 			username: username,
-			title: room,
+			chatTitle: title,
 			room: room,
 		};
 
@@ -85,25 +87,17 @@ function getChats(username, callback) {
 }
 
 /**
- * Deletes Chat object from the chats table
- * To be used when a user leaves a chat
+ * Deletes User Chat Relationship object from the table
  */
 function deleteUserChatRelationship(username, room, callback) {
-  // Check that the user exists
-  User.get(username, (userErr, userData) => {
-    if (userErr || !userData) {
-      callback(null, "User not found.");
-    }
-
-    // Deletes the realtionship associated with user and the room
-    UserChatRelationship
-      .destroy(username, room, (deleteErr) => {
-        if (deleteErr) {
-          callback(false, "Error trying to delete user chat relationship: " + deleteErr.message);
-        } else {
-          callback(true, null);
-        }
-    });
+  // Deletes the realtionship associated with user and the room
+  UserChatRelationship
+    .destroy(username, room, (deleteErr) => {
+      if (deleteErr) {
+        callback(false, "Error trying to delete user chat relationship: " + deleteErr.message);
+      } else {
+        callback(true, null);
+      }
   });
 }
 

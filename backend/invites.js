@@ -97,8 +97,8 @@ const async = require('async');
           // Return the invites to the user
           callback(invites, err);
         });
-}
-});
+      }
+  });
 }
 
 /**
@@ -116,7 +116,7 @@ const async = require('async');
     Invite
     .destroy(username, room, (deleteErr) => {
       if (deleteErr) {
-        callback(false, "Error trying to delete like: " + deleteErr.message);
+        callback(false, "Error trying to delete invite: " + deleteErr.message);
       } else {
         callback(true, null);
       }

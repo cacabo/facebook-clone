@@ -80,7 +80,7 @@ class Nav extends React.Component {
   // Handle signout
   handleLogout() {
     // Sign the user out
-    axios.get('/api/logout')
+    axios.get('/api/logout/' + this.props.username)
       .then(data => {
         if (!data.success) {
           // Purge the user's redux state

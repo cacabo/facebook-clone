@@ -9,6 +9,8 @@ import { sendMessage } from './socketrouter';
 import { invite } from './socketrouter';
 import { connect } from 'react-redux';
 import { joinRoom } from './socketrouter';
+import { leaveRoom } from './socketrouter';
+import { reloadChatList } from './socketrouter';
 import PropTypes from 'prop-types';
 
 /**
@@ -29,13 +31,13 @@ class Chat extends React.Component {
       users: [],
     };
 
-    // Everyone is part of a room for receving invitations
-    joinRoom(this.state.currentUser + 'inviteRoom', () => {});
+    console.log("Current User " + this.props.username);
 
     // Bind this to helper methods
     this.handleChangeMessage = this.handleChangeMessage.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleInvite = this.handleInvite.bind(this);
+    this.handleLeave = this.handleLeave.bind(this);
     this.reloadMessages = this.reloadMessages.bind(this);
     this.handleChangeInvite = this.handleChangeInvite.bind(this);
   }
@@ -56,8 +58,9 @@ class Chat extends React.Component {
           this.setState({
             messages: checkData.data.data
           });
+          console.log(this.state.messages);
         } else {
-            console.log("Failed to get invites");
+            console.log("Failed to get messages");
         }
       })
       .catch(err => {
@@ -65,7 +68,7 @@ class Chat extends React.Component {
       });
   }
 
-  //Prepares component to listen to new messages
+  // Prepares component to listen to new messages
   componentDidMount() {
     autosize(document.querySelectorAll('textarea'));
 
@@ -113,7 +116,7 @@ class Chat extends React.Component {
         if (messageData.data.success) {
           console.log("Successfully created a new message: " + messageToSend);
           const messageParams = {
-            user: this.state.currentUser,
+            username: this.state.currentUser,
             body: messageToSend,
             room: this.props.match.params.id
           };
@@ -151,13 +154,13 @@ class Chat extends React.Component {
 
     // Creates a new invite object and puts in table
     if (this.state.currentInvite) {
-      axios.post('/api/users/' + this.state.currentUser + '/chats/' + this.props.match.params.id + '/invite/' + this.state.currentInvite)
+      axios.post('/api/users/' + this.state.currentUser + '/chats/' + this.props.match.params.id + '/invite/' + this.props.match.params.chatTitle)
         .then((inviteData) => {
           if (inviteData.data.success) {
             // TODO will need to check if person you are inviting is a friend first
             // Parameters: chat id, user we want to invite, current user, cb
             // Does the invite over socket
-            invite(this.props.match.params.id, this.state.currentInvite, this.state.currentUser, () => {
+            invite(this.props.match.params.id, this.state.currentInvite + 'inviteRoom', this.props.match.params.chatTitle, this.state.currentInvite, this.state.currentUser, false, () => {
                 console.log("Invite successful");
             });
           } else {
@@ -171,6 +174,27 @@ class Chat extends React.Component {
     }
   }
 
+  // Handles removing user from chat room
+  handleLeave(event) {
+    axios.post('/api/users/' + this.state.currentUser + '/chats/' + this.props.match.params.id + '/delete')
+    .then((deleteData) => {
+      if (deleteData.data.success) {
+        reloadChatList(() => {});
+
+        // Leave room on socket
+        leaveRoom(this.props.match.params.id, (success) => {
+          console.log("Successfully removed user from room");
+        });
+      } else {
+          // There was an error creating a new message
+          console.log(deleteData.data.err);
+        }
+      })
+    .catch(chatErr => {
+      console.log(chatErr);
+    });
+  }
+
   /**
    * Helper function to render messages
    *
@@ -179,7 +203,7 @@ class Chat extends React.Component {
   renderMessages() {
     return this.state.messages.map(m => {
       // If the message belongs to the logged in user
-      if (this.state.currentUser === m.user) {
+      if (this.state.currentUser === m.username) {
         return (
           <div className="message-wrapper current-user" key={ uuid() }>
             <div className="message">
@@ -244,6 +268,11 @@ class Chat extends React.Component {
             value="Invite"
           />
         </form>
+
+        <button className="btn btn-gray"
+          onClick={ this.handleLeave }> 
+          Leave Chat 
+        </button>
       </Chats>
     );
   }

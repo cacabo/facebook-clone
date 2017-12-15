@@ -52,13 +52,24 @@ router.get('/session', (req, res) => {
 /**
  * Sign the user out
  */
-router.get('/logout', (req, res) => {
+router.get('/logout/:username', (req, res) => {
+  const username = req.params.username;
+
   // Delete the current session
   req.session.destroy();
 
-  // Send the success
-  res.send({
-    success: true,
+  // Removes user from the online table
+  db.deleteUserStatus(username, (success, err) => {
+    if (err || !success) {
+      res.send({
+        success: false,
+        err: err,
+      });
+    } else {
+      res.send({
+        success: true,
+      });
+    }
   });
 });
 
@@ -444,13 +455,22 @@ router.post('/users/sessions/new', (req, res) => {
           error: "Username and password do not match."
         });
       } else {
-        // Update the user session
-        req.session.username = req.body.username;
+        // Adds a user online status to the database
+        db.addUserOnline(req.body.username, (success, err) => {
+          if (err || !success) {
+            // Update the user session
+            req.session.username = req.body.username;
 
-        // Send success to the user
-        res.send({
-          success: true,
-          data: data,
+            res.send({
+              success: false,
+              err: err,
+            });
+          } else {
+            res.send({
+              success: true,
+              data: data,
+            });
+          }
         });
       }
     }
@@ -851,6 +871,50 @@ router.post('/users/:username/chats/:roomID/newMessage/:message', (req, res) => 
 });
 
 /**
+ * Gets a chat object associated with a room
+ */
+router.get('/chat/:room', (req, res) => {
+  const room = req.params.room;
+
+  // Get all chats of a user using username
+  db.getChat(room, (data, err) => {
+    if (err || !data) {
+      res.send({
+        success: false,
+        err: err,
+      });
+    } else {
+      res.send({
+        success: true,
+        data: data
+      });
+    }
+  });
+});
+
+/**
+ * Creates a chat object
+ */
+router.post('/chat/:room/title/:chatTitle/new', (req, res) => {
+  const room = req.params.room;
+  const title = req.params.chatTitle;
+
+  // Creates a chat object
+  db.createChat(title, room, (success, err) => {
+    if (err || !success) {
+      res.send({
+        success: false,
+        err: err,
+      });
+    } else {
+      res.send({
+        success: true,
+      });
+    }
+  });
+});
+
+/**
  * Gets all chats for a user
  */
 router.get('/users/:username/chats', (req, res) => {
@@ -875,13 +939,134 @@ router.get('/users/:username/chats', (req, res) => {
 /**
  * Creates a createUserChatRelationship
  */
-router.post('/users/:username/chats/:roomID/newUserChatRelationship', (req, res) => {
+router.post('/users/:username/chats/:roomID/newUserChatRelationship/:chatTitle', (req, res) => {
   const username = req.params.username;
   const roomID = req.params.roomID;
+  const title = req.params.chatTitle;
 
   // Creates a user chat relationship
-  db.createUserChatRelationship(username, roomID, (success, err) => {
+  db.createUserChatRelationship(username, title, roomID, (success, err) => {
     if (err || !success) {
+      res.send({
+        success: false,
+        err: err,
+      });
+    } else {
+      // Increments count of the chat
+      db.getChat(roomID, (chatData, err) => {
+        if (err || !chatData) {
+          res.send({
+            success: false,
+            err: err,
+          });
+        } else {
+          // Update the chat to increment num users
+          const newChat = {
+            chatTitle: title,
+            room: roomID,
+            numUsers: Number(chatData.attrs.numUsers) + Number(1),
+          };
+
+          // Send the object to the database
+          db.updateChat(newChat, (data, err) => {
+            if (err) {
+              // If there was an error updating
+              res.send({
+                success: false,
+                error: err,
+              });
+            } else {
+              // If the update was successful
+              res.send({
+                success: true,
+                data: data,
+              });
+            }
+          });
+        }
+      });
+    }
+  });
+});
+
+/**
+ * Deletes a user chat relationship
+ */
+router.post('/users/:username/chats/:roomID/delete', (req, res) => {
+  const username = req.params.username;
+  const room = req.params.roomID;
+
+  db.deleteUserChatRelationship(username, room, (success, err) => {
+    if (err || !success) {
+      res.send({
+        success: false,
+        err: err,
+      });
+    } else {
+      // Decrements count of the chat
+      db.getChat(room, (chatData, err) => {
+        if (err || !chatData) {
+          res.send({
+            success: false,
+            err: err,
+          });
+        } else {
+          // Removes chat object if there is no one left in the chat
+          if (Number(chatData.attrs.numUsers) - Number(1) <= 0) {
+            // Deletes chat is no one left in it
+            db.deleteChat(room, (deleteData, err) => {
+              if (err) {
+                // If there was an error updating
+                res.send({
+                  success: false,
+                  error: err,
+                });
+              } else {
+                console.log("Reached re.sed error");
+                // If the update was successful
+                res.send({
+                  success: true,
+                  data: deleteData,
+                });
+              }
+            });
+          } else {
+            // Update the chat to decrement num users
+            const newChat = {
+              chatTitle: chatData.attrs.chatTitle,
+              room: chatData.attrs.room,
+              numUsers: Number(chatData.attrs.numUsers) - Number(1),
+            };
+
+            // Send the object to the database
+            db.updateChat(newChat, (data, err) => {
+              if (err) {
+                // If there was an error updating
+                res.send({
+                  success: false,
+                  error: err,
+                });
+              } else {
+                // If the update was successful
+                res.send({
+                  success: true,
+                  data: data,
+                });
+              }
+            });
+          } 
+        }
+      });
+    }
+  });
+});
+
+/**
+ * get a all users online
+ */
+router.get('/online', (req, res) => {
+  db.getAllUserStatus((data, err) => {
+    if (err || !data) {
       res.send({
         success: false,
         err: err,
@@ -889,6 +1074,7 @@ router.post('/users/:username/chats/:roomID/newUserChatRelationship', (req, res)
     } else {
       res.send({
         success: true,
+        data: data
       });
     }
   });

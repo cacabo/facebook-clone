@@ -95,6 +95,12 @@ class Login extends React.Component {
 
             // Dispatch the login event to Redux
             this.props.onLogin(username, profilePicture, name);
+
+
+            /*
+            * TODO call client socket to send username to server side
+            */
+
           }
         })
         .catch(err => {

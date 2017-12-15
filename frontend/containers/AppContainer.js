@@ -104,7 +104,7 @@ class AppContainer extends React.Component {
 
     // Handle chat show route
     const chatRoute = (
-      <Route exact path="/chats/:id" component={Chat} />
+      <Route exact path="/chats/:id/title/:chatTitle" component={Chat} />
     );
 
     // Handle chat index route

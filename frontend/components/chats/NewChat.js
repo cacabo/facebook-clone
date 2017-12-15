@@ -4,6 +4,8 @@ import autosize from 'autosize';
 const uuid = require('uuid-v4');
 import axios from 'axios';
 import { connect } from 'react-redux';
+import { joinRoom } from './socketrouter';
+import { reloadChatList } from './socketrouter';
 
 /**
  * Component to render one of a user's group chats.
@@ -12,14 +14,15 @@ import { connect } from 'react-redux';
 /*
 * TODO Put in database and then simply reload it 
 */
-
 class NewChat extends React.Component {
   // Constructor method
   constructor(props) {
     super(props);
     this.state = {
+      chatTitle: "",
       members: "",
     };
+    this.handleChangeTitle = this.handleChangeTitle.bind(this);
     this.handleChangeMembers = this.handleChangeMembers.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
@@ -36,9 +39,16 @@ class NewChat extends React.Component {
     });
   }
 
+  // Handle a change to the title state
+  handleChangeTitle(event) {
+    this.setState({
+      chatTitle: event.target.value,
+    });
+  }
+
   // Handle when the new chat form is submitted
   handleSubmit(event) {
-    console.log("New chat for submitted");
+    console.log("New chat for submitted " + this.state.chatTitle + " " + this.state.members);
     event.preventDefault();
 
     /*
@@ -47,50 +57,70 @@ class NewChat extends React.Component {
 
     const roomID = uuid();
 
-    // Creates a new chat in the database
-    axios.post('/api/users/' + this.props.username + '/chats/' + roomID +'/newUserChatRelationship')
-      .then((chatData) => {
-        if (chatData.data.success) {
-          const chatParams = {
-            username: this.state.currentUser,
-            title: 'Chat ' + roomID,
-            room: roomID
-          };
-        } else {
+    // Creates and puts a new user chat relationship in the database
+    axios.post('/api/users/' + this.props.username + '/chats/' + roomID +'/newUserChatRelationship/' + this.state.chatTitle)
+    .then((chatData) => {
+      if (chatData.data.success) {
+        console.log("Successfully created chat: " + this.state.chatTitle);
+        joinRoom(roomID, () => {});
+        reloadChatList(() => {});
+      } else {
           // There was an error creating a new message
-          console.log(messageData.data.err);
+          console.log(chatData.data.err);
         }
       })
-      .catch(messageErr => {
-          console.log(messageErr);
-      });
+    .catch(chatErr => {
+      console.log(chatErr);
+    });
+
+    // Creates and puts a new chat in the database
+    axios.post('/api/chat/' + roomID + '/title/' + this.state.chatTitle + '/new')
+    .then((chatData) => {
+      if (chatData.data.success) {
+        console.log("Successfully created chat object: " + this.state.chatTitle);
+      } else {
+          // There was an error creating a new message
+          console.log(chatData.data.err);
+        }
+      })
+    .catch(chatErr => {
+      console.log(chatErr);
+    });
   }
 
   // Render the component
   render() {
     return (
       <Chats>
-        <form className="message-form" onSubmit={ this.handleSubmit }>
-          <textarea
-            name="members"
-            value={ this.state.members }
-            onChange={ this.handleChangeMembers }
-            rows="1"
-            className="form-control"
-          />
-          <input
-            type="submit"
-            className={
-              this.state.members ?
-              "btn btn-gray" :
-              "btn btn-gray disabled"
-            }
-            value="Create chat"
-          />
-        </form>
-        <div className="space-1"/>
+      <form className="message-form" onSubmit={ this.handleSubmit }>
+      <textarea
+      name="members"
+      value={ this.state.chatTitle }
+      onChange={ this.handleChangeTitle }
+      rows="1"
+      className="form-control"
+      />
+
+      <textarea
+      name="members"
+      value={ this.state.members }
+      onChange={ this.handleChangeMembers }
+      rows="1"
+      className="form-control"
+      />
+      <input
+      type="submit"
+      className={
+        this.state.members ?
+        "btn btn-gray" :
+        "btn btn-gray disabled"
+      }
+      value="Create chat"
+      />
+      </form>
+      <div className="space-1"/>
       </Chats>
-    );
+      );
   }
 }
 
@@ -107,4 +137,5 @@ const mapDispatchToProps = (/* dispatch */) => {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(NewChat);
+  )(NewChat);
+  

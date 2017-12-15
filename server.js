@@ -5,8 +5,8 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const api = require('./backend/routes');
 const bodyParser = require('body-parser');
-const socket = require('socket.io')();
-socket.listen(8000);
+const io = require('socket.io')();
+io.listen(8000);
 
 // Express sessions configuration
 app.set('trust proxy', 1);
@@ -36,18 +36,13 @@ app.listen(PORT, error => {
 });
 
 // The event will be called when a client is connected. Right when the app opens
-socket.on('connection', (socket) => {
+io.on('connection', (socket) => {
 	console.log('A client just joined on', socket.id);
-	/**
-	 * TODO pull from database all chats pertaining to user and connect to them here
-	 */
 
 	// Listens for new messages
 	socket.on('message', (message) => {
 		const messageData = JSON.parse(message);
 		const room = messageData.room;
-
-		console.log("Broadcast reached " + message.body + " " + room);
 		socket.broadcast.to(room).emit('message', message);
 	});
 
@@ -55,9 +50,20 @@ socket.on('connection', (socket) => {
 	socket.on('invite', (data) => {
 		const rooms = JSON.parse(data);
 
-		// Below is temporary for testing purposes since will have to already be part of a room to invite someone.
-		socket.join(rooms.roomToJoin);
-		socket.broadcast.to(rooms.roomToReceive).emit('invite', data);
+		console.log("Room to receive: " + rooms.roomToReceive);
+		console.log(data);
+
+		if (rooms.autoJoin) {
+			socket.emit('invite', data);
+			socket.broadcast.to(rooms.roomToReceive).emit('invite', data);
+		} else {
+			socket.broadcast.to(rooms.roomToReceive).emit('invite', data);
+		}
+	});
+
+	// Prompts the client to reload chats list
+	socket.on('reloadChat', (reload) => {
+		socket.emit('reloadChat', (reload));
 	});
 
 	// Joins a room
@@ -70,12 +76,5 @@ socket.on('connection', (socket) => {
 	socket.on('leaveRoom', (room) => {
 		socket.broadcast.to(room).emit('message', "left room");
 		socket.leave(room);
-	});
-
-	// For creating a new room when third person joins
-	socket.on('autoJoin', (data) => {
-		const rooms = JSON.parse(data);
-		socket.join(room);
-		console.log("auto joined room " + room);
 	});
 });
