@@ -99,6 +99,17 @@ const Affiliation = vogels.define("Affiliation", {
   }
 });
 
+// Define a schema for interests
+const Interest = vogels.define("Interest", {
+  hashKey: "interest",
+  rangeKey: "username",
+  timestamps: false,
+  schema: {
+    interest: Joi.string(),
+    username: Joi.string(),
+  }
+});
+
 // Define a schema for statuses
 const Status = vogels.define("Status", {
   hashKey: "user",
@@ -107,7 +118,7 @@ const Status = vogels.define("Status", {
   schema: {
     id: Joi.string(),
     image: Joi.string().allow(null).allow("").optional(),
-    content: Joi.string(),
+    content: Joi.string().allow(null).allow("").optional(),
     user: Joi.string(),
     receiver: Joi.string().allow(null).allow("").optional(),
     likesCount: Joi.number(),
@@ -126,6 +137,7 @@ const StatusReceiver = vogels.define("StatusReceiver", {
   schema: {
     receiver: Joi.string(),
     id: Joi.string(),
+    user: Joi.string(),
   },
 });
 
@@ -157,7 +169,7 @@ const Comment = vogels.define("Comment", {
 });
 
 // Define a schema for friendships
-var Friendship = vogels.define("Friendship", {
+const Friendship = vogels.define("Friendship", {
   hashKey: "user1",
   rangeKey: "user2",
   timestamps: true,
@@ -166,6 +178,18 @@ var Friendship = vogels.define("Friendship", {
     user2: Joi.string(),
   },
   tableName: "friendships",
+});
+
+// Define a schema for friend recommendations
+const FriendRecommendation = vogels.define("FriendRecommendation", {
+  hashKey: "user",
+  rangeKey: "newFriend",
+  timestamps: false,
+  schema: {
+    user: Joi.string(),
+    newFriend: Joi.string(),
+    rank: Joi.number(),
+  },
 });
 
 // Create the above tables
@@ -182,6 +206,7 @@ const tables = {
   User,
   UserStatus,
   Affiliation,
+  Interest,
   Status,
   Like,
   Comment,
@@ -191,6 +216,7 @@ const tables = {
   UserChatRelationship,
   StatusReceiver,
   Friendship,
+  FriendRecommendation,
 };
 
 module.exports = tables;

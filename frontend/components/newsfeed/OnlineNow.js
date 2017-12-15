@@ -4,7 +4,6 @@ import uuid from 'uuid-v4';
 
 /**
  * Component to render which of your friends are currently online.
- *
  * TODO remove dummy data
  * TODO have timestamps for when a user logged off? Show most recent number?
  */

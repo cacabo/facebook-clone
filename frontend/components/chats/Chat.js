@@ -11,11 +11,10 @@ import { connect } from 'react-redux';
 import { joinRoom } from './socketrouter';
 import { leaveRoom } from './socketrouter';
 import { reloadChatList } from './socketrouter';
+import PropTypes from 'prop-types';
 
 /**
  * Component to render one of a user's group chats.
- *
- * TODO replace dummy data
  * TODO pass down ID of the current user
  */
 class Chat extends React.Component {
@@ -30,7 +29,7 @@ class Chat extends React.Component {
       currentUser: this.props.username,
       messages: [],
       users: [],
-    } 
+    };
 
     console.log("Current User " + this.props.username);
 
@@ -71,22 +70,25 @@ class Chat extends React.Component {
 
   // Prepares component to listen to new messages
   componentDidMount() {
-    autosize(document.querySelectorAll('textarea')); 
+    autosize(document.querySelectorAll('textarea'));
 
     // Listens for new messages received
     subscribeToMessages((message) => this.setState((prevState, props) => {
-        console.log("received message: " + message)
-        const messageInfo = JSON.parse(message);
+      console.log("received message: " + message)
+      const messageInfo = JSON.parse(message);
 
-        if (messageInfo.room == this.props.match.params.id) {
-          let oldMessage = this.state.messages;
-          oldMessage.push(messageInfo);
-          return {messages: oldMessage}
-        }
-    })); 
+      if (messageInfo.room === this.props.match.params.id) {
+        let oldMessage = this.state.messages;
+        oldMessage.push(messageInfo);
+        return {messages: oldMessage}
+      }
+
+      // If nothing was returned yet
+      return {};
+    }));
 
     // Load current messages
-    this.reloadMessages()  
+    this.reloadMessages();
   }
 
   // Handles change to message field
@@ -113,7 +115,6 @@ class Chat extends React.Component {
       .then((messageData) => {
         if (messageData.data.success) {
           console.log("Successfully created a new message: " + messageToSend);
-
           const messageParams = {
             username: this.state.currentUser,
             body: messageToSend,
@@ -276,6 +277,11 @@ class Chat extends React.Component {
     );
   }
 }
+
+Chat.propTypes = {
+  username: PropTypes.string,
+  match: PropTypes.obj,
+};
 
 const mapStateToProps = (state) => {
   return {

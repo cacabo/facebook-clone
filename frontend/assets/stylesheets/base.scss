@@ -207,3 +207,33 @@ a {
     padding: 0rem !important;
   }
 }
+
+#details {
+  h4 {
+    font-size: 1.4rem !important;
+    text-transform: capitalize;
+  }
+
+  font-size: 1rem !important;
+  position: absolute;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  right: 1rem;
+  padding: 1rem;
+  border-radius: 0.4rem;
+  min-width: 200px;
+  min-height: 50px;
+  box-shadow: 0rem 0.1rem 0.4rem rgba(0, 0, 0, 0.05);
+
+  li {
+    text-transform: capitalize;
+
+    .relation {
+      text-transform: lowercase;
+    }
+  }
+}
+
+.node {
+  color: black !important;
+  text-transform: capitalize;
+}

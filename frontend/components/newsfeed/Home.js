@@ -6,6 +6,7 @@ import OnlineNow from './OnlineNow';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import Loading from '../shared/Loading';
+import ErrorMessage from '../shared/ErrorMessage';
 
 /**
  * Component to render a user's newsfeed.
@@ -14,10 +15,8 @@ import Loading from '../shared/Loading';
  * however, a user sees 1. recommended friends (to the left), 2. their newsfeed,
  * 3. a list of friends currently online.
  *
- * TODO handle success / push notifications when the user successfully logs in,
- * creates a post, etc.
- *
- * TODO style new statuses
+ * TODO handle success notifications when the user successfully logs in,
+ *      creates a post, etc.
  * TODO periodically reload as things update
  * TODO README documentation
  * TODO Notifications
@@ -41,12 +40,10 @@ class Home extends React.Component {
 
   /**
    * Pull the statuses from the database
-   * TODO pull only statuses from friends
-   * TODO denote errors to the user
    */
   componentDidMount() {
     // Make the AJAX request
-    axios.get('/api/statuses')
+    axios.get('/api/newsfeed')
       .then(res => {
         // Check if the response was successful
         if (res.data.success) {
@@ -92,10 +89,9 @@ class Home extends React.Component {
         });
       })
       .catch(err => {
-        /**
-         * TODO
-         */
-        console.log(err);
+        this.setState({
+          error: err,
+        });
       });
   }
 
@@ -148,14 +144,7 @@ class Home extends React.Component {
               callback={ this.newStatusCallback }
             />
             { this.state.error && (
-              <div className="alert alert-danger error">
-                <p className="strong marg-bot-05">
-                  There was an error
-                </p>
-                <p className="marg-bot-1">
-                  { this.state.error }
-                </p>
-              </div>
+              <ErrorMessage text={ this.state.error } />
             ) }
             { (this.state.pending && !this.state.error) ? (<Loading />) : (this.renderStatuses()) }
             { !this.state.pending && (

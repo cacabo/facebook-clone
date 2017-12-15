@@ -1,6 +1,7 @@
 // Import the friends table
-const { User, Friendship } = require('./schema.js');
+const { User, Friendship, Status, StatusReceiver } = require('./schema.js');
 const async = require('async');
+const uuid = require('uuid');
 
 /**
  * Create a friendship. friend1 is adding, and friend2 is being added
@@ -54,7 +55,36 @@ function addFriendship(friend1, friend2, callback) {
                 if (err2 || !data2) {
                   callback(null, "Failed to create second friendship: " + err2);
                 } else {
-                  callback({ success: true, data: data1 }, null);
+                  // Create a friendship status
+                  const statusObj = {
+                    id: uuid(),
+                    image: "",
+                    content: "",
+                    user: friendship1Object.user1,
+                    receiver: friendship1Object.user2,
+                    likesCount: 0,
+                    commentsCount: 0,
+                    type: "FRIENDSHIP",
+                  };
+
+                  // Add the status object to the database
+                  Status.create(statusObj, (statusErr, statusData) => {
+                    if (statusErr || !statusData) {
+                      callback(null, "Failed to create status");
+                    } else {
+                      StatusReceiver.create({
+                        user: statusObj.user,
+                        receiver: statusObj.receiver,
+                        id: statusObj.id,
+                      }, (receiverErr, receiverData) => {
+                        if (receiverErr || !receiverData) {
+                          callback(null, "Failed to create receiver entry for status.");
+                        } else {
+                          callback({ success: true, data: data1}, null);
+                        }
+                      });
+                    }
+                  });
                 }
               });
             }
@@ -98,7 +128,6 @@ function getFriendships(user, callback) {
 
                 // Delete unneeded info from the object
                 delete userObj.password;
-                delete userObj.affiliation;
                 delete userObj.interests;
                 delete userObj.bio;
                 delete userObj.coverPhoto;
@@ -120,7 +149,7 @@ function getFriendships(user, callback) {
                 (a && a.name) ? (a.name.localeCompare(b.name)) : (-1)
               ));
 
-              // Return the comments to the user
+              // Return the friends to the user
               callback(friendships, err);
             }
           });
