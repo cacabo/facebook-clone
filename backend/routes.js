@@ -511,8 +511,7 @@ router.get('/users/:username/friends', (req, res) => {
  */
 router.get('/visualizer', (req, res) => {
   // Get the username of the user
-  // const user = req.session.username;
-  const user = "ccabo";
+  const user = req.session.username;
 
   // Get the visualizer data from the database
   db.getVisualizer(user, (data, err) => {
