@@ -713,15 +713,23 @@ router.post('/users/new', (req, res) => {
         error: err,
       });
     } else {
-      // Set the session username
-      req.session.username = req.body.username;
-
-      // Propogate the success to the component
-      res.send({
-        success: true,
-        data: data,
-        username: req.session.username,
-      });
+      // Adds a user online status to the database
+        db.addUserOnline(req.body.username, (success, err) => {
+          if (err || !success) {
+            res.send({
+              success: false,
+              err: err,
+            });
+          } else {
+            // Update the user session
+            req.session.username = req.body.username;
+            res.send({
+              success: true,
+              data: data,
+              username: req.session.username,
+            });
+          }
+        });
     }
   });
 });
@@ -1090,6 +1098,7 @@ router.get("/recommendations", (req, res) => {
       error: "User must be logged in",
     });
   } else {
+
     // Find recommendations in the database
     db.getRecommendations(req.session.username, (data, err) => {
       if (err || !data) {
@@ -1098,7 +1107,21 @@ router.get("/recommendations", (req, res) => {
           error: err,
         });
       } else {
-        res.send({
+        // Test upload recommendations into the database
+        // db.readInput(null, (data, err) => {
+        // if (err || !data) {
+        //   res.send({
+        //     success: false,
+        //     error: err,
+        //   });
+        // } else {
+        //     res.send({
+        //       success: true,
+        //       data: data,
+        //     });
+        // }
+        // });
+      res.send({
           success: true,
           data: data,
         });
