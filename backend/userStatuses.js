@@ -1,31 +1,28 @@
 const { UserStatus } = require('./schema.js');
 const uuid = require('uuid-v4');
-const async = require('async');
-
 
 /**
  * Create a user online status
  */
- function addUserOnline(username, callback) {
+function addUserOnline(username, callback) {
   if (!username) {
     callback(null, "Username must be populated");
   } else {
     // Create status object
     const userOnlineObject = {
-     id: uuid(),
-     username: username,
-   };
+      id: uuid(),
+      username: username,
+    };
 
-		//Put the user in to the online database
-		UserStatus
-    .create(userOnlineObject, (err, data) => {
-			if (err || !data) {
+		// Put the user in to the online database
+    UserStatus.create(userOnlineObject, (err, data) => {
+      if (err || !data) {
         callback(null, "Failed to put user status in database.");
       } else {
         callback(data, null);
       }
     });
-	}
+  }
 }
 
 /**
@@ -44,9 +41,8 @@ function getAllUserStatus(callback) {
 /**
  * Deletes user online status object
  */
- function deleteUserStatus(username, callback) {
-  UserStatus
-  .destroy(username, (deleteErr) => {
+function deleteUserStatus(username, callback) {
+  UserStatus.destroy(username, (deleteErr) => {
     if (deleteErr) {
       callback(false, "Error trying to delete user status: " + deleteErr.message);
     } else {
