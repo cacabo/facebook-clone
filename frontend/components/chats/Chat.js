@@ -10,6 +10,7 @@ import { connect } from 'react-redux';
 import { leaveRoom } from './socketrouter';
 import { reloadChatList } from './socketrouter';
 import PropTypes from 'prop-types';
+import { Redirect } from 'react-router-dom';
 
 /**
  * Component to render one of a user's group chats.
@@ -229,6 +230,7 @@ class Chat extends React.Component {
   render() {
     return (
       <Chats>
+        { !this.props.username && <Redirect to="/login" /> }
         <div className="messages">
           { this.renderMessages() }
         </div>
