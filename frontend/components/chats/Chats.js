@@ -224,7 +224,7 @@ import { invite } from './socketrouter';
             }
 
             this.setState({
-              loaded: true
+              loaded: true,
             })
           }
         } else {
@@ -241,10 +241,10 @@ import { invite } from './socketrouter';
     return this.state.chats.map(chat => {
       return (
         <ChatPreview
-        username={ chat.username }
-        chatTitle={ chat.chatTitle }
-        room={ chat.room }
-        key={ uuid() }
+          username={ chat.username }
+          chatTitle={ chat.chatTitle }
+          room={ chat.room }
+          key={ uuid() }
         />
         );
 });
@@ -266,12 +266,12 @@ render() {
     { this.props.children }
     </div>
     <button className="btn btn-gray"
-    onClick={ this.handleLeave }> 
-    Leave Chat 
+      onClick={ this.handleLeave }> 
+      Leave Chat 
     </button>
     <button className="btn btn-gray"
-    onClick={ this.handleInvite }> 
-    Accept 
+      onClick={ this.handleInvite }> 
+      Accept 
     </button>
     <div> invited to join: { this.state.currentInvitation.chatTitle } </div>
     </div>

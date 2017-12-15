@@ -269,8 +269,8 @@ class Chat extends React.Component {
         </form>
 
         <button className="btn btn-gray"
-        onClick={ this.handleLeave }> 
-        Leave Chat 
+          onClick={ this.handleLeave }> 
+          Leave Chat 
         </button>
       </Chats>
     );

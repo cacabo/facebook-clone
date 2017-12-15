@@ -392,14 +392,6 @@ router.post('/users/sessions/new', (req, res) => {
             });
           }
         });
-
-
-
-        // Send success to the user
-        // res.send({
-        //   success: true,
-        //   data: data,
-        // });
       }
     }
   });
