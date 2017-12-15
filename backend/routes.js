@@ -52,8 +52,8 @@ router.get('/session', (req, res) => {
 /**
  * Sign the user out
  */
-router.get('/logout/:username', (req, res) => {
-  const username = req.params.username;
+router.get('/logout', (req, res) => {
+  const username = req.session.username;
 
   // Delete the current session
   req.session.destroy();
@@ -458,14 +458,13 @@ router.post('/users/sessions/new', (req, res) => {
         // Adds a user online status to the database
         db.addUserOnline(req.body.username, (success, err) => {
           if (err || !success) {
-            // Update the user session
-            req.session.username = req.body.username;
-
             res.send({
               success: false,
               err: err,
             });
           } else {
+            // Update the user session
+            req.session.username = req.body.username;
             res.send({
               success: true,
               data: data,
