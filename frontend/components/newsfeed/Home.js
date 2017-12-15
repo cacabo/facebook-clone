@@ -8,7 +8,6 @@ import axios from 'axios';
 import Loading from '../shared/Loading';
 import ErrorMessage from '../shared/ErrorMessage';
 import { connect } from 'react-redux';
-import { Redirect } from 'react-router-dom';
 
 /**
  * Component to render a user's newsfeed.
@@ -16,12 +15,6 @@ import { Redirect } from 'react-router-dom';
  * On smaller screens, exclusively the newsfeed shows up. On larger screens,
  * however, a user sees 1. recommended friends (to the left), 2. their newsfeed,
  * 3. a list of friends currently online.
- *
- * TODO handle success notifications when the user successfully logs in,
- *      creates a post, etc.
- * TODO periodically reload as things update
- * TODO README documentation
- * TODO Notifications
  */
 class Home extends React.Component {
   // Constructor method

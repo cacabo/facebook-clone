@@ -5,10 +5,6 @@ const SHA3 = require('crypto-js/sha3');
 const db = require('./database.js');
 
 /**
- * TODO ensure that a user is logged in where it makes sense
- */
-
-/**
  * Render mapreduce data
  */
 router.get('/mapreduce', (req, res) => {
@@ -713,14 +709,21 @@ router.post('/users/new', (req, res) => {
         error: err,
       });
     } else {
-      // Set the session username
-      req.session.username = req.body.username;
-
-      // Propogate the success to the component
-      res.send({
-        success: true,
-        data: data,
-        username: req.session.username,
+      // Adds a user online status to the database
+      db.addUserOnline(req.body.username, (success, addUserErr) => {
+        if (addUserErr || !success) {
+          res.send({
+            success: false,
+            err: addUserErr,
+          });
+        } else {
+          // Update the user session
+          req.session.username = req.body.username;
+          res.send({
+            success: true,
+            data: data,
+          });
+        }
       });
     }
   });

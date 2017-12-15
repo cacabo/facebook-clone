@@ -61,7 +61,7 @@ function addComment(commenter, comment, statusUser, statusID, callback) {
                 if (updateErr || !updateData) {
                   callback(null, "There was an error updating comments count.");
                 } else {
-                  callback({success: true, data: updateData}, null);
+                  callback({success: true, data: dataComment}, null);
                 }
               });
             }
