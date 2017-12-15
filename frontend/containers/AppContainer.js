@@ -46,7 +46,7 @@ class AppContainer extends React.Component {
   render() {
     // Handle the root path
     const homeRoute = (
-      <Route exact path="/" component={ Home } />
+      <LoggedInAuth toBeRendered={<Home />} />
     );
 
     // Handle the user registration route

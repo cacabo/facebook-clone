@@ -22,10 +22,19 @@ class OnlineNow extends React.Component {
   }
 
   // Pull in the data from the database
-  componendDidMount() {
+  componentDidMount() {
+    console.log("IN COMPONENT DID MOUNT");
     axios.get("/api/online")
       .then(res => {
-        console.log(res);
+        if (res.data.success) {
+          console.log("RESPONSE");
+          console.log(res.data.data);
+        } else {
+          this.setState({
+            pending: false,
+            error: res.data.error,
+          });
+        }
       })
       .catch(err => {
         this.setState({
