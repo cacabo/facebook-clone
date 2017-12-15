@@ -1093,7 +1093,6 @@ router.get("/recommendations", (req, res) => {
       error: "User must be logged in",
     });
   } else {
-
     // Find recommendations in the database
     db.getRecommendations(req.session.username, (data, err) => {
       if (err || !data) {
@@ -1116,7 +1115,7 @@ router.get("/recommendations", (req, res) => {
         //     });
         // }
         // });
-      res.send({
+        res.send({
           success: true,
           data: data,
         });

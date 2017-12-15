@@ -3,19 +3,16 @@ import autosize from 'autosize';
 import Chats from './Chats';
 import uuid from 'uuid-v4';
 import axios from 'axios';
-import SocketIOClient from 'socket.io-client';
 import { subscribeToMessages } from './socketrouter';
 import { sendMessage } from './socketrouter';
 import { invite } from './socketrouter';
 import { connect } from 'react-redux';
-import { joinRoom } from './socketrouter';
 import { leaveRoom } from './socketrouter';
 import { reloadChatList } from './socketrouter';
 import PropTypes from 'prop-types';
 
 /**
  * Component to render one of a user's group chats.
- * TODO pass down ID of the current user
  */
 class Chat extends React.Component {
   // Constructor method
@@ -32,8 +29,6 @@ class Chat extends React.Component {
       addMemberActive: false,
     };
 
-    console.log("Current User " + this.props.username);
-
     // Bind this to helper methods
     this.handleChangeMessage = this.handleChangeMessage.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -49,14 +44,13 @@ class Chat extends React.Component {
     autosize(document.querySelectorAll('textarea'));
 
     // Listens for new messages received
-    subscribeToMessages((message) => this.setState((prevState, props) => {
-      console.log("received message: " + message)
+    subscribeToMessages((message) => this.setState(() => {
       const messageInfo = JSON.parse(message);
 
       if (messageInfo.room === this.props.match.params.id) {
         const oldMessage = this.state.messages;
         oldMessage.push(messageInfo);
-        return {messages: oldMessage}
+        return { messages: oldMessage };
       }
 
       // If nothing was returned yet
@@ -97,6 +91,7 @@ class Chat extends React.Component {
 
   // Does socket message sending
   handleSubmit(event) {
+    // Prevent the default event
     event.preventDefault();
     const messageToSend = this.state.message;
 
@@ -104,7 +99,7 @@ class Chat extends React.Component {
     axios.post('/api/users/' + this.state.currentUser + '/chats/' + this.props.match.params.id + '/newMessage/' + messageToSend)
       .then((messageData) => {
         if (messageData.data.success) {
-          console.log("Successfully created a new message: " + messageToSend);
+          // Construct the message params
           const messageParams = {
             username: this.state.currentUser,
             body: messageToSend,
@@ -122,10 +117,6 @@ class Chat extends React.Component {
                   message: ""
                 };
               });
-            } else {
-              /**
-               * TODO handle unsent message error
-               */
             }
           });
         } else {
@@ -194,7 +185,7 @@ class Chat extends React.Component {
         reloadChatList(() => {});
 
         // Leave room on socket
-        leaveRoom(this.props.match.params.id, (success) => {
+        leaveRoom(this.props.match.params.id, () => {
           console.log("Successfully removed user from room");
         });
       } else {
@@ -209,8 +200,6 @@ class Chat extends React.Component {
 
   /**
    * Helper function to render messages
-   *
-   * TODO find user profile picture and render that next to the message
    */
   renderMessages() {
     return this.state.messages.map(m => {

@@ -12,7 +12,6 @@ function subscribeToMessages(cb) {
 // Listens for invitations
 function subscribeToInvitations(username, cb) {
 	// User is part of a specialized room for receving invitations
-  console.log("Received Invite");
   socket.emit('joinRoom', username + 'inviteRoom');
   socket.on('invite', (data) => {
   	cb(data);

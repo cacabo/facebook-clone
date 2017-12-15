@@ -25,6 +25,7 @@ class Chats extends React.Component {
       autoJoin: false,
     };
 
+    // Bind this to helper methods
     this.handleInvite = this.handleInvite.bind(this);
     this.updateChatRoom = this.updateChatRoom.bind(this);
     this.getInvites = this.getInvites.bind(this);
@@ -66,47 +67,47 @@ class Chats extends React.Component {
   }
 
   // Handles approval of new invites
-  handleInvite(event) {
+  handleInvite() {
     axios.get('/api/chat/' + this.state.currentInvitation.roomToJoin)
-    .then(checkData => {
-      // If success is true, user has invited already
-      if (checkData.data.success === true) {
-        // Creates new chat for 3 people when 1 join 2
-        if (checkData.data.data.numUsers === 2) {
-          const newRoomID = uuid();
-          const chatTitle = checkData.data.data.chatTitle + " (Group)";
+      .then(checkData => {
+        // If success is true, user has invited already
+        if (checkData.data.success === true) {
+          // Creates new chat for 3 people when 1 join 2
+          if (checkData.data.data.numUsers === 2) {
+            const newRoomID = uuid();
+            const chatTitle = checkData.data.data.chatTitle + " (Group)";
 
-          // Creates and puts a new chat in the database
-          axios.post('/api/chat/' + newRoomID + '/title/' + chatTitle + '/new')
-          .then((chatData) => {
-            if (chatData.data.success) {
-              console.log("Successfully created chat object: " + chatTitle);
-              invite(newRoomID, this.state.currentInvitation.roomToJoin, chatTitle, "everyone", this.props.username, true, () => {});
-              this.setState({
-                currentInvitation: newRoomID,
-              });
+            // Creates and puts a new chat in the database
+            axios.post('/api/chat/' + newRoomID + '/title/' + chatTitle + '/new')
+            .then((chatData) => {
+              if (chatData.data.success) {
+                console.log("Successfully created chat object: " + chatTitle);
+                invite(newRoomID, this.state.currentInvitation.roomToJoin, chatTitle, "everyone", this.props.username, true, () => {});
+                this.setState({
+                  currentInvitation: newRoomID,
+                });
 
-              // Update the chat room
-              this.updateChatRoom();
-            } else {
-              // There was an error creating a new message
-              console.log(chatData.data.err);
-            }
-          })
-          .catch(chatErr => {
-            console.log(chatErr);
-          });
+                // Update the chat room
+                this.updateChatRoom();
+              } else {
+                // There was an error creating a new message
+                console.log(chatData.data.err);
+              }
+            })
+            .catch(chatErr => {
+              console.log(chatErr);
+            });
+          } else {
+            joinRoom(this.state.currentInvitation.roomToJoin, () => {});
+            this.updateChatRoom();
+          }
         } else {
-          joinRoom(this.state.currentInvitation.roomToJoin, () => {});
-          this.updateChatRoom();
+          console.log("Failed to get chat");
         }
-      } else {
-        console.log("Failed to get chat");
-      }
-    })
-    .catch(err => {
-      console.log(err);
-    });
+      })
+      .catch(err => {
+        console.log(err);
+      });
   }
 
   // Prevents joining room multiple times
@@ -168,11 +169,6 @@ class Chats extends React.Component {
       // If success is true, user has invited already
       if(checkData.data.success === true) {
         console.log(checkData.data.data);
-        this.setState({
-          /**
-           * TODO setup state with list of invites
-           */
-        });
       } else {
         console.log("Failed to get invites");
       }
@@ -191,8 +187,6 @@ class Chats extends React.Component {
         this.setState({
           chats: checkData.data.data
         });
-
-        console.log(this.state.chats);
 
         // Joins all of users chats - run this once when loading
         if (!this.state.loaded) {
