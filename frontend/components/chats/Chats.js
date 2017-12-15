@@ -83,7 +83,7 @@ class Chats extends React.Component {
               console.log("Successfully created chat object: " + chatTitle);
               invite(newRoomID, this.state.currentInvitation.roomToJoin, chatTitle, "everyone", this.props.username, true, () => {});
               this.setState({
-                currentInvitation: newRoomID
+                currentInvitation: newRoomID,
               });
 
               // Update the chat room
@@ -129,6 +129,10 @@ class Chats extends React.Component {
           + '/newUserChatRelationship/' + this.state.currentInvitation.chatTitle)
           .then((chatData) => {
             if (chatData.data.success) {
+              this.setState({
+                currentInvitation: null,
+              });
+
               // Reloads chats
               this.reloadChats();
             } else {
@@ -166,8 +170,8 @@ class Chats extends React.Component {
         console.log(checkData.data.data);
         this.setState({
           /**
-          * TODO setup state with list of invites
-          */
+           * TODO setup state with list of invites
+           */
         });
       } else {
         console.log("Failed to get invites");
@@ -226,29 +230,36 @@ class Chats extends React.Component {
 
   // Render the chats co mponent
   render() {
+    // Return the component
     return (
       <div className="chat-container">
         <div className="chats">
           { this.renderChatPreviews() }
-          <div className="pad-1 pad-top-0">
-          <Link to="/chats/new" className="btn btn-gray marg-top-05">
-            New chat &nbsp; <i className="fa fa-plus" />
-          </Link>
+          <div className="pad-1">
+            <Link to="/chats/new" className="btn btn-gray marg-top-05">
+              New chat &nbsp; <i className="fa fa-plus" />
+            </Link>
+
+            <div className="space-1" />
+
+            { this.state.currentInvitation.chatTitle && (
+              <div className="alert alert-warning">
+                <p className="bold marg-bot-05">
+                  Invited to join
+                </p>
+                <p>
+                  { this.state.currentInvitation.chatTitle }
+                </p>
+                <button className="btn btn-gray"
+                  onClick={ this.handleInvite }>
+                  Accept invite
+                </button>
+              </div>
+            ) }
           </div>
         </div>
         <div className="chat">
           { this.props.children }
-        </div>
-        <button className="btn btn-gray"
-          onClick={ this.handleLeave }>
-          Leave Chat
-        </button>
-        <button className="btn btn-gray"
-          onClick={ this.handleInvite }>
-          Accept
-        </button>
-        <div>
-          Invited to join: { this.state.currentInvitation.chatTitle }
         </div>
       </div>
     );

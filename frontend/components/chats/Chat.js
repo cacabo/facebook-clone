@@ -29,6 +29,7 @@ class Chat extends React.Component {
       currentUser: this.props.username,
       messages: [],
       users: [],
+      addMemberActive: false,
     };
 
     console.log("Current User " + this.props.username);
@@ -40,32 +41,7 @@ class Chat extends React.Component {
     this.handleLeave = this.handleLeave.bind(this);
     this.reloadMessages = this.reloadMessages.bind(this);
     this.handleChangeInvite = this.handleChangeInvite.bind(this);
-  }
-
-  // Reload the messages when switched to a different chat
-  componentDidUpdate(prevProps) {
-    if (prevProps.match.params.id !== this.props.match.params.id) {
-      this.reloadMessages()
-    }
-  }
-
-  // Reloads all of the messages
-  reloadMessages() {
-    axios.get('/api/users/' + this.state.currentUser + '/chats/' + this.props.match.params.id + '/messages')
-      .then(checkData => {
-        // If success is true, user has retrieved messages
-        if(checkData.data.success === true) {
-          this.setState({
-            messages: checkData.data.data
-          });
-          console.log(this.state.messages);
-        } else {
-            console.log("Failed to get messages");
-        }
-      })
-      .catch(err => {
-        console.log(err);
-      });
+    this.toggleAddMember = this.toggleAddMember.bind(this);
   }
 
   // Prepares component to listen to new messages
@@ -78,7 +54,7 @@ class Chat extends React.Component {
       const messageInfo = JSON.parse(message);
 
       if (messageInfo.room === this.props.match.params.id) {
-        let oldMessage = this.state.messages;
+        const oldMessage = this.state.messages;
         oldMessage.push(messageInfo);
         return {messages: oldMessage}
       }
@@ -89,6 +65,13 @@ class Chat extends React.Component {
 
     // Load current messages
     this.reloadMessages();
+  }
+
+  // Reload the messages when switched to a different chat
+  componentDidUpdate(prevProps) {
+    if (prevProps.match.params.id !== this.props.match.params.id) {
+      this.reloadMessages();
+    }
   }
 
   // Handles change to message field
@@ -102,6 +85,13 @@ class Chat extends React.Component {
   handleChangeInvite(event) {
     this.setState({
       currentInvite: event.target.value,
+    });
+  }
+
+  // Handle toggling stuff
+  toggleAddMember() {
+    this.setState({
+      addMemberActive: !this.state.addMemberActive,
     });
   }
 
@@ -124,13 +114,13 @@ class Chat extends React.Component {
           // Sends message over the socket
           sendMessage(JSON.stringify(messageParams), (success) => {
             if (success) {
-              this.setState((prevState, props) => {
-                let oldMessage = this.state.messages;
+              this.setState(() => {
+                const oldMessage = this.state.messages;
                 oldMessage.push(messageParams);
                 return {
                   messages: oldMessage,
                   message: ""
-                }
+                };
               });
             } else {
               /**
@@ -144,7 +134,26 @@ class Chat extends React.Component {
         }
       })
       .catch(messageErr => {
-          console.log(messageErr);
+        console.log(messageErr);
+      });
+  }
+
+  // Reloads all of the messages
+  reloadMessages() {
+    axios.get('/api/users/' + this.state.currentUser + '/chats/' + this.props.match.params.id + '/messages')
+      .then(checkData => {
+        // If success is true, user has retrieved messages
+        if(checkData.data.success === true) {
+          this.setState({
+            messages: checkData.data.data
+          });
+          console.log(this.state.messages);
+        } else {
+          console.log("Failed to get messages");
+        }
+      })
+      .catch(err => {
+        console.log(err);
       });
   }
 
@@ -161,7 +170,10 @@ class Chat extends React.Component {
             // Parameters: chat id, user we want to invite, current user, cb
             // Does the invite over socket
             invite(this.props.match.params.id, this.state.currentInvite + 'inviteRoom', this.props.match.params.chatTitle, this.state.currentInvite, this.state.currentUser, false, () => {
-                console.log("Invite successful");
+              this.setState({
+                currentInvite: "",
+                addMemberActive: false,
+              });
             });
           } else {
             // There was an error creating a new invite
@@ -169,13 +181,13 @@ class Chat extends React.Component {
           }
         })
         .catch(inviteErr => {
-            console.log(inviteErr);
+          console.log(inviteErr);
         });
     }
   }
 
   // Handles removing user from chat room
-  handleLeave(event) {
+  handleLeave() {
     axios.post('/api/users/' + this.state.currentUser + '/chats/' + this.props.match.params.id + '/delete')
     .then((deleteData) => {
       if (deleteData.data.success) {
@@ -186,10 +198,10 @@ class Chat extends React.Component {
           console.log("Successfully removed user from room");
         });
       } else {
-          // There was an error creating a new message
-          console.log(deleteData.data.err);
-        }
-      })
+        // There was an error creating a new message
+        console.log(deleteData.data.err);
+      }
+    })
     .catch(chatErr => {
       console.log(chatErr);
     });
@@ -236,9 +248,18 @@ class Chat extends React.Component {
             name="message"
             value={ this.state.message }
             onChange={ this.handleChangeMessage }
+            placeholder="Type a message..."
             className="form-control"
             type="text"
           />
+          <button className="btn btn-gray marg-right-05"
+            onClick={ this.toggleAddMember }>
+            <i className="fa fa-plus" aria-hidden />
+          </button>
+          <button className="btn btn-gray marg-right-05"
+            onClick={ this.handleLeave }>
+            Leave Chat
+          </button>
           <input
             type="submit"
             className={
@@ -250,29 +271,27 @@ class Chat extends React.Component {
           />
         </form>
 
-        <form className="message-form" onSubmit={ this.handleInvite }>
-          <textarea
-            name="invite"
-            value={ this.state.currentInvite }
-            onChange={ this.handleChangeInvite }
-            className="form-control"
-            type="text"
-          />
-          <input
-            type="submit"
-            className={
-              this.state.currentInvite ?
-              "btn btn-gray" :
-              "btn btn-gray disabled"
-            }
-            value="Invite"
-          />
-        </form>
-
-        <button className="btn btn-gray"
-          onClick={ this.handleLeave }> 
-          Leave Chat 
-        </button>
+        { this.state.addMemberActive && (
+          <form className="message-form marg-top-1" onSubmit={ this.handleInvite }>
+            <input
+              name="invite"
+              value={ this.state.currentInvite }
+              onChange={ this.handleChangeInvite }
+              className="form-control"
+              type="text"
+              placeholder="Invite a new user by username to the chat..."
+            />
+            <input
+              type="submit"
+              className={
+                this.state.currentInvite ?
+                "btn btn-gray" :
+                "btn btn-gray disabled"
+              }
+              value="Invite"
+            />
+          </form>
+        ) }
       </Chats>
     );
   }
