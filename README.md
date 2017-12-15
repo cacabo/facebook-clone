@@ -2,11 +2,36 @@
 
 Facebook-clone for NETS 212. View the Dropbox paper [here.](https://paper.dropbox.com/doc/NETS-212-Final-Project-ez4p6TwrYmhhTXeR6T8qu)
 
+### Features
+* __Users__
+  * Profile picture updates
+  * Cover photo updates
+  * Birthday, name
+  * Has many friends
+  * Has many statuses
+* __Statuses:__ statuses can be written on the newsfeed or on a user's wall. Statuses are also generated implicitly with profile updates.
+* __Friendships:__ users have many friends. Users see posts by their friends or written to their friends.
+* __Affiliations:__ users can be grouped based on a common affiliation. A user has one affiliation.
+* __Interests:__ users can be grouped based on common interests. A user has many interests.
+* __Friend recommendations:__ recommending friends with an adsorption algorithm written in Java on Hadoop MapReduce.
+* __Chats:__ group chats between users handled via Socket IO
+* __Online now:__ list of users who are currently online (logged in)
+* __Visualizer:__ means of visualizing a user's friendships and affiliations with other users.
+
+### Stack used
+* Node
+* React
+* Redux
+* Amazon DynamoDB
+* Amazon EC2
+* Express
+* Socket IO
+
 ### Setup
 
 To start, `clone` the repository and then run `npm install`. Make sure that you have a `config.json` file created in the route directory just like in HW4 which contains your AWS public and secret keys and your region for AWS DynamoDB. Note that this is not included in the git repository because you should never publish your keys to GitHub, even in a private repository.
 
-There are a variety of scripts that you can run as detailed in the `package.json` file. When editing react components, for example, it makes sense to run `npm start` and `npm run frontend` in different terminal windows.
+There are a variety of scripts that you can run as detailed in the `package.json` file. When editing react components, for example, it makes sense to run `npm run backend` and `npm run frontend` in different terminal windows (that is, concurrently).
 
 There's information about the boilerplate below, but for our general workflow:
 * Always run `git pull` before starting or committing anything.
