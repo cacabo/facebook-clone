@@ -1,6 +1,5 @@
 import React from 'react';
 import UserPreview from './UserPreview';
-import uuid from 'uuid-v4';
 import Loading from '../shared/Loading';
 import ErrorMessage from '../shared/ErrorMessage';
 import axios from 'axios';
@@ -23,12 +22,14 @@ class OnlineNow extends React.Component {
 
   // Pull in the data from the database
   componentDidMount() {
-    console.log("IN COMPONENT DID MOUNT");
     axios.get("/api/online")
       .then(res => {
         if (res.data.success) {
-          console.log("RESPONSE");
-          console.log(res.data.data);
+          this.setState({
+            pending: false,
+            error: "",
+            onlineNow: res.data.data,
+          });
         } else {
           this.setState({
             pending: false,
@@ -49,11 +50,10 @@ class OnlineNow extends React.Component {
     return this.state.onlineNow.map(rec => {
       return (
         <UserPreview
-          name={ rec.name }
-          id={ rec.id }
-          img={ rec.img }
-          isOnline
-          key={ uuid() }
+          name={ rec.userData.name }
+          username={ rec.userData.username }
+          profilePicture={ rec.userData.profilePicture }
+          key={ rec.userData.username }
         />
       );
     });

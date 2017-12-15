@@ -39,8 +39,7 @@ function getAllUserStatus(callback) {
       callback(null, error.message);
     }
     // Find the list of usernames
-    const onlineUsers = data.Items.map(item => (item.attrs.username));
-    const users = [];
+    const onlineUsers = data.Items.map(item => ({ username: item.attrs.username }));
     console.log(onlineUsers);
 
     // Asyncronously pull user data for each
@@ -50,7 +49,15 @@ function getAllUserStatus(callback) {
           callback(null, userErr.message);
         } else {
           const userObj = userData.attrs;
-          users.push[userObj];
+          delete userObj.password;
+          delete userObj.birthday;
+          delete userObj.bio;
+          delete userObj.coverPhoto;
+          delete userObj.interests;
+          delete userObj.affiliation;
+          delete userObj.updatedAt;
+          delete userObj.createdAt;
+          user.userData = userObj;
           keysCallback();
         }
       });
@@ -58,9 +65,8 @@ function getAllUserStatus(callback) {
       if (asyncErr) {
         callback(null, asyncErr);
       } else {
-        console.log(users);
         // Return the recommendations to the user
-        callback(users, null);
+        callback(onlineUsers, null);
       }
     });
   });
